@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, StatusBar, View, Platform } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState, useEffect, useRef } from "react";
+import { StyleSheet, StatusBar, View, Platform } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import Sidebar from '../components/Sidebar';
-import ContentArea from '../components/ContentArea';
-import Screensaver from '../components/Screensaver';
+import Sidebar from "../components/Sidebar";
+import ContentArea from "../components/ContentArea";
+import Screensaver from "../components/Screensaver";
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('turizam');
-  const [language, setLanguage] = useState('HR');
+  const [activeTab, setActiveTab] = useState("turizam");
+  const [language, setLanguage] = useState("HR");
   const [showScreensaver, setShowScreensaver] = useState(true);
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -20,16 +20,22 @@ export default function App() {
 
     timerRef.current = setTimeout(() => {
       setShowScreensaver(true);
-      setActiveTab('turizam'); 
-    }, 60000); 
+      setActiveTab("turizam");
+    }, 60000);
   };
 
   useEffect(() => {
     if (!showScreensaver) {
       resetInactivityTimer();
 
-      if (Platform.OS === 'web' && typeof window !== 'undefined') {
-        const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+      if (Platform.OS === "web" && typeof window !== "undefined") {
+        const activityEvents = [
+          "mousedown",
+          "mousemove",
+          "keypress",
+          "scroll",
+          "touchstart",
+        ];
         const handleGlobalActivity = () => {
           resetInactivityTimer();
         };
@@ -53,8 +59,8 @@ export default function App() {
   return (
     <View style={{ flex: 1 }} onTouchStart={resetInactivityTimer}>
       {showScreensaver && (
-        <Screensaver 
-          onStart={() => setShowScreensaver(false)} 
+        <Screensaver
+          onStart={() => setShowScreensaver(false)}
           language={language}
           setLanguage={setLanguage}
         />
@@ -62,13 +68,14 @@ export default function App() {
 
       <SafeAreaView style={styles.container}>
         <StatusBar hidden={true} />
-        
-        <Sidebar 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
+
+        <Sidebar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          language={language}
         />
 
-        <ContentArea activeTab={activeTab} />
+        <ContentArea activeTab={activeTab} language={language} />
       </SafeAreaView>
     </View>
   );
@@ -77,7 +84,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'row',
-    backgroundColor: '#F4F6F8',
+    flexDirection: "row",
+    backgroundColor: "#F4F6F8",
   },
 });

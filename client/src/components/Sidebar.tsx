@@ -4,14 +4,21 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 type SidebarProps = {
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  language: string;
 };
 
-export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
+export default function Sidebar({
+  activeTab,
+  setActiveTab,
+  language,
+}: SidebarProps) {
   return (
     <View style={styles.sidebar}>
       <View style={styles.logoContainer}>
         <Text style={styles.logoText}>GRAD OSIJEK</Text>
-        <Text style={styles.logoSubtext}>Info Panel</Text>
+        <Text style={styles.logoSubtext}>
+          {language === "HR" ? "Info Panel" : "Info Panel"}
+        </Text>
       </View>
 
       <View style={styles.menuItems}>
@@ -28,7 +35,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
               activeTab === "turizam" && styles.menuButtonTextActive,
             ]}
           >
-            Turizam
+            {language === "HR" ? "Turizam" : "Tourism"}
           </Text>
         </TouchableOpacity>
 
@@ -45,7 +52,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
               activeTab === "dogadjanja" && styles.menuButtonTextActive,
             ]}
           >
-            Događanja
+            {language === "HR" ? "Događanja" : "Events"}
           </Text>
         </TouchableOpacity>
 
@@ -62,7 +69,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
               activeTab === "usluge" && styles.menuButtonTextActive,
             ]}
           >
-            Usluge
+            {language === "HR" ? "Usluge" : "Services"}
           </Text>
         </TouchableOpacity>
 
@@ -79,7 +86,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
               activeTab === "karta" && styles.menuButtonTextActive,
             ]}
           >
-            Karta
+            {language === "HR" ? "Karta" : "Map"}
           </Text>
         </TouchableOpacity>
       </View>
