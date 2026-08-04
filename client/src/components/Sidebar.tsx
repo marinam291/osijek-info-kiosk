@@ -4,16 +4,9 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 type SidebarProps = {
   activeTab: string;
   setActiveTab: (tab: string) => void;
-  language: string;
-  setLanguage: (lang: string) => void;
 };
 
-export default function Sidebar({
-  activeTab,
-  setActiveTab,
-  language,
-  setLanguage,
-}: SidebarProps) {
+export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   return (
     <View style={styles.sidebar}>
       <View style={styles.logoContainer}>
@@ -90,41 +83,6 @@ export default function Sidebar({
           </Text>
         </TouchableOpacity>
       </View>
-
-      <View style={styles.langContainer}>
-        <TouchableOpacity
-          style={[
-            styles.langButton,
-            language === "HR" && styles.langButtonActive,
-          ]}
-          onPress={() => setLanguage("HR")}
-        >
-          <Text
-            style={[
-              styles.langText,
-              language === "HR" && styles.langTextActive,
-            ]}
-          >
-            HR
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.langButton,
-            language === "EN" && styles.langButtonActive,
-          ]}
-          onPress={() => setLanguage("EN")}
-        >
-          <Text
-            style={[
-              styles.langText,
-              language === "EN" && styles.langTextActive,
-            ]}
-          >
-            EN
-          </Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
@@ -174,29 +132,5 @@ const styles = StyleSheet.create({
   menuButtonTextActive: {
     color: "#0A2540",
     fontWeight: "bold",
-  },
-  langContainer: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  langButton: {
-    flex: 1,
-    paddingVertical: 16,
-    borderRadius: 8,
-    borderWidth: 1.5,
-    borderColor: "#A0AEC0",
-    alignItems: "center",
-  },
-  langButtonActive: {
-    backgroundColor: "#00D4B2",
-    borderColor: "#00D4B2",
-  },
-  langText: {
-    color: "#A0AEC0",
-    fontWeight: "bold",
-    fontSize: 18,
-  },
-  langTextActive: {
-    color: "#0A2540",
   },
 });
