@@ -10,9 +10,7 @@ export default function Screensaver({ onStart }: ScreensaverProps) {
   return (
     <View style={styles.container}>
       <Video
-        source={{
-          uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
-        }}
+        source={require("../../assets/videos/osijek.mp4")}
         style={styles.video}
         shouldPlay
         isLooping
