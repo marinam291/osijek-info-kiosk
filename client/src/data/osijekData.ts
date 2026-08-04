@@ -9,7 +9,7 @@ export const getOsijekData = (language: string) => {
         opis: isHR
           ? "Najočuvaniji kompleks barokne arhitekture u Hrvatskoj i povijesno srce Osijeka. Idealno za šetnju kamenim ulicama, posjet muzejima i uživanje u lokalnim kafićima."
           : "The best-preserved complex of Baroque architecture in Croatia and the historic heart of Osijek. Ideal for walking paved streets, visiting museums, and enjoying local cafes.",
-        slika: "tvrda_slika",
+        slika: require("../../assets/images/tvrda.jpg"),
       },
       {
         id: "t2",
@@ -19,7 +19,7 @@ export const getOsijekData = (language: string) => {
         opis: isHR
           ? "Prepoznatljiva neogotička građevina sagrađena od crvene fasadne cigle. Njezin zvonik visok 90 metara dominira glavnim gradskim trgom."
           : "A recognizable neo-Gothic building built of red facade brick. Its 90-meter-high bell tower dominates the main city square.",
-        slika: "konkatedrala_slika",
+        slika: require("../../assets/images/katedrala.jpg"),
       },
       {
         id: "t3",
@@ -29,7 +29,7 @@ export const getOsijekData = (language: string) => {
         opis: isHR
           ? "Najljepša šetnica uz rijeku Dravu u regiji. Pješački most, koji spaja Osijek s Baranjom, jedan je od glavnih simbola grada i omiljeno mjesto za fotografiranje."
           : "The most beautiful promenade along the Drava River in the region. The pedestrian bridge, connecting Osijek with Baranja, is a major city symbol and a favorite photo spot.",
-        slika: "promenada_slika",
+        slika: require("../../assets/images/promenada.jpg"),
       },
       {
         id: "t4",
@@ -37,7 +37,7 @@ export const getOsijekData = (language: string) => {
         opis: isHR
           ? "Smješten na lijevoj obali Drave, ovo je najveći zoološki vrt u Hrvatskoj površinom, idealan za obiteljski izlet i rekreaciju."
           : "Located on the left bank of the Drava, this is the largest zoo in Croatia by area, ideal for a family trip and recreation.",
-        slika: "zoo_slika",
+        slika: require("../../assets/images/zoo.jpg"),
       },
     ],
 
@@ -51,6 +51,11 @@ export const getOsijekData = (language: string) => {
         opis: isHR
           ? "Najveća kulturna manifestacija u istočnoj Hrvatskoj s bogatim kazališnim, filmskim, glazbenim i likovnim programom na otvorenome."
           : "The largest cultural event in eastern Croatia with a rich outdoor theater, film, music, and art program.",
+        slika: require("../../assets/images/oljk1.jpg"),
+        galerija: [
+          require("../../assets/images/oljk1.jpg"),
+          require("../../assets/images/oljk2.jpg"),
+        ],
       },
       {
         id: "d2",
@@ -59,6 +64,11 @@ export const getOsijekData = (language: string) => {
         opis: isHR
           ? "Najveći festival ekstremnog sporta i urbane kulture u regiji. Okuplja najbolje BMX, skate i romobil vozače svijeta."
           : "The largest extreme sports and urban culture festival in the region, gathering the world's best BMX, skate, and scooter riders.",
+        slika: require("../../assets/images/pannonian1.jpg"),
+        galerija: [
+          require("../../assets/images/pannonian1.jpg"),
+          require("../../assets/images/pannonian2.jpg"),
+        ],
       },
       {
         id: "d3",
@@ -67,6 +77,11 @@ export const getOsijekData = (language: string) => {
         opis: isHR
           ? "Višestruko nagrađivan kao jedan od najljepših Advenata u Hrvatskoj, donosi čarobnu atmosferu, klizalište i bogatu gastronomsku ponudu."
           : "Multiple times awarded as one of the most beautiful Advents in Croatia, bringing a magical atmosphere, ice rink, and rich gastronomic offer.",
+        slika: require("../../assets/images/advent1.jpg"),
+        galerija: [
+          require("../../assets/images/advent1.jpg"),
+          require("../../assets/images/advent2.jpg"),
+        ],
       },
     ],
 
