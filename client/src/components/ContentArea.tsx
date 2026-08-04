@@ -1,4 +1,4 @@
-import React, { createElement } from "react";
+import React, { createElement, useState } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,8 @@ import {
   StyleSheet,
   Platform,
   Image,
+  TouchableOpacity,
+  Modal,
 } from "react-native";
 import { getOsijekData } from "../data/osijekData";
 
@@ -14,18 +16,11 @@ type ContentProps = {
   language: string;
 };
 
-type KioskItem = {
-  id: string;
-  naziv: string;
-  opis: string;
-  slika?: any;
-  vrijeme?: string;
-  info?: string;
-};
-
 export default function ContentArea({ activeTab, language }: ContentProps) {
   const currentData = getOsijekData(language);
-  let dataToRender: KioskItem[] = [];
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+
+  let dataToRender: any[] = [];
   let title = "";
 
   switch (activeTab) {
@@ -84,28 +79,90 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
       <View style={styles.contentBox}>
         <Text style={styles.contentTitle}>{title}</Text>
 
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContainer}
-        >
+        <ScrollView showsVerticalScrollIndicator={false}>
           {dataToRender.map((item) => (
-            <View key={item.id} style={styles.card}>
+            <TouchableOpacity
+              key={item.id}
+              style={styles.card}
+              onPress={() => setSelectedItem(item)}
+            >
               {item.slika && (
                 <Image source={item.slika} style={styles.cardImage} />
               )}
-
               <View style={styles.cardTextContainer}>
                 <Text style={styles.cardTitle}>{item.naziv}</Text>
                 {item.vrijeme && (
                   <Text style={styles.cardSubtitle}>{item.vrijeme}</Text>
                 )}
-                <Text style={styles.cardDescription}>{item.opis}</Text>
-                {item.info && <Text style={styles.cardInfo}>{item.info}</Text>}
+                <Text numberOfLines={3} style={styles.cardDescription}>
+                  {item.opis}
+                </Text>
               </View>
-            </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
+
+      <Modal
+        visible={selectedItem !== null}
+        animationType="fade"
+        transparent={true}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setSelectedItem(null)}
+            >
+              <Text style={styles.closeButtonText}>✕</Text>
+            </TouchableOpacity>
+
+            <ScrollView contentContainerStyle={styles.modalScroll}>
+              <Text style={styles.modalTitle}>{selectedItem?.naziv}</Text>
+
+              <View style={styles.galleryContainer}>
+                {selectedItem?.galerija
+                  ? selectedItem.galerija.map((img: any, index: number) => (
+                      <Image
+                        key={index}
+                        source={img}
+                        style={styles.galleryImage}
+                      />
+                    ))
+                  : selectedItem?.slika && (
+                      <Image
+                        source={selectedItem.slika}
+                        style={styles.fullImage}
+                      />
+                    )}
+              </View>
+
+              <Text style={styles.modalDescription}>{selectedItem?.opis}</Text>
+
+              <View style={styles.qrSection}>
+                <View style={styles.qrTextContent}>
+                  <Text style={styles.qrTitle}>
+                    {language === "HR"
+                      ? "Ponesi informacije sa sobom"
+                      : "Take info with you"}
+                  </Text>
+                  <Text style={styles.qrSub}>
+                    {language === "HR"
+                      ? "Skeniraj za navigaciju i dodatne info"
+                      : "Scan for navigation and more info"}
+                  </Text>
+                </View>
+                <View style={styles.qrPlaceholder}>
+                  <Text style={{ fontSize: 40 }}>📱</Text>
+                  <Text style={{ fontSize: 10, fontWeight: "bold" }}>
+                    QR CODE
+                  </Text>
+                </View>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -190,5 +247,81 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: "center",
     marginTop: 40,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(10, 37, 64, 0.85)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 50,
+  },
+  modalContent: {
+    width: "90%",
+    height: "90%",
+    backgroundColor: "#FFF",
+    borderRadius: 30,
+    padding: 40,
+    position: "relative",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 20,
+    right: 20,
+    zIndex: 10,
+    backgroundColor: "#F1F5F9",
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  closeButtonText: { fontSize: 24, fontWeight: "bold", color: "#0A2540" },
+  modalScroll: { alignItems: "center" },
+  modalTitle: {
+    fontSize: 48,
+    fontWeight: "bold",
+    color: "#0A2540",
+    marginBottom: 30,
+    textAlign: "center",
+  },
+  galleryContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 20,
+    marginBottom: 30,
+  },
+  galleryImage: { width: 350, height: 250, borderRadius: 20 },
+  fullImage: { width: 600, height: 400, borderRadius: 20 },
+  modalDescription: {
+    fontSize: 22,
+    color: "#4A5568",
+    lineHeight: 34,
+    textAlign: "center",
+    maxWidth: 800,
+  },
+
+  qrSection: {
+    marginTop: 50,
+    flexDirection: "row",
+    backgroundColor: "#F8FAFC",
+    padding: 30,
+    borderRadius: 20,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+  },
+  qrTextContent: { marginRight: 30 },
+  qrTitle: { fontSize: 24, fontWeight: "bold", color: "#0A2540" },
+  qrSub: { fontSize: 16, color: "#64748B" },
+  qrPlaceholder: {
+    width: 100,
+    height: 100,
+    backgroundColor: "#FFF",
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#0A2540",
   },
 });
