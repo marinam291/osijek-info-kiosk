@@ -1,9 +1,10 @@
 import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
-import { osijekData } from "../data/osijekData";
+import { getOsijekData } from "../data/osijekData";
 
 type ContentProps = {
   activeTab: string;
+  language: string;
 };
 
 type KioskItem = {
@@ -15,31 +16,36 @@ type KioskItem = {
   info?: string;
 };
 
-export default function ContentArea({ activeTab }: ContentProps) {
+export default function ContentArea({ activeTab, language }: ContentProps) {
   let dataToRender: KioskItem[] = [];
   let title = "";
 
   switch (activeTab) {
     case "turizam":
-      dataToRender = osijekData.turizam;
-      title = "Turizam i znamenitosti";
+      dataToRender = getOsijekData(language).turizam;
+      title =
+        language === "HR" ? "Turizam i znamenitosti" : "Tourism & Landmarks";
       break;
     case "dogadjanja":
-      dataToRender = osijekData.dogadjanja;
-      title = "Događanja u Osijeku";
+      dataToRender = getOsijekData(language).dogadjanja;
+      title = language === "HR" ? "Događanja u Osijeku" : "Events in Osijek";
       break;
     case "usluge":
-      dataToRender = osijekData.usluge;
-      title = "Usluge & Prijevoz";
+      dataToRender = getOsijekData(language).usluge;
+      title = language === "HR" ? "Usluge & Prijevoz" : "Services & Transport";
       break;
     case "karta":
       return (
         <View style={styles.mainContent}>
           <View style={styles.contentBox}>
-            <Text style={styles.contentTitle}>Karta grada</Text>
+            <Text style={styles.contentTitle}>
+              {language === "HR" ? "Karta grada" : "City Map"}
+            </Text>
             <View style={styles.mapPlaceholder}>
               <Text style={styles.mapText}>
-                Ovdje ćemo kasnije ubaciti sliku karte s pinovima.
+                {language === "HR"
+                  ? "Ovdje ćemo kasnije ubaciti sliku karte s pinovima."
+                  : "Map image with pins will be inserted here later."}
               </Text>
             </View>
           </View>

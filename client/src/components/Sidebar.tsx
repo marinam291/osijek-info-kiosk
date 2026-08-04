@@ -5,20 +5,20 @@ type SidebarProps = {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   language: string;
-  setLanguage: (lang: string) => void;
 };
 
 export default function Sidebar({
   activeTab,
   setActiveTab,
   language,
-  setLanguage,
 }: SidebarProps) {
   return (
     <View style={styles.sidebar}>
       <View style={styles.logoContainer}>
         <Text style={styles.logoText}>GRAD OSIJEK</Text>
-        <Text style={styles.logoSubtext}>Info Panel</Text>
+        <Text style={styles.logoSubtext}>
+          {language === "HR" ? "Info Panel" : "Info Panel"}
+        </Text>
       </View>
 
       <View style={styles.menuItems}>
@@ -35,7 +35,7 @@ export default function Sidebar({
               activeTab === "turizam" && styles.menuButtonTextActive,
             ]}
           >
-            Turizam
+            {language === "HR" ? "Turizam" : "Tourism"}
           </Text>
         </TouchableOpacity>
 
@@ -52,7 +52,7 @@ export default function Sidebar({
               activeTab === "dogadjanja" && styles.menuButtonTextActive,
             ]}
           >
-            Događanja
+            {language === "HR" ? "Događanja" : "Events"}
           </Text>
         </TouchableOpacity>
 
@@ -69,7 +69,7 @@ export default function Sidebar({
               activeTab === "usluge" && styles.menuButtonTextActive,
             ]}
           >
-            Usluge
+            {language === "HR" ? "Usluge" : "Services"}
           </Text>
         </TouchableOpacity>
 
@@ -86,42 +86,7 @@ export default function Sidebar({
               activeTab === "karta" && styles.menuButtonTextActive,
             ]}
           >
-            Karta
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.langContainer}>
-        <TouchableOpacity
-          style={[
-            styles.langButton,
-            language === "HR" && styles.langButtonActive,
-          ]}
-          onPress={() => setLanguage("HR")}
-        >
-          <Text
-            style={[
-              styles.langText,
-              language === "HR" && styles.langTextActive,
-            ]}
-          >
-            HR
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.langButton,
-            language === "EN" && styles.langButtonActive,
-          ]}
-          onPress={() => setLanguage("EN")}
-        >
-          <Text
-            style={[
-              styles.langText,
-              language === "EN" && styles.langTextActive,
-            ]}
-          >
-            EN
+            {language === "HR" ? "Karta" : "Map"}
           </Text>
         </TouchableOpacity>
       </View>
@@ -174,29 +139,5 @@ const styles = StyleSheet.create({
   menuButtonTextActive: {
     color: "#0A2540",
     fontWeight: "bold",
-  },
-  langContainer: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  langButton: {
-    flex: 1,
-    paddingVertical: 16,
-    borderRadius: 8,
-    borderWidth: 1.5,
-    borderColor: "#A0AEC0",
-    alignItems: "center",
-  },
-  langButtonActive: {
-    backgroundColor: "#00D4B2",
-    borderColor: "#00D4B2",
-  },
-  langText: {
-    color: "#A0AEC0",
-    fontWeight: "bold",
-    fontSize: 18,
-  },
-  langTextActive: {
-    color: "#0A2540",
   },
 });
