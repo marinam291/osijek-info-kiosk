@@ -51,6 +51,11 @@ export const getOsijekData = (language: string) => {
         opis: isHR
           ? "Najveća kulturna manifestacija u istočnoj Hrvatskoj s bogatim kazališnim, filmskim, glazbenim i likovnim programom na otvorenome."
           : "The largest cultural event in eastern Croatia with a rich outdoor theater, film, music, and art program.",
+        slika: require("../../assets/images/oljk1.jpg"),
+        galerija: [
+          require("../../assets/images/oljk1.jpg"),
+          require("../../assets/images/oljk2.jpg"),
+        ],
       },
       {
         id: "d2",
@@ -59,6 +64,11 @@ export const getOsijekData = (language: string) => {
         opis: isHR
           ? "Najveći festival ekstremnog sporta i urbane kulture u regiji. Okuplja najbolje BMX, skate i romobil vozače svijeta."
           : "The largest extreme sports and urban culture festival in the region, gathering the world's best BMX, skate, and scooter riders.",
+        slika: require("../../assets/images/pannonian1.jpg"),
+        galerija: [
+          require("../../assets/images/pannonian1.jpg"),
+          require("../../assets/images/pannonian2.jpg"),
+        ],
       },
       {
         id: "d3",
@@ -67,6 +77,11 @@ export const getOsijekData = (language: string) => {
         opis: isHR
           ? "Višestruko nagrađivan kao jedan od najljepših Advenata u Hrvatskoj, donosi čarobnu atmosferu, klizalište i bogatu gastronomsku ponudu."
           : "Multiple times awarded as one of the most beautiful Advents in Croatia, bringing a magical atmosphere, ice rink, and rich gastronomic offer.",
+        slika: require("../../assets/images/advent1.jpg"),
+        galerija: [
+          require("../../assets/images/advent1.jpg"),
+          require("../../assets/images/advent2.jpg"),
+        ],
       },
     ],
 
