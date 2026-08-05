@@ -7,7 +7,6 @@ import {
   Animated,
   Image,
 } from "react-native";
-import { Video, ResizeMode } from "expo-av";
 import { Feather } from "@expo/vector-icons";
 import { ThemeMode, useTheme } from "../context/ThemeContext";
 
@@ -54,14 +53,27 @@ export default function Screensaver({
 
   return (
     <View style={styles.container}>
-      <Video
-        source={require("../../assets/videos/osijek.mp4")}
-        style={styles.video}
-        shouldPlay
-        isLooping
-        isMuted
-        resizeMode={ResizeMode.COVER}
-      />
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          objectFit: "cover",
+          zIndex: -1,
+        }}
+      >
+        <source
+          src={require("../../assets/videos/osijek.mp4")}
+          type="video/mp4"
+        />
+        Vaš preglednik ne podržava video.
+      </video>
 
       <View style={[styles.overlay, { backgroundColor: overlayColor }]}>
         <View style={styles.controlsContainer}>
@@ -188,15 +200,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
     zIndex: 1000,
     overflow: "hidden",
-  },
-  video: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    width: "100%",
-    height: "100%",
   },
   overlay: {
     flex: 1,
