@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useTheme } from "../context/ThemeContext";
 
 type SidebarProps = {
@@ -26,6 +26,11 @@ export default function Sidebar({
       ]}
     >
       <View style={styles.logoContainer}>
+        <Image
+          source={require("../../assets/images/logo.png")}
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
         <Text style={[styles.logoBadge, { color: colors.accent }]}>
           INFO KIOSK
         </Text>
@@ -87,6 +92,12 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     marginBottom: 48,
+    alignItems: "flex-start",
+  },
+  logoImage: {
+    width: 70,
+    height: 80,
+    marginBottom: 16,
   },
   logoBadge: {
     fontSize: 12,
