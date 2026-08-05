@@ -70,6 +70,7 @@ export const getOsijekData = (language: string) => {
           require("../../assets/images/pannonian1.jpg"),
           require("../../assets/images/pannonian2.jpg"),
         ],
+        qrLink: "https://pannonian.hr",
       },
       {
         id: "d3",
@@ -83,6 +84,7 @@ export const getOsijekData = (language: string) => {
           require("../../assets/images/advent1.jpg"),
           require("../../assets/images/advent2.jpg"),
         ],
+        qrLink: "https://www.tzosijek.hr/stranica.php?id=1475",
       },
     ],
 
