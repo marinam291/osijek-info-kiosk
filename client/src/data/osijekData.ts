@@ -10,6 +10,7 @@ export const getOsijekData = (language: string) => {
           ? "Najočuvaniji kompleks barokne arhitekture u Hrvatskoj i povijesno srce Osijeka. Idealno za šetnju kamenim ulicama, posjet muzejima i uživanje u lokalnim kafićima."
           : "The best-preserved complex of Baroque architecture in Croatia and the historic heart of Osijek. Ideal for walking paved streets, visiting museums, and enjoying local cafes.",
         slika: require("../../assets/images/tvrda.jpg"),
+        qrLink: "https://www.osijek.hr/kultura/tvrda/",
       },
       {
         id: "t2",
@@ -20,6 +21,7 @@ export const getOsijekData = (language: string) => {
           ? "Prepoznatljiva neogotička građevina sagrađena od crvene fasadne cigle. Njezin zvonik visok 90 metara dominira glavnim gradskim trgom."
           : "A recognizable neo-Gothic building built of red facade brick. Its 90-meter-high bell tower dominates the main city square.",
         slika: require("../../assets/images/katedrala.jpg"),
+        qrLink: "https://svpetaripavao.hr/konkatedrala/",
       },
       {
         id: "t3",
@@ -30,6 +32,8 @@ export const getOsijekData = (language: string) => {
           ? "Najljepša šetnica uz rijeku Dravu u regiji. Pješački most, koji spaja Osijek s Baranjom, jedan je od glavnih simbola grada i omiljeno mjesto za fotografiranje."
           : "The most beautiful promenade along the Drava River in the region. The pedestrian bridge, connecting Osijek with Baranja, is a major city symbol and a favorite photo spot.",
         slika: require("../../assets/images/promenada.jpg"),
+        qrLink:
+          "https://www.osijek.hr/osjecka-promenada-najljepsa-europska-setnica-uz-rijeku/",
       },
       {
         id: "t4",
@@ -38,6 +42,7 @@ export const getOsijekData = (language: string) => {
           ? "Smješten na lijevoj obali Drave, ovo je najveći zoološki vrt u Hrvatskoj površinom, idealan za obiteljski izlet i rekreaciju."
           : "Located on the left bank of the Drava, this is the largest zoo in Croatia by area, ideal for a family trip and recreation.",
         slika: require("../../assets/images/zoo.jpg"),
+        qrLink: "https://www.zoo-osijek.hr",
       },
     ],
 
