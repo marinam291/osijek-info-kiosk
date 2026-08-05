@@ -5,11 +5,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Sidebar from "../components/Sidebar";
 import ContentArea from "../components/ContentArea";
 import Screensaver from "../components/Screensaver";
+import { ThemeProvider, useTheme, ThemeMode } from "../context/ThemeContext";
 
-export default function App() {
+function MainApp() {
   const [activeTab, setActiveTab] = useState("turizam");
   const [language, setLanguage] = useState("HR");
   const [showScreensaver, setShowScreensaver] = useState(true);
+  const { theme, setTheme } = useTheme();
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -21,6 +23,8 @@ export default function App() {
     timerRef.current = setTimeout(() => {
       setShowScreensaver(true);
       setActiveTab("turizam");
+      setLanguage("HR");
+      setTheme("dark"); 
     }, 60000);
   };
 
@@ -63,6 +67,8 @@ export default function App() {
           onStart={() => setShowScreensaver(false)}
           language={language}
           setLanguage={setLanguage}
+          theme={theme}
+          setTheme={setTheme}
         />
       )}
 
@@ -81,10 +87,17 @@ export default function App() {
   );
 }
 
+export default function App() {
+  return (
+    <ThemeProvider>
+      <MainApp />
+    </ThemeProvider>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "row",
-    backgroundColor: "#F4F6F8",
   },
 });

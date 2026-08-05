@@ -1,17 +1,22 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Video, ResizeMode } from "expo-av";
+import { ThemeMode } from "../context/ThemeContext";
 
 type ScreensaverProps = {
   onStart: () => void;
   language: string;
   setLanguage: (lang: string) => void;
+  theme: ThemeMode;
+  setTheme: (theme: ThemeMode) => void;
 };
 
 export default function Screensaver({
   onStart,
   language,
   setLanguage,
+  theme,
+  setTheme,
 }: ScreensaverProps) {
   return (
     <View style={styles.container}>
@@ -24,39 +29,76 @@ export default function Screensaver({
         resizeMode={ResizeMode.COVER}
       />
 
-      <View style={styles.langContainer}>
-        <TouchableOpacity
-          style={[
-            styles.langButton,
-            language === "HR" && styles.langButtonActive,
-          ]}
-          onPress={() => setLanguage("HR")}
-        >
-          <Text
+      <View style={styles.controlsContainer}>
+        <View style={styles.buttonGroup}>
+          <TouchableOpacity
             style={[
-              styles.langText,
-              language === "HR" && styles.langTextActive,
+              styles.ctrlButton,
+              language === "HR" && styles.ctrlButtonActive,
             ]}
+            onPress={() => setLanguage("HR")}
           >
-            HR
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.langButton,
-            language === "EN" && styles.langButtonActive,
-          ]}
-          onPress={() => setLanguage("EN")}
-        >
-          <Text
+            <Text
+              style={[
+                styles.ctrlText,
+                language === "HR" && styles.ctrlTextActive,
+              ]}
+            >
+              HR
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
             style={[
-              styles.langText,
-              language === "EN" && styles.langTextActive,
+              styles.ctrlButton,
+              language === "EN" && styles.ctrlButtonActive,
             ]}
+            onPress={() => setLanguage("EN")}
           >
-            EN
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={[
+                styles.ctrlText,
+                language === "EN" && styles.ctrlTextActive,
+              ]}
+            >
+              EN
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.buttonGroup}>
+          <TouchableOpacity
+            style={[
+              styles.ctrlButton,
+              theme === "light" && styles.ctrlButtonActive,
+            ]}
+            onPress={() => setTheme("light")}
+          >
+            <Text
+              style={[
+                styles.ctrlText,
+                theme === "light" && styles.ctrlTextActive,
+              ]}
+            >
+              {language === "HR" ? "SVIJETLO" : "LIGHT"}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.ctrlButton,
+              theme === "dark" && styles.ctrlButtonActive,
+            ]}
+            onPress={() => setTheme("dark")}
+          >
+            <Text
+              style={[
+                styles.ctrlText,
+                theme === "dark" && styles.ctrlTextActive,
+              ]}
+            >
+              {language === "HR" ? "TAMNO" : "DARK"}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.overlay}>
@@ -111,33 +153,38 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  langContainer: {
+  controlsContainer: {
     position: "absolute",
     top: 40,
     right: 40,
-    flexDirection: "row",
+    flexDirection: "column",
+    alignItems: "flex-end",
     gap: 12,
     zIndex: 1001,
   },
-  langButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+  buttonGroup: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  ctrlButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     borderRadius: 8,
     borderWidth: 2,
     borderColor: "#FFFFFF",
-    backgroundColor: "rgba(0,0,0,0.3)",
+    backgroundColor: "rgba(0,0,0,0.4)",
     alignItems: "center",
   },
-  langButtonActive: {
+  ctrlButtonActive: {
     backgroundColor: "#00D4B2",
     borderColor: "#00D4B2",
   },
-  langText: {
+  ctrlText: {
     color: "#FFFFFF",
     fontWeight: "bold",
-    fontSize: 18,
+    fontSize: 16,
   },
-  langTextActive: {
+  ctrlTextActive: {
     color: "#0A2540",
   },
   title: {

@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useTheme } from "../context/ThemeContext";
 
 type SidebarProps = {
   activeTab: string;
@@ -12,84 +13,66 @@ export default function Sidebar({
   setActiveTab,
   language,
 }: SidebarProps) {
+  const { colors } = useTheme();
+
   return (
-    <View style={styles.sidebar}>
+    <View
+      style={[
+        styles.sidebar,
+        {
+          backgroundColor: colors.sidebarBackground,
+          borderRightColor: colors.border,
+        },
+      ]}
+    >
       <View style={styles.logoContainer}>
-        <Text style={styles.logoBadge}>INFO KIOSK</Text>
-        <Text style={styles.logoText}>GRAD OSIJEK</Text>
-        <Text style={styles.logoSubtext}>
+        <Text style={[styles.logoBadge, { color: colors.accent }]}>
+          INFO KIOSK
+        </Text>
+        <Text style={[styles.logoText, { color: colors.textPrimary }]}>
+          GRAD OSIJEK
+        </Text>
+        <Text style={[styles.logoSubtext, { color: colors.textSecondary }]}>
           {language === "HR" ? "Službeni portal" : "Official Portal"}
         </Text>
       </View>
 
       <View style={styles.menuItems}>
-        <TouchableOpacity
-          style={[
-            styles.menuButton,
-            activeTab === "turizam" && styles.menuButtonActive,
-          ]}
-          onPress={() => setActiveTab("turizam")}
-        >
-          <Text
-            style={[
-              styles.menuButtonText,
-              activeTab === "turizam" && styles.menuButtonTextActive,
-            ]}
-          >
-            {language === "HR" ? "Turizam" : "Tourism"}
-          </Text>
-        </TouchableOpacity>
+        {["turizam", "dogadjanja", "usluge", "karta"].map((tab) => {
+          const isActive = activeTab === tab;
+          const labels: Record<string, { hr: string; en: string }> = {
+            turizam: { hr: "Turizam", en: "Tourism" },
+            dogadjanja: { hr: "Događanja", en: "Events" },
+            usluge: { hr: "Usluge", en: "Services" },
+            karta: { hr: "Karta", en: "Map" },
+          };
 
-        <TouchableOpacity
-          style={[
-            styles.menuButton,
-            activeTab === "dogadjanja" && styles.menuButtonActive,
-          ]}
-          onPress={() => setActiveTab("dogadjanja")}
-        >
-          <Text
-            style={[
-              styles.menuButtonText,
-              activeTab === "dogadjanja" && styles.menuButtonTextActive,
-            ]}
-          >
-            {language === "HR" ? "Događanja" : "Events"}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.menuButton,
-            activeTab === "usluge" && styles.menuButtonActive,
-          ]}
-          onPress={() => setActiveTab("usluge")}
-        >
-          <Text
-            style={[
-              styles.menuButtonText,
-              activeTab === "usluge" && styles.menuButtonTextActive,
-            ]}
-          >
-            {language === "HR" ? "Usluge" : "Services"}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.menuButton,
-            activeTab === "karta" && styles.menuButtonActive,
-          ]}
-          onPress={() => setActiveTab("karta")}
-        >
-          <Text
-            style={[
-              styles.menuButtonText,
-              activeTab === "karta" && styles.menuButtonTextActive,
-            ]}
-          >
-            {language === "HR" ? "Karta" : "Map"}
-          </Text>
-        </TouchableOpacity>
+          return (
+            <TouchableOpacity
+              key={tab}
+              style={[
+                styles.menuButton,
+                isActive && {
+                  backgroundColor: colors.cardBackground,
+                  borderLeftWidth: 4,
+                  borderLeftColor: colors.accent,
+                },
+              ]}
+              onPress={() => setActiveTab(tab)}
+            >
+              <Text
+                style={[
+                  styles.menuButtonText,
+                  {
+                    color: isActive ? colors.textPrimary : colors.textSecondary,
+                  },
+                ]}
+              >
+                {language === "HR" ? labels[tab].hr : labels[tab].en}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
     </View>
   );
@@ -98,9 +81,7 @@ export default function Sidebar({
 const styles = StyleSheet.create({
   sidebar: {
     width: 280,
-    backgroundColor: "#070A12",
     borderRightWidth: 1,
-    borderRightColor: "#1E293B",
     padding: 32,
     justifyContent: "flex-start",
   },
@@ -108,7 +89,6 @@ const styles = StyleSheet.create({
     marginBottom: 48,
   },
   logoBadge: {
-    color: "#00D4B2",
     fontSize: 12,
     fontWeight: "bold",
     letterSpacing: 2,
@@ -117,12 +97,10 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 26,
     fontWeight: "bold",
-    color: "#FFFFFF",
     letterSpacing: 1,
   },
   logoSubtext: {
     fontSize: 14,
-    color: "#64748B",
     marginTop: 2,
   },
   menuItems: {
@@ -134,18 +112,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: "transparent",
   },
-  menuButtonActive: {
-    backgroundColor: "#1E293B",
-    borderLeftWidth: 4,
-    borderLeftColor: "#00D4B2",
-  },
   menuButtonText: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#94A3B8",
-  },
-  menuButtonTextActive: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
   },
 });
