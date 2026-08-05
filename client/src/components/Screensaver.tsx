@@ -1,7 +1,14 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+} from "react-native";
 import { Video, ResizeMode } from "expo-av";
-import { ThemeMode } from "../context/ThemeContext";
+import { Feather } from "@expo/vector-icons";
+import { ThemeMode, useTheme } from "../context/ThemeContext";
 
 type ScreensaverProps = {
   onStart: () => void;
@@ -18,6 +25,32 @@ export default function Screensaver({
   theme,
   setTheme,
 }: ScreensaverProps) {
+  const { colors } = useTheme();
+
+  const slideAnim = useRef(
+    new Animated.Value(theme === "light" ? 0 : 40),
+  ).current;
+
+  useEffect(() => {
+    Animated.timing(slideAnim, {
+      toValue: theme === "light" ? 0 : 40,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
+
+  const isLight = theme === "light";
+  const overlayColor = isLight
+    ? "rgba(255, 255, 255, 0.4)"
+    : "rgba(10, 37, 64, 0.6)";
+  const textColor = isLight ? "#0A2540" : "#FFFFFF";
+  const controlBg = isLight ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.6)";
+  const controlBorder = isLight ? "#0A2540" : "#FFFFFF";
+
   return (
     <View style={styles.container}>
       <Video
@@ -29,87 +62,103 @@ export default function Screensaver({
         resizeMode={ResizeMode.COVER}
       />
 
-      <View style={styles.controlsContainer}>
-        <View style={styles.buttonGroup}>
-          <TouchableOpacity
-            style={[
-              styles.ctrlButton,
-              language === "HR" && styles.ctrlButtonActive,
-            ]}
-            onPress={() => setLanguage("HR")}
-          >
-            <Text
+      <View style={[styles.overlay, { backgroundColor: overlayColor }]}>
+        <View style={styles.controlsContainer}>
+          <View style={styles.buttonGroup}>
+            <TouchableOpacity
               style={[
-                styles.ctrlText,
-                language === "HR" && styles.ctrlTextActive,
+                styles.langButton,
+                { borderColor: controlBorder, backgroundColor: controlBg },
+                language === "HR" && {
+                  backgroundColor: colors.accent,
+                  borderColor: colors.accent,
+                },
+              ]}
+              onPress={() => setLanguage("HR")}
+            >
+              <Text
+                style={[
+                  styles.langText,
+                  { color: textColor },
+                  language === "HR" && { color: "#0A2540" },
+                ]}
+              >
+                HR
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.langButton,
+                { borderColor: controlBorder, backgroundColor: controlBg },
+                language === "EN" && {
+                  backgroundColor: colors.accent,
+                  borderColor: colors.accent,
+                },
+              ]}
+              onPress={() => setLanguage("EN")}
+            >
+              <Text
+                style={[
+                  styles.langText,
+                  { color: textColor },
+                  language === "EN" && { color: "#0A2540" },
+                ]}
+              >
+                EN
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={toggleTheme}
+            style={[
+              styles.themeToggleContainer,
+              { backgroundColor: controlBg, borderColor: controlBorder },
+            ]}
+          >
+            <View style={styles.toggleBackgroundIcons}>
+              <Feather
+                name="sun"
+                size={16}
+                color={isLight ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.3)"}
+              />
+              <Feather
+                name="moon"
+                size={16}
+                color={isLight ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.3)"}
+              />
+            </View>
+
+            <Animated.View
+              style={[
+                styles.toggleThumb,
+                {
+                  transform: [{ translateX: slideAnim }],
+                  backgroundColor: isLight ? "#0A2540" : "#FFFFFF",
+                },
               ]}
             >
-              HR
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.ctrlButton,
-              language === "EN" && styles.ctrlButtonActive,
-            ]}
-            onPress={() => setLanguage("EN")}
-          >
-            <Text
-              style={[
-                styles.ctrlText,
-                language === "EN" && styles.ctrlTextActive,
-              ]}
-            >
-              EN
-            </Text>
+              <Feather
+                name={isLight ? "sun" : "moon"}
+                size={18}
+                color={isLight ? "#FFFFFF" : "#0A2540"}
+              />
+            </Animated.View>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.buttonGroup}>
-          <TouchableOpacity
-            style={[
-              styles.ctrlButton,
-              theme === "light" && styles.ctrlButtonActive,
-            ]}
-            onPress={() => setTheme("light")}
-          >
-            <Text
-              style={[
-                styles.ctrlText,
-                theme === "light" && styles.ctrlTextActive,
-              ]}
-            >
-              {language === "HR" ? "SVIJETLO" : "LIGHT"}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.ctrlButton,
-              theme === "dark" && styles.ctrlButtonActive,
-            ]}
-            onPress={() => setTheme("dark")}
-          >
-            <Text
-              style={[
-                styles.ctrlText,
-                theme === "dark" && styles.ctrlTextActive,
-              ]}
-            >
-              {language === "HR" ? "TAMNO" : "DARK"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <View style={styles.overlay}>
-        <Text style={styles.title}>
+        <Text style={[styles.title, { color: textColor }]}>
           {language === "HR" ? "Dobrodošli u Osijek" : "Welcome to Osijek"}
         </Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.subtitle, { color: colors.accent }]}>
           {language === "HR" ? "Grad na Dravi" : "City on the Drava River"}
         </Text>
 
-        <TouchableOpacity style={styles.button} onPress={onStart}>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: colors.accent }]}
+          onPress={onStart}
+        >
           <Text style={styles.buttonText}>
             {language === "HR" ? "Dodirni za početak" : "Touch to start"}
           </Text>
@@ -142,14 +191,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(10, 37, 64, 0.5)",
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -157,63 +199,64 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 40,
     right: 40,
-    flexDirection: "column",
-    alignItems: "flex-end",
-    gap: 12,
-    zIndex: 1001,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 24,
   },
   buttonGroup: {
     flexDirection: "row",
     gap: 8,
   },
-  ctrlButton: {
+  langButton: {
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: "#FFFFFF",
-    backgroundColor: "rgba(0,0,0,0.4)",
     alignItems: "center",
   },
-  ctrlButtonActive: {
-    backgroundColor: "#00D4B2",
-    borderColor: "#00D4B2",
-  },
-  ctrlText: {
-    color: "#FFFFFF",
+  langText: {
     fontWeight: "bold",
     fontSize: 16,
   },
-  ctrlTextActive: {
-    color: "#0A2540",
+  themeToggleContainer: {
+    width: 80,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 2,
+    justifyContent: "center",
+    paddingHorizontal: 4,
+  },
+  toggleBackgroundIcons: {
+    position: "absolute",
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+  },
+  toggleThumb: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5,
   },
   title: {
     fontSize: 72,
     fontWeight: "bold",
-    color: "#FFFFFF",
     marginBottom: 16,
-    textShadowColor: "rgba(0, 0, 0, 0.75)",
-    textShadowOffset: { width: 0, height: 4 },
-    textShadowRadius: 10,
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 32,
-    color: "#00D4B2",
     fontWeight: "600",
     marginBottom: 80,
-    textShadowColor: "rgba(0, 0, 0, 0.75)",
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 5,
+    textAlign: "center",
   },
   button: {
-    backgroundColor: "#00D4B2",
     paddingVertical: 24,
     paddingHorizontal: 64,
     borderRadius: 50,
-    shadowColor: "#000",
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 8,
   },
   buttonText: {
     fontSize: 32,
