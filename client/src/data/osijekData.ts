@@ -10,6 +10,7 @@ export const getOsijekData = (language: string) => {
           ? "Najočuvaniji kompleks barokne arhitekture u Hrvatskoj i povijesno srce Osijeka. Idealno za šetnju kamenim ulicama, posjet muzejima i uživanje u lokalnim kafićima."
           : "The best-preserved complex of Baroque architecture in Croatia and the historic heart of Osijek. Ideal for walking paved streets, visiting museums, and enjoying local cafes.",
         slika: require("../../assets/images/tvrda.jpg"),
+        qrLink: "https://www.osijek.hr/kultura/tvrda/",
       },
       {
         id: "t2",
@@ -20,6 +21,7 @@ export const getOsijekData = (language: string) => {
           ? "Prepoznatljiva neogotička građevina sagrađena od crvene fasadne cigle. Njezin zvonik visok 90 metara dominira glavnim gradskim trgom."
           : "A recognizable neo-Gothic building built of red facade brick. Its 90-meter-high bell tower dominates the main city square.",
         slika: require("../../assets/images/katedrala.jpg"),
+        qrLink: "https://svpetaripavao.hr/konkatedrala/",
       },
       {
         id: "t3",
@@ -30,6 +32,8 @@ export const getOsijekData = (language: string) => {
           ? "Najljepša šetnica uz rijeku Dravu u regiji. Pješački most, koji spaja Osijek s Baranjom, jedan je od glavnih simbola grada i omiljeno mjesto za fotografiranje."
           : "The most beautiful promenade along the Drava River in the region. The pedestrian bridge, connecting Osijek with Baranja, is a major city symbol and a favorite photo spot.",
         slika: require("../../assets/images/promenada.jpg"),
+        qrLink:
+          "https://www.osijek.hr/osjecka-promenada-najljepsa-europska-setnica-uz-rijeku/",
       },
       {
         id: "t4",
@@ -38,6 +42,7 @@ export const getOsijekData = (language: string) => {
           ? "Smješten na lijevoj obali Drave, ovo je najveći zoološki vrt u Hrvatskoj površinom, idealan za obiteljski izlet i rekreaciju."
           : "Located on the left bank of the Drava, this is the largest zoo in Croatia by area, ideal for a family trip and recreation.",
         slika: require("../../assets/images/zoo.jpg"),
+        qrLink: "https://www.zoo-osijek.hr",
       },
     ],
 
@@ -56,6 +61,7 @@ export const getOsijekData = (language: string) => {
           require("../../assets/images/oljk1.jpg"),
           require("../../assets/images/oljk2.jpg"),
         ],
+        qrLink: "https://www.tzosijek.hr/osjecko-ljeto-kulture-2026-1507",
       },
       {
         id: "d2",
@@ -69,6 +75,7 @@ export const getOsijekData = (language: string) => {
           require("../../assets/images/pannonian1.jpg"),
           require("../../assets/images/pannonian2.jpg"),
         ],
+        qrLink: "https://pannonian.hr",
       },
       {
         id: "d3",
@@ -82,6 +89,7 @@ export const getOsijekData = (language: string) => {
           require("../../assets/images/advent1.jpg"),
           require("../../assets/images/advent2.jpg"),
         ],
+        qrLink: "https://www.tzosijek.hr/stranica.php?id=1475",
       },
     ],
 
@@ -93,6 +101,8 @@ export const getOsijekData = (language: string) => {
           ? "Grad je povezan odličnom mrežom tramvaja i autobusa. Glavna tramvajska linija (Linija 1) povezuje istok (Zeleno polje) i zapad (Višnjevac)."
           : "The city is connected by an excellent network of trams and buses. The main tram line (Line 1) connects the east (Zeleno polje) and west (Višnjevac).",
         info: "Tel: 031 228 300",
+        slika: require("../../assets/images/gpp.png"),
+        qrLink: "https://web.gpp-osijek.com",
       },
       {
         id: "u2",
@@ -101,16 +111,21 @@ export const getOsijekData = (language: string) => {
           ? 'Ljekarna "Centar" na Trgu Ante Starčevića dežurna je 0-24h za sve hitne slučajeve i potrebe građana.'
           : '"Centar" Pharmacy at Ante Starčević Square is on duty 24/7 for all emergencies and citizen needs.',
         info: "Tel: 031 211 744",
+        slika: require("../../assets/images/ljekarna.jpg"),
+        qrLink: "https://ljekarne-srce.hr/ljekarne/centralna-ljekarna-osijek/",
       },
       {
         id: "u3",
         naziv: isHR
-          ? "Nextbike sustav javnih bicikala"
-          : "Nextbike Public Bike System",
+          ? "eMobi sustav javnih bicikala"
+          : "eMobi Public Bike System",
         opis: isHR
           ? "Iznajmite bicikl na jednoj od brojnih stanica u gradu i provozajte se najdužom i najsigurnijom mrežom biciklističkih staza u Hrvatskoj."
           : "Rent a bike at one of the many city stations and ride along the longest and safest bicycle path network in Croatia.",
         info: isHR ? "Aplikacija: Nextbike" : "App: Nextbike",
+        slika: require("../../assets/images/emobi.jpg"),
+        qrLink:
+          "https://bikesharemap.com/osijek/#/13.204798330578056/18.6779/45.5395/",
       },
     ],
   };
