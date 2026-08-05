@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Animated,
+  Image,
 } from "react-native";
 import { Video, ResizeMode } from "expo-av";
 import { Feather } from "@expo/vector-icons";
@@ -148,6 +149,12 @@ export default function Screensaver({
           </TouchableOpacity>
         </View>
 
+        <Image
+          source={require("../../assets/images/logo.png")}
+          style={styles.logoScreensaver}
+          resizeMode="contain"
+        />
+
         <Text style={[styles.title, { color: textColor }]}>
           {language === "HR" ? "Dobrodošli u Osijek" : "Welcome to Osijek"}
         </Text>
@@ -240,6 +247,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     elevation: 5,
+  },
+  logoScreensaver: {
+    width: 150,
+    height: 180,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
   },
   title: {
     fontSize: 72,
