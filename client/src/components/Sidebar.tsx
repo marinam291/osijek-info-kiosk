@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useTheme } from "../context/ThemeContext";
+import Clock from "./Clock";
 
 type SidebarProps = {
   activeTab: string;
@@ -37,9 +38,8 @@ export default function Sidebar({
         <Text style={[styles.logoText, { color: colors.textPrimary }]}>
           GRAD OSIJEK
         </Text>
-        <Text style={[styles.logoSubtext, { color: colors.textSecondary }]}>
-          {language === "HR" ? "Službeni portal" : "Official Portal"}
-        </Text>
+
+        <Clock language={language} colors={colors} />
       </View>
 
       <View style={styles.menuItems}>
@@ -90,41 +90,21 @@ const styles = StyleSheet.create({
     padding: 32,
     justifyContent: "flex-start",
   },
-  logoContainer: {
-    marginBottom: 48,
-    alignItems: "flex-start",
-  },
-  logoImage: {
-    width: 70,
-    height: 80,
-    marginBottom: 16,
-  },
+  logoContainer: { marginBottom: 48, alignItems: "flex-start" },
+  logoImage: { width: 70, height: 80, marginBottom: 16 },
   logoBadge: {
     fontSize: 12,
     fontWeight: "bold",
     letterSpacing: 2,
     marginBottom: 6,
   },
-  logoText: {
-    fontSize: 26,
-    fontWeight: "bold",
-    letterSpacing: 1,
-  },
-  logoSubtext: {
-    fontSize: 14,
-    marginTop: 2,
-  },
-  menuItems: {
-    gap: 12,
-  },
+  logoText: { fontSize: 26, fontWeight: "bold", letterSpacing: 1 },
+  menuItems: { gap: 12 },
   menuButton: {
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderRadius: 12,
     backgroundColor: "transparent",
   },
-  menuButtonText: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
+  menuButtonText: { fontSize: 18, fontWeight: "600" },
 });
