@@ -12,6 +12,7 @@ import { getOsijekData } from "../data/osijekData";
 import { useTheme } from "../context/ThemeContext";
 import MapTab from "./MapTab";
 import ItemModal from "./ItemModal";
+import FadeInView from "./FadeInView";
 
 type ContentProps = {
   activeTab: string;
@@ -25,7 +26,11 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
   const [fullScreenImage, setFullScreenImage] = useState<any>(null);
 
   if (activeTab === "karta") {
-    return <MapTab language={language} colors={colors} />;
+    return (
+      <FadeInView triggerKey={`${activeTab}-${language}`}>
+        <MapTab language={language} colors={colors} />
+      </FadeInView>
+    );
   }
 
   let dataToRender: any[] = [];
@@ -52,90 +57,101 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
 
   return (
     <View style={[styles.mainContent, { backgroundColor: colors.background }]}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-          {title}
-        </Text>
+      <FadeInView triggerKey={`${activeTab}-${language}`}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            {title}
+          </Text>
 
-        {heroItem && (
-          <TouchableOpacity
-            activeOpacity={0.9}
-            onPress={() => setSelectedItem(heroItem)}
-          >
-            <ImageBackground
-              source={heroItem.slika}
-              style={styles.heroContainer}
-              imageStyle={{ borderRadius: 20 }}
+          {heroItem && (
+            <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={() => setSelectedItem(heroItem)}
             >
-              <View
-                style={[
-                  styles.heroOverlay,
-                  { backgroundColor: colors.background + "B3" },
-                ]}
+              <ImageBackground
+                source={heroItem.slika}
+                style={styles.heroContainer}
+                imageStyle={{ borderRadius: 20 }}
               >
-                <Text style={[styles.heroTitle, { color: colors.textPrimary }]}>
-                  {heroItem.naziv}
-                </Text>
-                {heroItem.vrijeme && (
-                  <Text style={[styles.heroSubtitle, { color: colors.accent }]}>
-                    {heroItem.vrijeme}
-                  </Text>
-                )}
-                <Text
-                  numberOfLines={2}
+                <View
                   style={[
-                    styles.heroDescription,
-                    { color: colors.textSecondary },
+                    styles.heroOverlay,
+                    { backgroundColor: colors.background + "B3" },
                   ]}
                 >
-                  {heroItem.opis}
-                </Text>
-              </View>
-            </ImageBackground>
-          </TouchableOpacity>
-        )}
-
-        <Text style={[styles.subTitle, { color: colors.textSecondary }]}>
-          {language === "HR" ? "Ostalo u ponudi" : "More to explore"}
-        </Text>
-
-        <View style={styles.gridContainer}>
-          {listItems.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={[
-                styles.gridCard,
-                {
-                  backgroundColor: colors.cardBackground,
-                  borderColor: colors.border,
-                },
-              ]}
-              onPress={() => setSelectedItem(item)}
-            >
-              {item.slika ? (
-                <Image source={item.slika} style={styles.gridImage} />
-              ) : (
-                <View
-                  style={[styles.gridImage, { backgroundColor: colors.border }]}
-                />
-              )}
-              <View style={styles.gridTextContainer}>
-                <Text
-                  style={[styles.gridTitle, { color: colors.textPrimary }]}
-                  numberOfLines={1}
-                >
-                  {item.naziv}
-                </Text>
-                {item.vrijeme && (
-                  <Text style={[styles.gridSubtitle, { color: colors.accent }]}>
-                    {item.vrijeme}
+                  <Text
+                    style={[styles.heroTitle, { color: colors.textPrimary }]}
+                  >
+                    {heroItem.naziv}
                   </Text>
-                )}
-              </View>
+                  {heroItem.vrijeme && (
+                    <Text
+                      style={[styles.heroSubtitle, { color: colors.accent }]}
+                    >
+                      {heroItem.vrijeme}
+                    </Text>
+                  )}
+                  <Text
+                    numberOfLines={2}
+                    style={[
+                      styles.heroDescription,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    {heroItem.opis}
+                  </Text>
+                </View>
+              </ImageBackground>
             </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
+          )}
+
+          <Text style={[styles.subTitle, { color: colors.textSecondary }]}>
+            {language === "HR" ? "Ostalo u ponudi" : "More to explore"}
+          </Text>
+
+          <View style={styles.gridContainer}>
+            {listItems.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                style={[
+                  styles.gridCard,
+                  {
+                    backgroundColor: colors.cardBackground,
+                    borderColor: colors.border,
+                  },
+                ]}
+                onPress={() => setSelectedItem(item)}
+              >
+                {item.slika ? (
+                  <Image source={item.slika} style={styles.gridImage} />
+                ) : (
+                  <View
+                    style={[
+                      styles.gridImage,
+                      { backgroundColor: colors.border },
+                    ]}
+                  />
+                )}
+                <View style={styles.gridTextContainer}>
+                  <Text
+                    style={[styles.gridTitle, { color: colors.textPrimary }]}
+                    numberOfLines={1}
+                  >
+                    {item.naziv}
+                  </Text>
+                  {item.vrijeme && (
+                    <Text
+                      style={[styles.gridSubtitle, { color: colors.accent }]}
+                    >
+                      {item.vrijeme}
+                    </Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      </FadeInView>
 
       <ItemModal
         selectedItem={selectedItem}
