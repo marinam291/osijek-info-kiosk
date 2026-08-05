@@ -8,9 +8,10 @@ import {
   Image,
   TouchableOpacity,
   Modal,
+  ImageBackground,
 } from "react-native";
-import { getOsijekData } from "../data/osijekData";
 import QRCode from "react-native-qrcode-svg";
+import { getOsijekData } from "../data/osijekData";
 
 type ContentProps = {
   activeTab: string;
@@ -20,6 +21,7 @@ type ContentProps = {
 export default function ContentArea({ activeTab, language }: ContentProps) {
   const currentData = getOsijekData(language);
   const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [fullScreenImage, setFullScreenImage] = useState<any>(null); // NOVO: State za sliku preko cijelog ekrana
 
   let dataToRender: any[] = [];
   let title = "";
@@ -32,42 +34,30 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
       break;
     case "dogadjanja":
       dataToRender = currentData.dogadjanja;
-      title = language === "HR" ? "Događanja u Osijeku" : "Events in Osijek";
+      title = language === "HR" ? "Događanja" : "Events";
       break;
     case "usluge":
       dataToRender = currentData.usluge;
-      title = language === "HR" ? "Usluge i Prijevoz" : "Services & Transport";
+      title = language === "HR" ? "Usluge i prijevoz" : "Services & Transport";
       break;
     case "karta":
       return (
         <View style={styles.mainContent}>
-          <View style={styles.contentBox}>
-            <Text style={styles.contentTitle}>
-              {language === "HR"
-                ? "Interaktivna karta grada"
-                : "Interactive City Map"}
-            </Text>
-
-            <View style={styles.mapContainer}>
-              {Platform.OS === "web" ? (
-                createElement("iframe", {
+          <Text style={styles.sectionTitle}>
+            {language === "HR" ? "Karta grada" : "City Map"}
+          </Text>
+          <View style={styles.mapContainer}>
+            {Platform.OS === "web"
+              ? createElement("iframe", {
                   src: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d89260.67104033107!2d18.6146059!3d45.5414341!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x475ce7a869728075%3A0x5b8c725621a41136!2sOsijek!5e0!3m2!1sen!2shr!4v1715000000000!5m2!1sen!2shr",
                   style: {
                     width: "100%",
                     height: "100%",
                     border: "0",
-                    borderRadius: "12px",
+                    borderRadius: "16px",
                   },
-                  allowFullScreen: true,
-                  loading: "lazy",
-                  referrerPolicy: "no-referrer-when-downgrade",
                 })
-              ) : (
-                <Text style={styles.mapText}>
-                  Karta je dostupna samo u web pregledu.
-                </Text>
-              )}
-            </View>
+              : null}
           </View>
         </View>
       );
@@ -75,35 +65,69 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
       return null;
   }
 
+  const heroItem = dataToRender[0];
+  const listItems = dataToRender.slice(1);
+
   return (
     <View style={styles.mainContent}>
-      <View style={styles.contentBox}>
-        <Text style={styles.contentTitle}>{title}</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Text style={styles.sectionTitle}>{title}</Text>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {dataToRender.map((item) => (
+        {heroItem && (
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={() => setSelectedItem(heroItem)}
+          >
+            <ImageBackground
+              source={heroItem.slika}
+              style={styles.heroContainer}
+              imageStyle={{ borderRadius: 20 }}
+            >
+              <View style={styles.heroOverlay}>
+                <Text style={styles.heroTitle}>{heroItem.naziv}</Text>
+                {heroItem.vrijeme && (
+                  <Text style={styles.heroSubtitle}>{heroItem.vrijeme}</Text>
+                )}
+                <Text numberOfLines={2} style={styles.heroDescription}>
+                  {heroItem.opis}
+                </Text>
+              </View>
+            </ImageBackground>
+          </TouchableOpacity>
+        )}
+
+        <Text style={styles.subTitle}>
+          {language === "HR" ? "Ostalo u ponudi" : "More to explore"}
+        </Text>
+
+        <View style={styles.gridContainer}>
+          {listItems.map((item) => (
             <TouchableOpacity
               key={item.id}
-              style={styles.card}
+              style={styles.gridCard}
               onPress={() => setSelectedItem(item)}
             >
-              {item.slika && (
-                <Image source={item.slika} style={styles.cardImage} />
+              {item.slika ? (
+                <Image source={item.slika} style={styles.gridImage} />
+              ) : (
+                <View
+                  style={[styles.gridImage, { backgroundColor: "#1E293B" }]}
+                />
               )}
-              <View style={styles.cardTextContainer}>
-                <Text style={styles.cardTitle}>{item.naziv}</Text>
-                {item.vrijeme && (
-                  <Text style={styles.cardSubtitle}>{item.vrijeme}</Text>
-                )}
-                <Text numberOfLines={3} style={styles.cardDescription}>
-                  {item.opis}
+              <View style={styles.gridTextContainer}>
+                <Text style={styles.gridTitle} numberOfLines={1}>
+                  {item.naziv}
                 </Text>
+                {item.vrijeme && (
+                  <Text style={styles.gridSubtitle}>{item.vrijeme}</Text>
+                )}
               </View>
             </TouchableOpacity>
           ))}
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
 
+      {/* DETALJNI MODAL */}
       <Modal
         visible={selectedItem !== null}
         animationType="fade"
@@ -121,20 +145,28 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
             <ScrollView contentContainerStyle={styles.modalScroll}>
               <Text style={styles.modalTitle}>{selectedItem?.naziv}</Text>
 
+              {/* NOVO: Dodan TouchableOpacity oko slika kako bi se mogle povećati */}
               <View style={styles.galleryContainer}>
                 {selectedItem?.galerija
                   ? selectedItem.galerija.map((img: any, index: number) => (
-                      <Image
+                      <TouchableOpacity
                         key={index}
-                        source={img}
-                        style={styles.galleryImage}
-                      />
+                        activeOpacity={0.8}
+                        onPress={() => setFullScreenImage(img)}
+                      >
+                        <Image source={img} style={styles.galleryImage} />
+                      </TouchableOpacity>
                     ))
                   : selectedItem?.slika && (
-                      <Image
-                        source={selectedItem.slika}
-                        style={styles.fullImage}
-                      />
+                      <TouchableOpacity
+                        activeOpacity={0.8}
+                        onPress={() => setFullScreenImage(selectedItem.slika)}
+                      >
+                        <Image
+                          source={selectedItem.slika}
+                          style={styles.fullImage}
+                        />
+                      </TouchableOpacity>
                     )}
               </View>
 
@@ -149,8 +181,8 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
                   </Text>
                   <Text style={styles.qrSub}>
                     {language === "HR"
-                      ? "Skeniraj za dodatne info"
-                      : "Scan for more info"}
+                      ? "Skeniraj za navigaciju"
+                      : "Scan for navigation"}
                   </Text>
                 </View>
                 {selectedItem?.qrLink ? (
@@ -158,16 +190,13 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
                     <QRCode
                       value={selectedItem.qrLink}
                       size={100}
-                      color="#0A2540"
+                      color="#000"
                       backgroundColor="#FFF"
                     />
                   </View>
                 ) : (
                   <View style={styles.qrPlaceholder}>
                     <Text style={{ fontSize: 30 }}>🔗</Text>
-                    <Text style={{ fontSize: 10, fontWeight: "bold" }}>
-                      NEMA LINKA
-                    </Text>
                   </View>
                 )}
               </View>
@@ -175,94 +204,96 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
           </View>
         </View>
       </Modal>
+
+      {/* NOVO: Modal za prikaz slike preko cijelog ekrana */}
+      <Modal
+        visible={fullScreenImage !== null}
+        animationType="fade"
+        transparent={true}
+      >
+        <View style={styles.fullScreenOverlay}>
+          <TouchableOpacity
+            style={styles.fullScreenCloseButton}
+            onPress={() => setFullScreenImage(null)}
+          >
+            <Text style={styles.closeButtonText}>✕</Text>
+          </TouchableOpacity>
+          <Image
+            source={fullScreenImage}
+            style={styles.fullScreenImage}
+            resizeMode="contain"
+          />
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  mainContent: {
-    flex: 1,
-    padding: 32,
-  },
-  contentBox: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 24,
-    padding: 32,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 15,
-    elevation: 3,
-  },
-  contentTitle: {
-    fontSize: 32,
+  mainContent: { flex: 1, padding: 40, backgroundColor: "#0B0F19" },
+  sectionTitle: {
+    fontSize: 42,
     fontWeight: "bold",
-    color: "#0A2540",
+    color: "#FFFFFF",
     marginBottom: 24,
+    letterSpacing: 1,
   },
-  scrollContainer: {
-    paddingBottom: 20,
-  },
-  card: {
-    flexDirection: "row",
-    backgroundColor: "#F8FAFC",
-    borderRadius: 16,
-    padding: 24,
-    marginBottom: 16,
-    borderLeftWidth: 6,
-    borderLeftColor: "#00D4B2",
-  },
-  cardImage: {
-    width: 200,
-    height: 150,
-    borderRadius: 12,
-    marginRight: 24,
-    backgroundColor: "#E2E8F0",
-  },
-  cardTextContainer: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  cardTitle: {
+  subTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#0A2540",
+    color: "#94A3B8",
+    marginTop: 40,
+    marginBottom: 20,
+  },
+  heroContainer: {
+    width: "100%",
+    height: 400,
+    justifyContent: "flex-end",
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  heroOverlay: {
+    backgroundColor: "rgba(11, 15, 25, 0.7)",
+    padding: 30,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  heroTitle: {
+    fontSize: 36,
+    fontWeight: "bold",
+    color: "#FFFFFF",
     marginBottom: 8,
   },
-  cardSubtitle: {
-    fontSize: 16,
+  heroSubtitle: {
+    fontSize: 18,
     fontWeight: "bold",
     color: "#00D4B2",
-    marginBottom: 12,
+    marginBottom: 8,
   },
-  cardDescription: {
-    fontSize: 18,
-    color: "#4A5568",
-    lineHeight: 28,
-  },
-  cardInfo: {
-    marginTop: 12,
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#2B6CB0",
-  },
-  mapContainer: {
-    flex: 1,
-    width: "100%",
-    minHeight: 400,
-    backgroundColor: "#E2E8F0",
-    borderRadius: 12,
+  heroDescription: { fontSize: 18, color: "#CBD5E1", maxWidth: "80%" },
+  gridContainer: { flexDirection: "row", flexWrap: "wrap", gap: 24 },
+  gridCard: {
+    width: "31%",
+    backgroundColor: "#1E293B",
+    borderRadius: 16,
     overflow: "hidden",
   },
-  mapText: {
-    color: "#4A5568",
-    fontSize: 18,
-    textAlign: "center",
-    marginTop: 40,
+  gridImage: { width: "100%", height: 200 },
+  gridTextContainer: { padding: 16 },
+  gridTitle: { fontSize: 20, fontWeight: "bold", color: "#FFFFFF" },
+  gridSubtitle: { fontSize: 14, color: "#00D4B2", marginTop: 4 },
+  mapContainer: {
+    flex: 1,
+    minHeight: 600,
+    borderRadius: 16,
+    overflow: "hidden",
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(10, 37, 64, 0.85)",
+    backgroundColor: "rgba(0, 0, 0, 0.9)",
     justifyContent: "center",
     alignItems: "center",
     padding: 50,
@@ -270,29 +301,31 @@ const styles = StyleSheet.create({
   modalContent: {
     width: "90%",
     height: "90%",
-    backgroundColor: "#FFF",
+    backgroundColor: "#0F172A",
     borderRadius: 30,
     padding: 40,
     position: "relative",
+    borderWidth: 1,
+    borderColor: "#334155",
   },
   closeButton: {
     position: "absolute",
     top: 20,
     right: 20,
     zIndex: 10,
-    backgroundColor: "#F1F5F9",
+    backgroundColor: "#1E293B",
     width: 50,
     height: 50,
     borderRadius: 25,
     justifyContent: "center",
     alignItems: "center",
   },
-  closeButtonText: { fontSize: 24, fontWeight: "bold", color: "#0A2540" },
+  closeButtonText: { fontSize: 24, fontWeight: "bold", color: "#FFFFFF" },
   modalScroll: { alignItems: "center" },
   modalTitle: {
     fontSize: 48,
     fontWeight: "bold",
-    color: "#0A2540",
+    color: "#FFFFFF",
     marginBottom: 30,
     textAlign: "center",
   },
@@ -307,34 +340,53 @@ const styles = StyleSheet.create({
   fullImage: { width: 600, height: 400, borderRadius: 20 },
   modalDescription: {
     fontSize: 22,
-    color: "#4A5568",
+    color: "#CBD5E1",
     lineHeight: 34,
     textAlign: "center",
     maxWidth: 800,
   },
-
   qrSection: {
     marginTop: 50,
     flexDirection: "row",
-    backgroundColor: "#F8FAFC",
+    backgroundColor: "#1E293B",
     padding: 30,
     borderRadius: 20,
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
   },
   qrTextContent: { marginRight: 30 },
-  qrTitle: { fontSize: 24, fontWeight: "bold", color: "#0A2540" },
-  qrSub: { fontSize: 16, color: "#64748B" },
+  qrTitle: { fontSize: 24, fontWeight: "bold", color: "#FFFFFF" },
+  qrSub: { fontSize: 16, color: "#94A3B8" },
+  qrCodeWrapper: { padding: 10, backgroundColor: "#FFF", borderRadius: 8 },
   qrPlaceholder: {
     width: 100,
     height: 100,
-    backgroundColor: "#FFF",
+    backgroundColor: "#334155",
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 2,
-    borderColor: "#0A2540",
   },
-  qrCodeWrapper: { padding: 10, backgroundColor: "#FFF", borderRadius: 8 },
+
+  // Stilovi za prikaz slike preko cijelog ekrana
+  fullScreenOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.95)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  fullScreenCloseButton: {
+    position: "absolute",
+    top: 40,
+    right: 40,
+    zIndex: 20,
+    backgroundColor: "#1E293B",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  fullScreenImage: {
+    width: "90%",
+    height: "90%",
+  },
 });

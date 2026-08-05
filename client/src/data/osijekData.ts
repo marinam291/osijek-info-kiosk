@@ -101,6 +101,7 @@ export const getOsijekData = (language: string) => {
           ? "Grad je povezan odličnom mrežom tramvaja i autobusa. Glavna tramvajska linija (Linija 1) povezuje istok (Zeleno polje) i zapad (Višnjevac)."
           : "The city is connected by an excellent network of trams and buses. The main tram line (Line 1) connects the east (Zeleno polje) and west (Višnjevac).",
         info: "Tel: 031 228 300",
+        slika: require("../../assets/images/gpp.png"),
         qrLink: "https://web.gpp-osijek.com",
       },
       {
@@ -110,17 +111,19 @@ export const getOsijekData = (language: string) => {
           ? 'Ljekarna "Centar" na Trgu Ante Starčevića dežurna je 0-24h za sve hitne slučajeve i potrebe građana.'
           : '"Centar" Pharmacy at Ante Starčević Square is on duty 24/7 for all emergencies and citizen needs.',
         info: "Tel: 031 211 744",
+        slika: require("../../assets/images/ljekarna.jpg"),
         qrLink: "https://ljekarne-srce.hr/ljekarne/centralna-ljekarna-osijek/",
       },
       {
         id: "u3",
         naziv: isHR
-          ? "Nextbike sustav javnih bicikala"
-          : "Nextbike Public Bike System",
+          ? "eMobi sustav javnih bicikala"
+          : "eMobi Public Bike System",
         opis: isHR
           ? "Iznajmite bicikl na jednoj od brojnih stanica u gradu i provozajte se najdužom i najsigurnijom mrežom biciklističkih staza u Hrvatskoj."
           : "Rent a bike at one of the many city stations and ride along the longest and safest bicycle path network in Croatia.",
         info: isHR ? "Aplikacija: Nextbike" : "App: Nextbike",
+        slika: require("../../assets/images/emobi.jpg"),
         qrLink:
           "https://bikesharemap.com/osijek/#/13.204798330578056/18.6779/45.5395/",
       },

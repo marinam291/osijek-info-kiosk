@@ -15,9 +15,10 @@ export default function Sidebar({
   return (
     <View style={styles.sidebar}>
       <View style={styles.logoContainer}>
+        <Text style={styles.logoBadge}>INFO KIOSK</Text>
         <Text style={styles.logoText}>GRAD OSIJEK</Text>
         <Text style={styles.logoSubtext}>
-          {language === "HR" ? "Info Panel" : "Info Panel"}
+          {language === "HR" ? "Službeni portal" : "Official Portal"}
         </Text>
       </View>
 
@@ -96,48 +97,55 @@ export default function Sidebar({
 
 const styles = StyleSheet.create({
   sidebar: {
-    width: "25%",
-    backgroundColor: "#0A2540",
-    padding: 24,
-    justifyContent: "space-between",
+    width: 280,
+    backgroundColor: "#070A12",
+    borderRightWidth: 1,
+    borderRightColor: "#1E293B",
+    padding: 32,
+    justifyContent: "flex-start",
   },
   logoContainer: {
-    marginTop: 10,
-    marginBottom: 20,
+    marginBottom: 48,
+  },
+  logoBadge: {
+    color: "#00D4B2",
+    fontSize: 12,
+    fontWeight: "bold",
+    letterSpacing: 2,
+    marginBottom: 6,
   },
   logoText: {
-    color: "#FFFFFF",
     fontSize: 26,
     fontWeight: "bold",
-    letterSpacing: 1.5,
+    color: "#FFFFFF",
+    letterSpacing: 1,
   },
   logoSubtext: {
-    color: "#00D4B2",
     fontSize: 14,
-    marginTop: 4,
-    fontWeight: "500",
+    color: "#64748B",
+    marginTop: 2,
   },
   menuItems: {
-    flex: 1,
-    justifyContent: "center",
-    gap: 16,
+    gap: 12,
   },
   menuButton: {
-    paddingVertical: 24,
+    paddingVertical: 16,
     paddingHorizontal: 20,
     borderRadius: 12,
     backgroundColor: "transparent",
   },
   menuButtonActive: {
-    backgroundColor: "#00D4B2",
+    backgroundColor: "#1E293B",
+    borderLeftWidth: 4,
+    borderLeftColor: "#00D4B2",
   },
   menuButtonText: {
-    color: "#A0AEC0",
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: "600",
+    color: "#94A3B8",
   },
   menuButtonTextActive: {
-    color: "#0A2540",
+    color: "#FFFFFF",
     fontWeight: "bold",
   },
 });
