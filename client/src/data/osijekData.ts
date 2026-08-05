@@ -56,6 +56,7 @@ export const getOsijekData = (language: string) => {
           require("../../assets/images/oljk1.jpg"),
           require("../../assets/images/oljk2.jpg"),
         ],
+        qrLink: "https://www.tzosijek.hr/osjecko-ljeto-kulture-2026-1507",
       },
       {
         id: "d2",

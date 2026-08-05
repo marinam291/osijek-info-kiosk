@@ -10,6 +10,7 @@ import {
   Modal,
 } from "react-native";
 import { getOsijekData } from "../data/osijekData";
+import QRCode from "react-native-qrcode-svg";
 
 type ContentProps = {
   activeTab: string;
@@ -148,16 +149,27 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
                   </Text>
                   <Text style={styles.qrSub}>
                     {language === "HR"
-                      ? "Skeniraj za navigaciju i dodatne info"
-                      : "Scan for navigation and more info"}
+                      ? "Skeniraj za dodatne info"
+                      : "Scan for more info"}
                   </Text>
                 </View>
-                <View style={styles.qrPlaceholder}>
-                  <Text style={{ fontSize: 40 }}>📱</Text>
-                  <Text style={{ fontSize: 10, fontWeight: "bold" }}>
-                    QR CODE
-                  </Text>
-                </View>
+                {selectedItem?.qrLink ? (
+                  <View style={styles.qrCodeWrapper}>
+                    <QRCode
+                      value={selectedItem.qrLink}
+                      size={100}
+                      color="#0A2540"
+                      backgroundColor="#FFF"
+                    />
+                  </View>
+                ) : (
+                  <View style={styles.qrPlaceholder}>
+                    <Text style={{ fontSize: 30 }}>🔗</Text>
+                    <Text style={{ fontSize: 10, fontWeight: "bold" }}>
+                      NEMA LINKA
+                    </Text>
+                  </View>
+                )}
               </View>
             </ScrollView>
           </View>
@@ -324,4 +336,5 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#0A2540",
   },
+  qrCodeWrapper: { padding: 10, backgroundColor: "#FFF", borderRadius: 8 },
 });
