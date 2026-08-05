@@ -81,12 +81,13 @@ export default function Screensaver({
                 style={[
                   styles.langText,
                   { color: textColor },
-                  language === "HR" && { color: "#0A2540" },
+                  language === "HR" && { color: colors.accentText },
                 ]}
               >
                 HR
               </Text>
             </TouchableOpacity>
+
             <TouchableOpacity
               style={[
                 styles.langButton,
@@ -102,7 +103,7 @@ export default function Screensaver({
                 style={[
                   styles.langText,
                   { color: textColor },
-                  language === "EN" && { color: "#0A2540" },
+                  language === "EN" && { color: colors.accentText },
                 ]}
               >
                 EN
@@ -166,7 +167,7 @@ export default function Screensaver({
           style={[styles.button, { backgroundColor: colors.accent }]}
           onPress={onStart}
         >
-          <Text style={styles.buttonText}>
+          <Text style={[styles.buttonText, { color: colors.accentText }]}>
             {language === "HR" ? "Dodirni za početak" : "Touch to start"}
           </Text>
         </TouchableOpacity>
@@ -277,7 +278,6 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#0A2540",
     textTransform: "uppercase",
     letterSpacing: 2,
   },

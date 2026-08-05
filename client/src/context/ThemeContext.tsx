@@ -10,6 +10,7 @@ export interface ThemeColors {
   textSecondary: string;
   border: string;
   accent: string;
+  accentText: string;
   modalBackground: string;
   modalContent: string;
 }
@@ -23,6 +24,7 @@ export const themes: Record<ThemeMode, ThemeColors> = {
     textSecondary: "#94A3B8",
     border: "#1E293B",
     accent: "#FDB913",
+    accentText: "#0A2540",
     modalBackground: "rgba(0, 0, 0, 0.9)",
     modalContent: "#0F172A",
   },
@@ -34,6 +36,7 @@ export const themes: Record<ThemeMode, ThemeColors> = {
     textSecondary: "#4A5568",
     border: "#E2E8F0",
     accent: "#004B87",
+    accentText: "#FFFFFF",
     modalBackground: "rgba(10, 37, 64, 0.7)",
     modalContent: "#FFFFFF",
   },
