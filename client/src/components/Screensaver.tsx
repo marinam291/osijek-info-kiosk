@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { ThemeMode, useTheme } from "../context/ThemeContext";
+import WeatherWidget from "./WeatherWidget";
 
 type ScreensaverProps = {
   onStart: () => void;
@@ -184,6 +185,9 @@ export default function Screensaver({
           </Text>
         </TouchableOpacity>
       </View>
+      <View style={styles.topLeftContainer}>
+        <WeatherWidget />
+      </View>
     </View>
   );
 }
@@ -283,5 +287,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textTransform: "uppercase",
     letterSpacing: 2,
+  },
+  topLeftContainer: {
+    position: "absolute",
+    top: 40,
+    left: 40,
+    alignItems: "flex-start",
+    gap: 8,
   },
 });

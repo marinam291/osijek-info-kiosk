@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useTheme } from "../context/ThemeContext";
 import Clock from "./Clock";
+import WeatherWidget from "./WeatherWidget";
 
 type SidebarProps = {
   activeTab: string;
@@ -40,6 +41,9 @@ export default function Sidebar({
         </Text>
 
         <Clock language={language} colors={colors} />
+        <View style={{ marginTop: 12 }}>
+          <WeatherWidget variant="sidebar" textColor={colors.textPrimary} />
+        </View>
       </View>
 
       <View style={styles.menuItems}>
