@@ -1,90 +1,85 @@
-import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, StatusBar, View, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-
+import React, { useState } from "react";
+import { View, StyleSheet, Animated } from "react-native";
+import { ThemeProvider, useTheme } from "../context/ThemeContext";
+import Screensaver from "../components/Screensaver";
 import Sidebar from "../components/Sidebar";
 import ContentArea from "../components/ContentArea";
-import Screensaver from "../components/Screensaver";
+import FadeInView from "../components/FadeInView";
 
-export default function App() {
-  const [activeTab, setActiveTab] = useState("turizam");
-  const [language, setLanguage] = useState("HR");
-  const [showScreensaver, setShowScreensaver] = useState(true);
+function KioskMain() {
+  const { theme, setTheme, colors } = useTheme();
+  const [isScreensaverActive, setIsScreensaverActive] = useState(true);
+  const [isAppStarted, setIsAppStarted] = useState(false);
+  const [screensaverOpacity] = useState(() => new Animated.Value(1));
+  const [language, setLanguage] = useState<string>("HR");
+  const [activeTab, setActiveTab] = useState<string>("turizam");
 
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const handleStartApp = () => {
+    setIsAppStarted(true);
 
-  const resetInactivityTimer = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    timerRef.current = setTimeout(() => {
-      setShowScreensaver(true);
-      setActiveTab("turizam");
-    }, 60000);
+    Animated.timing(screensaverOpacity, {
+      toValue: 0,
+      duration: 600,
+      useNativeDriver: true,
+    }).start(() => {
+      setIsScreensaverActive(false);
+    });
   };
 
-  useEffect(() => {
-    if (!showScreensaver) {
-      resetInactivityTimer();
-
-      if (Platform.OS === "web" && typeof window !== "undefined") {
-        const activityEvents = [
-          "mousedown",
-          "mousemove",
-          "keypress",
-          "scroll",
-          "touchstart",
-        ];
-        const handleGlobalActivity = () => {
-          resetInactivityTimer();
-        };
-
-        activityEvents.forEach((event) => {
-          window.addEventListener(event, handleGlobalActivity);
-        });
-
-        return () => {
-          if (timerRef.current) clearTimeout(timerRef.current);
-          activityEvents.forEach((event) => {
-            window.removeEventListener(event, handleGlobalActivity);
-          });
-        };
-      }
-    } else {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    }
-  }, [showScreensaver]);
-
   return (
-    <View style={{ flex: 1 }} onTouchStart={resetInactivityTimer}>
-      {showScreensaver && (
-        <Screensaver
-          onStart={() => setShowScreensaver(false)}
-          language={language}
-          setLanguage={setLanguage}
-        />
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      {isAppStarted && (
+        <FadeInView triggerKey="main-layout" duration={600}>
+          <View style={styles.mainLayout}>
+            <Sidebar
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              language={language}
+            />
+            <ContentArea activeTab={activeTab} language={language} />
+          </View>
+        </FadeInView>
       )}
 
-      <SafeAreaView style={styles.container}>
-        <StatusBar hidden={true} />
-
-        <Sidebar
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          language={language}
-        />
-
-        <ContentArea activeTab={activeTab} language={language} />
-      </SafeAreaView>
+      {isScreensaverActive && (
+        <Animated.View
+          style={[styles.screensaverWrapper, { opacity: screensaverOpacity }]}
+        >
+          <Screensaver
+            onStart={handleStartApp}
+            language={language}
+            setLanguage={setLanguage}
+            theme={theme}
+            setTheme={setTheme}
+          />
+        </Animated.View>
+      )}
     </View>
+  );
+}
+
+export default function Index() {
+  return (
+    <ThemeProvider>
+      <KioskMain />
+    </ThemeProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  mainLayout: {
+    flex: 1,
     flexDirection: "row",
-    backgroundColor: "#F4F6F8",
+  },
+  screensaverWrapper: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 9999,
   },
 });
