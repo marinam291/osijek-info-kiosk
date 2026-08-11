@@ -255,7 +255,8 @@ export const getOsijekData = (language: string) => {
             : "Cozy furnished apartments within the historic core of Tvrđa.",
           info: isHR ? "Privatni smještaj" : "Private Accommodation",
           slika: require("../../assets/images/apartmanitvrda.jpeg"),
-          qrLink: "https://www.booking.com",
+          qrLink:
+            "https://www.booking.com/searchresults.hr.html?ss=Tvrđa+Osijek",
         },
         {
           id: "s_a2",
@@ -265,7 +266,8 @@ export const getOsijekData = (language: string) => {
             : "Modern apartments close to the main square and all amenities.",
           info: isHR ? "Privatni smještaj" : "Private Accommodation",
           slika: require("../../assets/images/apartmanicentar.png"),
-          qrLink: "https://www.booking.com",
+          qrLink:
+            "https://www.booking.com/searchresults.hr.html?ss=Center+Osijek",
         },
       ],
       hosteli: [
