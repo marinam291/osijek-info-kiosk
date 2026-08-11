@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { useTheme } from "../context/ThemeContext";
 
 type ClockProps = {
   language: string;
-  colors: Record<string, string>;
+  colors: ReturnType<typeof useTheme>["colors"];
 };
 
 export default function Clock({ language, colors }: ClockProps) {
