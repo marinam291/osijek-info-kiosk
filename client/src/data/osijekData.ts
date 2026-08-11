@@ -44,6 +44,17 @@ export const getOsijekData = (language: string) => {
         slika: require("../../assets/images/zoo.jpg"),
         qrLink: "https://www.zoo-osijek.hr",
       },
+      {
+        id: "t5",
+        naziv: isHR
+          ? "Europska avenija i Secesija"
+          : "European Avenue & Secession",
+        opis: isHR
+          ? "Jedinstveni niz secesijskih palača s kraja 19. i početka 20. stoljeća, najljepši primjer secesijske arhitekture u ovom dijelu Europe."
+          : "A unique row of Secessionist palaces from the late 19th and early 20th centuries, the finest example of Secessionist architecture in this part of Europe.",
+        slika: require("../../assets/images/promenada.jpg"), // Možeš zamijeniti vlastitom slikom secesije
+        qrLink: "https://www.tzosijek.hr",
+      },
     ],
 
     dogadjanja: [
@@ -91,6 +102,16 @@ export const getOsijekData = (language: string) => {
         ],
         qrLink: "https://www.tzosijek.hr/stranica.php?id=1475",
       },
+      {
+        id: "d4",
+        naziv: isHR ? "Dani vina i turizma" : "Wine & Tourism Days",
+        vrijeme: isHR ? "Listopad" : "October",
+        opis: isHR
+          ? "Manifestacija posvećena vrhunskim vinima Slavonije i Baranje uz bogat glazbeni i gastronomski program."
+          : "An event dedicated to top wines of Slavonia and Baranja with a rich music and gastronomic program.",
+        slika: require("../../assets/images/oljk1.jpg"),
+        qrLink: "https://www.tzosijek.hr",
+      },
     ],
 
     usluge: {
@@ -106,6 +127,17 @@ export const getOsijekData = (language: string) => {
         },
         {
           id: "u_z2",
+          naziv: isHR
+            ? "Dom zdravlja Osječko-baranjske županije"
+            : "Health Center Osijek",
+          opis: isHR
+            ? "Opća medicina, pedijatrija, laboratorij i specijalističke ordinacije."
+            : "General medicine, pediatrics, laboratory and specialist clinics.",
+          info: "Tel: 031 225 100",
+          qrLink: "https://www.dzoob.hr",
+        },
+        {
+          id: "u_z3",
           naziv: isHR ? "Dežurna ljekarna (Centar)" : "Duty Pharmacy (Center)",
           opis: isHR
             ? 'Ljekarna "Centar" na Trgu Ante Starčevića dežurna je 0-24h.'
@@ -114,7 +146,7 @@ export const getOsijekData = (language: string) => {
           qrLink: "https://ljekarne-srce.hr",
         },
         {
-          id: "u_z3",
+          id: "u_z4",
           naziv: isHR
             ? "Klinički bolnički centar Osijek (KBC)"
             : "Osijek Clinical Hospital Center",
@@ -187,6 +219,79 @@ export const getOsijekData = (language: string) => {
             : "Emergency police interventions and reports.",
           info: "Tel: 192 / 031 237 237",
           qrLink: "https://osijek-baranjska.policija.hr",
+        },
+      ],
+    },
+
+    smjestaj: {
+      hoteli: [
+        {
+          id: "s_h1",
+          naziv: "Hotel Osijek",
+          opis: isHR
+            ? "Luksuzni hotel s 4 zvjezdice smješten uz samu obalu Drave s predivnim pogledom."
+            : "Luxury 4-star hotel located right on the Drava riverbank with a wonderful view.",
+          info: "★★★★ | Tel: 031 230 000",
+          slika: require("../../assets/images/hotelosijek.png"),
+          qrLink: "https://www.hotelosijek.png",
+        },
+        {
+          id: "s_h2",
+          naziv: "Hotel Waldinger",
+          opis: isHR
+            ? "Elegantni boutique hotel u secesijskoj zgradi u samom pješačkom središtu grada."
+            : "Elegant boutique hotel in a Secessionist building right in the pedestrian city center.",
+          info: "★★★★ | Tel: 031 250 400",
+          slika: require("../../assets/images/hotelwaldinger.jpg"),
+          qrLink: "https://www.waldinger.jpg",
+        },
+      ],
+      apartmani: [
+        {
+          id: "s_a1",
+          naziv: "Apartmani Tvrđa / Old Town",
+          opis: isHR
+            ? "Ugodno uređeni apartmani unutar povijesne jezgre Tvrđe."
+            : "Cozy furnished apartments within the historic core of Tvrđa.",
+          info: isHR ? "Privatni smještaj" : "Private Accommodation",
+          slika: require("../../assets/images/apartmanitvrda.jpeg"),
+          qrLink: "https://www.booking.com",
+        },
+        {
+          id: "s_a2",
+          naziv: "City Center Apartments Osijek",
+          opis: isHR
+            ? "Moderni apartmani u blizini glavnog trga i svih sadržaja."
+            : "Modern apartments close to the main square and all amenities.",
+          info: isHR ? "Privatni smještaj" : "Private Accommodation",
+          slika: require("../../assets/images/apartmanicentar.png"),
+          qrLink: "https://www.booking.com",
+        },
+      ],
+      hosteli: [
+        {
+          id: "s_ho1",
+          naziv: "Hostel Street",
+          opis: isHR
+            ? "Moderan i originalno uređen hostel u Gundulićevoj ulici, poznat po hodniku oslikanom poput gradske ulice."
+            : "Modern and uniquely designed hostel in Gundulićeva Street, famous for its hallway painted like a city street.",
+          info: isHR
+            ? "Povoljan smještaj | Tel: 031 200 230"
+            : "Budget Accommodation | Tel: +385 31 200 230",
+          slika: require("../../assets/images/hostelstreet.jpg"),
+          qrLink: "https://www.tzosijek.hr/hosteli-85",
+        },
+        {
+          id: "s_ho2",
+          naziv: "Hostel OS",
+          opis: isHR
+            ? "Smješten u samom centru grada u povijesnoj zgradi, nudi udoban smještaj u privatnim i zajedničkim sobama."
+            : "Located right in the city center in a historic building, offering comfortable private and shared rooms.",
+          info: isHR
+            ? "U centru grada | Tel: 031 300 000"
+            : "City Center | Tel: +385 31 300 000",
+          slika: require("../../assets/images/hostelos.jpg"),
+          qrLink: "https://www.tzosijek.hr",
         },
       ],
     },

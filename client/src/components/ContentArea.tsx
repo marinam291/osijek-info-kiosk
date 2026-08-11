@@ -39,8 +39,10 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
   const [fullScreenImage, setFullScreenImage] =
     useState<ImageSourcePropType | null>(null);
 
-  // Stanje za filtriranje usluga (sve, zdravstvo, prijevoz, gradskeUsluge)
+  // Stanja za filtriranje
   const [serviceCategory, setServiceCategory] = useState<string>("sve");
+  const [accommodationSubCategory, setAccommodationSubCategory] =
+    useState<string>("sve");
 
   if (activeTab === "karta") {
     return (
@@ -74,8 +76,21 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
         dataToRender = currentData.usluge.prijevoz as ContentItem[];
       } else if (serviceCategory === "gradskeUsluge") {
         dataToRender = currentData.usluge.gradskeUsluge as ContentItem[];
+      } else if (serviceCategory === "smjestaj") {
+        if (accommodationSubCategory === "hoteli") {
+          dataToRender = currentData.smjestaj.hoteli as ContentItem[];
+        } else if (accommodationSubCategory === "apartmani") {
+          dataToRender = currentData.smjestaj.apartmani as ContentItem[];
+        } else if (accommodationSubCategory === "hosteli") {
+          dataToRender = currentData.smjestaj.hosteli as ContentItem[];
+        } else {
+          dataToRender = [
+            ...(currentData.smjestaj.hoteli as ContentItem[]),
+            ...(currentData.smjestaj.apartmani as ContentItem[]),
+            ...(currentData.smjestaj.hosteli as ContentItem[]),
+          ];
+        }
       } else {
-        // "sve" - spajamo sve
         dataToRender = [
           ...(currentData.usluge.zdravstvo as ContentItem[]),
           ...(currentData.usluge.prijevoz as ContentItem[]),
@@ -91,13 +106,15 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
 
   return (
     <View style={[styles.mainContent, { backgroundColor: colors.background }]}>
-      <FadeInView triggerKey={`${activeTab}-${language}-${serviceCategory}`}>
+      <FadeInView
+        triggerKey={`${activeTab}-${language}-${serviceCategory}-${accommodationSubCategory}`}
+      >
         <ScrollView showsVerticalScrollIndicator={false}>
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
             {title}
           </Text>
 
-          {/* Ako smo na kartici Usluge, prikazujemo gumbe za filtriranje kategorija */}
+          {/* Glavni filteri za Usluge (uključujući Smještaj) */}
           {activeTab === "usluge" && (
             <View style={styles.filterContainer}>
               {[
@@ -117,6 +134,10 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
                   key: "gradskeUsluge",
                   label: language === "HR" ? "Gradske usluge" : "City Services",
                 },
+                {
+                  key: "smjestaj",
+                  label: language === "HR" ? "Smještaj" : "Accommodation",
+                },
               ].map((cat) => (
                 <TouchableOpacity
                   key={cat.key}
@@ -130,7 +151,10 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
                       borderColor: colors.border,
                     },
                   ]}
-                  onPress={() => setServiceCategory(cat.key)}
+                  onPress={() => {
+                    setServiceCategory(cat.key);
+                    setAccommodationSubCategory("sve"); // Resetiramo pod-filter kad se mijenja glavna kategorija
+                  }}
                 >
                   <Text
                     style={[
@@ -150,8 +174,68 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
             </View>
           )}
 
-          {/* Hitni brojevi - prilagođeni odabranom jeziku */}
-          {activeTab === "usluge" && (
+          {/* Pod-filteri ako je unutar Usluga odabran Smještaj */}
+          {activeTab === "usluge" && serviceCategory === "smjestaj" && (
+            <View
+              style={[
+                styles.filterContainer,
+                { marginTop: -10, marginBottom: 20 },
+              ]}
+            >
+              {[
+                {
+                  key: "sve",
+                  label: language === "HR" ? "Svi smještaji" : "All",
+                },
+                {
+                  key: "hoteli",
+                  label: language === "HR" ? "Hoteli" : "Hotels",
+                },
+                {
+                  key: "apartmani",
+                  label: language === "HR" ? "Apartmani" : "Apartments",
+                },
+                {
+                  key: "hosteli",
+                  label: language === "HR" ? "Hosteli" : "Hostels",
+                },
+              ].map((subCat) => (
+                <TouchableOpacity
+                  key={subCat.key}
+                  style={[
+                    styles.filterButton,
+                    {
+                      backgroundColor:
+                        accommodationSubCategory === subCat.key
+                          ? colors.accent
+                          : colors.cardBackground,
+                      borderColor: colors.accent,
+                      borderWidth: 1.5,
+                    },
+                  ]}
+                  onPress={() => setAccommodationSubCategory(subCat.key)}
+                >
+                  <Text
+                    style={[
+                      styles.filterButtonText,
+                      {
+                        color:
+                          accommodationSubCategory === subCat.key
+                            ? "#FFFFFF"
+                            : colors.textPrimary,
+                        fontSize: 14,
+                      },
+                    ]}
+                  >
+                    {subCat.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+
+          {/* Hitni brojevi na vrhu usluga */}
+          {activeTab === "usluge" && serviceCategory === "sve" && (
             <View
               style={[
                 styles.emergencyBox,
@@ -267,7 +351,7 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
                       },
                     ]}
                   >
-                    <Text style={{ fontSize: 40 }}>ℹ️</Text>
+                    <Text style={{ fontSize: 40 }}>🏨</Text>
                   </View>
                 )}
                 <View style={styles.gridTextContainer}>
