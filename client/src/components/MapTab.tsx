@@ -1,9 +1,10 @@
 import React, { createElement } from "react";
 import { View, Text, StyleSheet, Platform } from "react-native";
+import { useTheme } from "../context/ThemeContext";
 
 type MapTabProps = {
   language: string;
-  colors: any;
+  colors: ReturnType<typeof useTheme>["colors"];
 };
 
 export default function MapTab({ language, colors }: MapTabProps) {

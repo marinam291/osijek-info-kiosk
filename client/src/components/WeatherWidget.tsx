@@ -26,7 +26,11 @@ export default function WeatherWidget({
 
   return (
     <View style={[styles.container, isScreen ? styles.screen : styles.side]}>
-      <Feather name={weather.icon as any} size={24} color={color} />
+      <Feather
+        name={weather.icon as keyof typeof Feather.glyphMap}
+        size={24}
+        color={color}
+      />
       <Text style={[styles.text, { color }]}>{weather.temperature}°C</Text>
     </View>
   );

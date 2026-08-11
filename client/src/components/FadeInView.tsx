@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, ReactNode } from "react";
+import React, { useEffect, ReactNode, useState } from "react";
 import { Animated, StyleSheet } from "react-native";
 
 type FadeInViewProps = {
   children: ReactNode;
-  triggerKey?: any;
+  triggerKey?: string | number | boolean;
   duration?: number;
 };
 
@@ -12,8 +12,8 @@ export default function FadeInView({
   triggerKey,
   duration = 500,
 }: FadeInViewProps) {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const translateYAnim = useRef(new Animated.Value(30)).current;
+  const [fadeAnim] = useState(() => new Animated.Value(0));
+  const [translateYAnim] = useState(() => new Animated.Value(30));
 
   useEffect(() => {
     fadeAnim.setValue(0);
@@ -31,7 +31,7 @@ export default function FadeInView({
         useNativeDriver: true,
       }),
     ]).start();
-  }, [triggerKey]);
+  }, [triggerKey, fadeAnim, translateYAnim, duration]);
 
   return (
     <Animated.View

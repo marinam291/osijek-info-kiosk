@@ -7,16 +7,29 @@ import {
   Image,
   TouchableOpacity,
   Modal,
+  ImageSourcePropType,
+  ViewStyle,
 } from "react-native";
 import QRCode from "react-native-qrcode-svg";
+import { useTheme } from "../context/ThemeContext";
+
+type ItemType = {
+  id: string | number;
+  naziv?: string;
+  opis?: string;
+  slika?: ImageSourcePropType;
+  galerija?: ImageSourcePropType[];
+  qrLink?: string;
+  vrijeme?: string;
+} | null;
 
 type ItemModalProps = {
-  selectedItem: any;
-  setSelectedItem: (item: any) => void;
-  fullScreenImage: any;
-  setFullScreenImage: (img: any) => void;
+  selectedItem: ItemType;
+  setSelectedItem: (item: ItemType) => void;
+  fullScreenImage: ImageSourcePropType | null;
+  setFullScreenImage: (img: ImageSourcePropType | null) => void;
   language: string;
-  colors: any;
+  colors: ReturnType<typeof useTheme>["colors"];
 };
 
 export default function ItemModal({
@@ -63,14 +76,24 @@ export default function ItemModal({
               </Text>
             </TouchableOpacity>
 
-            <ScrollView contentContainerStyle={styles.modalScroll}>
+            <ScrollView
+              contentContainerStyle={styles.modalScroll}
+              showsVerticalScrollIndicator={false}
+              style={
+                {
+                  scrollbarWidth: "none",
+                  msOverflowStyle: "none",
+                } as unknown as ViewStyle
+              }
+            >
               <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
                 {selectedItem?.naziv}
               </Text>
 
               <View style={styles.galleryContainer}>
-                {selectedItem?.galerija
-                  ? selectedItem.galerija.map((img: any, index: number) => (
+                {selectedItem?.galerija ? (
+                  selectedItem.galerija.map(
+                    (img: ImageSourcePropType, index: number) => (
                       <TouchableOpacity
                         key={index}
                         activeOpacity={0.8}
@@ -78,18 +101,23 @@ export default function ItemModal({
                       >
                         <Image source={img} style={styles.galleryImage} />
                       </TouchableOpacity>
-                    ))
-                  : selectedItem?.slika && (
-                      <TouchableOpacity
-                        activeOpacity={0.8}
-                        onPress={() => setFullScreenImage(selectedItem.slika)}
-                      >
-                        <Image
-                          source={selectedItem.slika}
-                          style={styles.fullImage}
-                        />
-                      </TouchableOpacity>
-                    )}
+                    ),
+                  )
+                ) : selectedItem?.slika ? (
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={() =>
+                      setFullScreenImage(
+                        selectedItem.slika as ImageSourcePropType,
+                      )
+                    }
+                  >
+                    <Image
+                      source={selectedItem.slika as ImageSourcePropType}
+                      style={styles.fullImage}
+                    />
+                  </TouchableOpacity>
+                ) : null}
               </View>
 
               <Text
@@ -175,7 +203,7 @@ export default function ItemModal({
             </Text>
           </TouchableOpacity>
           <Image
-            source={fullScreenImage}
+            source={fullScreenImage as ImageSourcePropType}
             style={styles.fullScreenImage}
             resizeMode="contain"
           />

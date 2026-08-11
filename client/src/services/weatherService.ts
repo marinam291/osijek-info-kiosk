@@ -37,6 +37,7 @@ export async function getOsijekWeather(): Promise<WeatherData> {
       icon,
     };
   } catch (error) {
+    console.error("Nisam uspio dohvatiti vrijeme:", error);
     return {
       temperature: 25,
       condition: "Sunčano",

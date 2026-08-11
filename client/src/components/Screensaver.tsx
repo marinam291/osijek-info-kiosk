@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -28,9 +28,9 @@ export default function Screensaver({
 }: ScreensaverProps) {
   const { colors } = useTheme();
 
-  const slideAnim = useRef(
-    new Animated.Value(theme === "light" ? 0 : 40),
-  ).current;
+  const [slideAnim] = useState(
+    () => new Animated.Value(theme === "light" ? 0 : 40),
+  );
 
   useEffect(() => {
     Animated.timing(slideAnim, {
@@ -38,7 +38,7 @@ export default function Screensaver({
       duration: 300,
       useNativeDriver: true,
     }).start();
-  }, [theme]);
+  }, [theme, slideAnim]);
 
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");

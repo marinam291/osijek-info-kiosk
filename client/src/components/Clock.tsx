@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 
 type ClockProps = {
   language: string;
-  colors: any;
+  colors: Record<string, string>;
 };
 
 export default function Clock({ language, colors }: ClockProps) {

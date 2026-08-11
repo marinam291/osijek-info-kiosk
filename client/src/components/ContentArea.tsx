@@ -7,12 +7,23 @@ import {
   Image,
   TouchableOpacity,
   ImageBackground,
+  ImageSourcePropType,
 } from "react-native";
 import { getOsijekData } from "../data/osijekData";
 import { useTheme } from "../context/ThemeContext";
 import MapTab from "./MapTab";
 import ItemModal from "./ItemModal";
 import FadeInView from "./FadeInView";
+
+export type ContentItem = {
+  id: string | number;
+  naziv?: string;
+  opis?: string;
+  slika?: ImageSourcePropType;
+  galerija?: ImageSourcePropType[];
+  qrLink?: string;
+  vrijeme?: string;
+};
 
 type ContentProps = {
   activeTab: string;
@@ -22,8 +33,10 @@ type ContentProps = {
 export default function ContentArea({ activeTab, language }: ContentProps) {
   const { colors } = useTheme();
   const currentData = getOsijekData(language);
-  const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [fullScreenImage, setFullScreenImage] = useState<any>(null);
+
+  const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
+  const [fullScreenImage, setFullScreenImage] =
+    useState<ImageSourcePropType | null>(null);
 
   if (activeTab === "karta") {
     return (
@@ -33,21 +46,21 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
     );
   }
 
-  let dataToRender: any[] = [];
+  let dataToRender: ContentItem[] = [];
   let title = "";
 
   switch (activeTab) {
     case "turizam":
-      dataToRender = currentData.turizam;
+      dataToRender = currentData.turizam as ContentItem[];
       title =
         language === "HR" ? "Turizam i znamenitosti" : "Tourism & Landmarks";
       break;
     case "dogadjanja":
-      dataToRender = currentData.dogadjanja;
+      dataToRender = currentData.dogadjanja as ContentItem[];
       title = language === "HR" ? "Događanja" : "Events";
       break;
     case "usluge":
-      dataToRender = currentData.usluge;
+      dataToRender = currentData.usluge as ContentItem[];
       title = language === "HR" ? "Usluge i prijevoz" : "Services & Transport";
       break;
   }
@@ -69,7 +82,7 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
               onPress={() => setSelectedItem(heroItem)}
             >
               <ImageBackground
-                source={heroItem.slika}
+                source={heroItem.slika as ImageSourcePropType}
                 style={styles.heroContainer}
                 imageStyle={{ borderRadius: 20 }}
               >

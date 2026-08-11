@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, Animated } from "react-native";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
 import Screensaver from "../components/Screensaver";
@@ -10,7 +10,7 @@ function KioskMain() {
   const { theme, setTheme, colors } = useTheme();
   const [isScreensaverActive, setIsScreensaverActive] = useState(true);
   const [isAppStarted, setIsAppStarted] = useState(false);
-  const screensaverOpacity = useRef(new Animated.Value(1)).current;
+  const [screensaverOpacity] = useState(() => new Animated.Value(1));
   const [language, setLanguage] = useState<string>("HR");
   const [activeTab, setActiveTab] = useState<string>("turizam");
 
