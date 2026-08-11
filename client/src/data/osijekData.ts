@@ -93,40 +93,102 @@ export const getOsijekData = (language: string) => {
       },
     ],
 
-    usluge: [
-      {
-        id: "u1",
-        naziv: isHR ? "Javni prijevoz (GPP)" : "Public Transport (GPP)",
-        opis: isHR
-          ? "Grad je povezan odličnom mrežom tramvaja i autobusa. Glavna tramvajska linija (Linija 1) povezuje istok (Zeleno polje) i zapad (Višnjevac)."
-          : "The city is connected by an excellent network of trams and buses. The main tram line (Line 1) connects the east (Zeleno polje) and west (Višnjevac).",
-        info: "Tel: 031 228 300",
-        slika: require("../../assets/images/gpp.png"),
-        qrLink: "https://web.gpp-osijek.com",
-      },
-      {
-        id: "u2",
-        naziv: isHR ? "Dežurna ljekarna" : "Duty Pharmacy",
-        opis: isHR
-          ? 'Ljekarna "Centar" na Trgu Ante Starčevića dežurna je 0-24h za sve hitne slučajeve i potrebe građana.'
-          : '"Centar" Pharmacy at Ante Starčević Square is on duty 24/7 for all emergencies and citizen needs.',
-        info: "Tel: 031 211 744",
-        slika: require("../../assets/images/ljekarna.jpg"),
-        qrLink: "https://ljekarne-srce.hr/ljekarne/centralna-ljekarna-osijek/",
-      },
-      {
-        id: "u3",
-        naziv: isHR
-          ? "eMobi sustav javnih bicikala"
-          : "eMobi Public Bike System",
-        opis: isHR
-          ? "Iznajmite bicikl na jednoj od brojnih stanica u gradu i provozajte se najdužom i najsigurnijom mrežom biciklističkih staza u Hrvatskoj."
-          : "Rent a bike at one of the many city stations and ride along the longest and safest bicycle path network in Croatia.",
-        info: isHR ? "Aplikacija: Nextbike" : "App: Nextbike",
-        slika: require("../../assets/images/emobi.jpg"),
-        qrLink:
-          "https://bikesharemap.com/osijek/#/13.204798330578056/18.6779/45.5395/",
-      },
-    ],
+    usluge: {
+      zdravstvo: [
+        {
+          id: "u_z1",
+          naziv: isHR ? "Hitna medicinska služba" : "Emergency Medical Service",
+          opis: isHR
+            ? "Hitni medicinski prijem i intervencije 0-24h."
+            : "Emergency medical care 24/7.",
+          info: "Tel: 194 / 031 225 555",
+          qrLink: "https://www.hznzih.hr",
+        },
+        {
+          id: "u_z2",
+          naziv: isHR ? "Dežurna ljekarna (Centar)" : "Duty Pharmacy (Center)",
+          opis: isHR
+            ? 'Ljekarna "Centar" na Trgu Ante Starčevića dežurna je 0-24h.'
+            : '"Centar" Pharmacy at Ante Starčević Square is on duty 24/7.',
+          info: "Tel: 031 211 744",
+          qrLink: "https://ljekarne-srce.hr",
+        },
+        {
+          id: "u_z3",
+          naziv: isHR
+            ? "Klinički bolnički centar Osijek (KBC)"
+            : "Osijek Clinical Hospital Center",
+          opis: isHR
+            ? "Glavna bolnica u Osijeku za sve zdravstvene potrebe."
+            : "Main hospital in Osijek for all healthcare needs.",
+          info: "Tel: 031 223 111",
+          qrLink: "https://www.kbco.hr",
+        },
+      ],
+      prijevoz: [
+        {
+          id: "u_p1",
+          naziv: isHR ? "Javni prijevoz (GPP)" : "Public Transport (GPP)",
+          opis: isHR
+            ? "Mreža tramvaja i autobusa diljem grada."
+            : "Tram and bus network across the city.",
+          info: "Tel: 031 228 300",
+          qrLink: "https://web.gpp-osijek.com",
+        },
+        {
+          id: "u_p2",
+          naziv: isHR
+            ? "Željeznički kolodvor Osijek"
+            : "Osijek Railway Station",
+          opis: isHR
+            ? "Informacije o dolascima i odlascima vlakova (HŽ)."
+            : "Train arrivals and departures information.",
+          info: "Tel: 060 333 444",
+          qrLink: "https://www.hzpp.hr",
+        },
+        {
+          id: "u_p3",
+          naziv: isHR ? "Taksi službe Osijek" : "Osijek Taxi Services",
+          opis: isHR
+            ? "Brz i pouzdan gradski prijevoz taksijem."
+            : "Fast and reliable city taxi transport.",
+          info: "Tel: Cammeo: 031 288 288",
+          qrLink: "https://cammeo.hr",
+        },
+        {
+          id: "u_p4",
+          naziv: isHR
+            ? "Sustav javnih bicikala (eMobi)"
+            : "Public Bike System (eMobi)",
+          opis: isHR
+            ? "Najam bicikala na stanicama diljem grada."
+            : "Bike rental at stations across the city.",
+          info: "App: Nextbike",
+          qrLink: "https://bikesharemap.com/osijek",
+        },
+      ],
+      gradskeUsluge: [
+        {
+          id: "u_g1",
+          naziv: isHR
+            ? "Turistička zajednica grada Osijeka"
+            : "Osijek Tourist Board",
+          opis: isHR
+            ? "Sve informacije za posjetitelje i turiste."
+            : "All information for visitors and tourists.",
+          info: "Tel: 031 203 782",
+          qrLink: "https://www.tzosijek.hr",
+        },
+        {
+          id: "u_g2",
+          naziv: isHR ? "Policijska postaja" : "Police Station",
+          opis: isHR
+            ? "Hitne policijske intervencije i prijave."
+            : "Emergency police interventions and reports.",
+          info: "Tel: 192 / 031 237 237",
+          qrLink: "https://osijek-baranjska.policija.hr",
+        },
+      ],
+    },
   };
 };
