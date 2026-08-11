@@ -123,6 +123,7 @@ export const getOsijekData = (language: string) => {
             ? "Hitni medicinski prijem i intervencije 0-24h."
             : "Emergency medical care 24/7.",
           info: "Tel: 194 / 031 225 555",
+          slika: require("../../assets/images/hitna.png"),
           qrLink: "https://www.hznzih.hr",
         },
         {
@@ -134,6 +135,7 @@ export const getOsijekData = (language: string) => {
             ? "Opća medicina, pedijatrija, laboratorij i specijalističke ordinacije."
             : "General medicine, pediatrics, laboratory and specialist clinics.",
           info: "Tel: 031 225 100",
+          slika: require("../../assets/images/domzdravlja.jpg"),
           qrLink: "https://www.dzoob.hr",
         },
         {
@@ -143,6 +145,7 @@ export const getOsijekData = (language: string) => {
             ? 'Ljekarna "Centar" na Trgu Ante Starčevića dežurna je 0-24h.'
             : '"Centar" Pharmacy at Ante Starčević Square is on duty 24/7.',
           info: "Tel: 031 211 744",
+          slika: require("../../assets/images/ljekarna.jpg"),
           qrLink: "https://ljekarne-srce.hr",
         },
         {
@@ -154,6 +157,7 @@ export const getOsijekData = (language: string) => {
             ? "Glavna bolnica u Osijeku za sve zdravstvene potrebe."
             : "Main hospital in Osijek for all healthcare needs.",
           info: "Tel: 031 223 111",
+          slika: require("../../assets/images/kbc.jpg"),
           qrLink: "https://www.kbco.hr",
         },
       ],
@@ -165,6 +169,7 @@ export const getOsijekData = (language: string) => {
             ? "Mreža tramvaja i autobusa diljem grada."
             : "Tram and bus network across the city.",
           info: "Tel: 031 228 300",
+          slika: require("../../assets/images/gpp.jpg"),
           qrLink: "https://web.gpp-osijek.com",
         },
         {
@@ -176,6 +181,7 @@ export const getOsijekData = (language: string) => {
             ? "Informacije o dolascima i odlascima vlakova (HŽ)."
             : "Train arrivals and departures information.",
           info: "Tel: 060 333 444",
+          slika: require("../../assets/images/hz.jpg"),
           qrLink: "https://www.hzpp.hr",
         },
         {
@@ -184,7 +190,8 @@ export const getOsijekData = (language: string) => {
           opis: isHR
             ? "Brz i pouzdan gradski prijevoz taksijem."
             : "Fast and reliable city taxi transport.",
-          info: "Tel: Cammeo: 031 288 288",
+          info: "Tel: Cammeo: 031 200 200",
+          slika: require("../../assets/images/taksi.jpg"),
           qrLink: "https://cammeo.hr",
         },
         {
@@ -196,6 +203,7 @@ export const getOsijekData = (language: string) => {
             ? "Najam bicikala na stanicama diljem grada."
             : "Bike rental at stations across the city.",
           info: "App: Nextbike",
+          slika: require("../../assets/images/emobi.jpg"),
           qrLink: "https://bikesharemap.com/osijek",
         },
       ],
@@ -209,6 +217,7 @@ export const getOsijekData = (language: string) => {
             ? "Sve informacije za posjetitelje i turiste."
             : "All information for visitors and tourists.",
           info: "Tel: 031 203 782",
+          slika: require("../../assets/images/tzgo.jpg"),
           qrLink: "https://www.tzosijek.hr",
         },
         {
@@ -218,6 +227,7 @@ export const getOsijekData = (language: string) => {
             ? "Hitne policijske intervencije i prijave."
             : "Emergency police interventions and reports.",
           info: "Tel: 192 / 031 237 237",
+          slika: require("../../assets/images/mup.jpg"),
           qrLink: "https://osijek-baranjska.policija.hr",
         },
       ],
