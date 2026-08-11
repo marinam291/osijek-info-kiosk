@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -39,10 +39,14 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
   const [fullScreenImage, setFullScreenImage] =
     useState<ImageSourcePropType | null>(null);
 
-  // Stanja za filtriranje
   const [serviceCategory, setServiceCategory] = useState<string>("sve");
   const [accommodationSubCategory, setAccommodationSubCategory] =
     useState<string>("sve");
+
+  useEffect(() => {
+    setServiceCategory("sve");
+    setAccommodationSubCategory("sve");
+  }, [activeTab]);
 
   if (activeTab === "karta") {
     return (
@@ -114,7 +118,6 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
             {title}
           </Text>
 
-          {/* Glavni filteri za Usluge (uključujući Smještaj) */}
           {activeTab === "usluge" && (
             <View style={styles.filterContainer}>
               {[
@@ -153,7 +156,7 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
                   ]}
                   onPress={() => {
                     setServiceCategory(cat.key);
-                    setAccommodationSubCategory("sve"); // Resetiramo pod-filter kad se mijenja glavna kategorija
+                    setAccommodationSubCategory("sve");
                   }}
                 >
                   <Text
@@ -174,7 +177,6 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
             </View>
           )}
 
-          {/* Pod-filteri ako je unutar Usluga odabran Smještaj */}
           {activeTab === "usluge" && serviceCategory === "smjestaj" && (
             <View
               style={[
@@ -234,7 +236,6 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
             </View>
           )}
 
-          {/* Hitni brojevi na vrhu usluga */}
           {activeTab === "usluge" && serviceCategory === "sve" && (
             <View
               style={[
@@ -246,7 +247,7 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
               ]}
             >
               <Text style={[styles.emergencyTitle, { color: colors.accent }]}>
-                🚨 {language === "HR" ? "HITNI BROJEVI" : "EMERGENCY NUMBERS"}
+                {language === "HR" ? "HITNI BROJEVI" : "EMERGENCY NUMBERS"}
               </Text>
               <View style={styles.emergencyGrid}>
                 <Text
