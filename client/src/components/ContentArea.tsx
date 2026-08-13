@@ -16,6 +16,7 @@ import ItemModal from "./ItemModal";
 import FadeInView from "./FadeInView";
 import EmergencyBox from "./EmergencyBox";
 import ServiceFilters from "./ServiceFilters";
+import TaxiDirectory, { TaxiService } from "./TaxiDirectory";
 
 export type ContentItem = {
   id: string | number;
@@ -54,7 +55,9 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
   }
 
   let dataToRender: ContentItem[] = [];
+  let taxiData: TaxiService[] = [];
   let title = "";
+  let isTaxiView = false;
 
   switch (activeTab) {
     case "turizam":
@@ -75,6 +78,9 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
         dataToRender = currentData.usluge.zdravstvo as ContentItem[];
       } else if (serviceCategory === "prijevoz") {
         dataToRender = currentData.usluge.prijevoz as ContentItem[];
+      } else if (serviceCategory === "taksi") {
+        isTaxiView = true;
+        taxiData = currentData.usluge.taksi as unknown as TaxiService[];
       } else if (serviceCategory === "gradskeUsluge") {
         dataToRender = currentData.usluge.gradskeUsluge as ContentItem[];
       } else if (serviceCategory === "smjestaj") {
@@ -92,7 +98,6 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
           ];
         }
       } else if (serviceCategory === "trgovine") {
-        // Sigurno dohvaćamo trgovine iz podataka bez 'any'
         dataToRender = (
           "trgovine" in currentData
             ? (currentData as { trgovine: ContentItem[] }).trgovine
@@ -116,6 +121,7 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
     { key: "sve", label: language === "HR" ? "Sve usluge" : "All Services" },
     { key: "zdravstvo", label: language === "HR" ? "Zdravstvo" : "Healthcare" },
     { key: "prijevoz", label: language === "HR" ? "Prijevoz" : "Transport" },
+    { key: "taksi", label: language === "HR" ? "Taksi" : "Taxi" },
     {
       key: "gradskeUsluge",
       label: language === "HR" ? "Gradske usluge" : "City Services",
@@ -221,45 +227,61 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
             </Text>
           )}
 
-          <View style={styles.gridContainer}>
-            {listItems.map((item) => (
-              <TouchableOpacity
-                key={item.id}
-                style={[
-                  styles.gridCard,
-                  {
-                    backgroundColor: colors.cardBackground,
-                    borderColor: colors.border,
-                  },
-                ]}
-                onPress={() => setSelectedItem(item)}
-              >
-                {item.slika && (
-                  <Image source={item.slika} style={styles.gridImage} />
-                )}
-                <View style={styles.gridTextContainer}>
-                  <Text
-                    style={[styles.gridTitle, { color: colors.textPrimary }]}
-                    numberOfLines={1}
-                  >
-                    {item.naziv}
-                  </Text>
-                  {item.vrijeme && (
+          {isTaxiView ? (
+            <TaxiDirectory
+              items={taxiData}
+              colors={colors}
+              onItemPress={(item) =>
+                setSelectedItem({
+                  id: item.id,
+                  naziv: item.naziv,
+                  opis: item.opis,
+                  info: item.telefon,
+                  qrLink: item.qrLink,
+                })
+              }
+            />
+          ) : (
+            <View style={styles.gridContainer}>
+              {listItems.map((item) => (
+                <TouchableOpacity
+                  key={item.id}
+                  style={[
+                    styles.gridCard,
+                    {
+                      backgroundColor: colors.cardBackground,
+                      borderColor: colors.border,
+                    },
+                  ]}
+                  onPress={() => setSelectedItem(item)}
+                >
+                  {item.slika && (
+                    <Image source={item.slika} style={styles.gridImage} />
+                  )}
+                  <View style={styles.gridTextContainer}>
                     <Text
-                      style={[styles.gridSubtitle, { color: colors.accent }]}
+                      style={[styles.gridTitle, { color: colors.textPrimary }]}
+                      numberOfLines={1}
                     >
-                      {item.vrijeme}
+                      {item.naziv}
                     </Text>
-                  )}
-                  {item.info && (
-                    <Text style={[styles.gridInfo, { color: colors.accent }]}>
-                      {item.info}
-                    </Text>
-                  )}
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
+                    {item.vrijeme && (
+                      <Text
+                        style={[styles.gridSubtitle, { color: colors.accent }]}
+                      >
+                        {item.vrijeme}
+                      </Text>
+                    )}
+                    {item.info && (
+                      <Text style={[styles.gridInfo, { color: colors.accent }]}>
+                        {item.info}
+                      </Text>
+                    )}
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
         </ScrollView>
       </FadeInView>
 

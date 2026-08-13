@@ -185,16 +185,6 @@ export const getOsijekData = (language: string) => {
           qrLink: "https://www.hzpp.hr",
         },
         {
-          id: "u_p3",
-          naziv: isHR ? "Taksi službe Osijek" : "Osijek Taxi Services",
-          opis: isHR
-            ? "Brz i pouzdan gradski prijevoz taksijem."
-            : "Fast and reliable city taxi transport.",
-          info: "Tel: Cammeo: 031 200 200",
-          slika: require("../../assets/images/taksi.jpg"),
-          qrLink: "https://cammeo.hr",
-        },
-        {
           id: "u_p4",
           naziv: isHR
             ? "Sustav javnih bicikala (eMobi)"
@@ -205,6 +195,43 @@ export const getOsijekData = (language: string) => {
           info: "App: Nextbike",
           slika: require("../../assets/images/emobi.jpg"),
           qrLink: "https://bikesharemap.com/osijek",
+        },
+      ],
+      taksi: [
+        {
+          id: "t_1",
+          naziv: "Cammeo Taxi Osijek",
+          telefon: "031 288 888",
+          opis: isHR
+            ? "Najveći taksi prijevoznik u gradu s mogućnošću poziva ili aplikacije."
+            : "The largest taxi provider in the city with call or app options.",
+          qrLink: "https://cammeo.hr",
+        },
+        {
+          id: "t_2",
+          naziv: "Uber Osijek",
+          telefon: "Aplikacija",
+          opis: isHR
+            ? "Globalna usluga prijevoza dostupna putem mobilne aplikacije."
+            : "Global ride-hailing service available via mobile app.",
+          qrLink: "https://m.uber.com",
+        },
+        {
+          id: "t_3",
+          naziv: "Bolt Osijek",
+          telefon: "Aplikacija",
+          opis: isHR
+            ? "Popularna platforma za naručivanje vožnji putem pametnog telefona."
+            : "Popular platform for ordering rides via smartphone.",
+          qrLink: "https://bolt.eu",
+        },
+        {
+          id: "t_4",
+          naziv: "Osiječki taxi",
+          telefon: "031 200 200",
+          opis: isHR
+            ? "Osječki taxi koji je uvijek bio više od taxi službe."
+            : "The Osijek taxi that has always been more than a taxi service.",
         },
       ],
       gradskeUsluge: [
