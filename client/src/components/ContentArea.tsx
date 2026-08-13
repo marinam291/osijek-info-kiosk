@@ -103,6 +103,12 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
         }
       } else if (serviceCategory === "gradskeUsluge") {
         dataToRender = currentData.usluge.gradskeUsluge as ContentItem[];
+      } else if (serviceCategory === "muzeji") {
+        dataToRender = (
+          "muzeji" in currentData
+            ? (currentData as { muzeji: ContentItem[] }).muzeji
+            : []
+        ) as ContentItem[];
       } else if (serviceCategory === "smjestaj") {
         if (accommodationSubCategory === "hoteli") {
           dataToRender = currentData.smjestaj.hoteli as ContentItem[];
@@ -141,6 +147,7 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
     { key: "sve", label: language === "HR" ? "Sve usluge" : "All Services" },
     { key: "zdravstvo", label: language === "HR" ? "Zdravstvo" : "Healthcare" },
     { key: "prijevoz", label: language === "HR" ? "Prijevoz" : "Transport" },
+    { key: "muzeji", label: language === "HR" ? "Muzeji" : "Museums" },
     {
       key: "gradskeUsluge",
       label: language === "HR" ? "Gradske usluge" : "City Services",

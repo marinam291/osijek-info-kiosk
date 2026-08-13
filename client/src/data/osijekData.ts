@@ -369,5 +369,44 @@ export const getOsijekData = (language: string) => {
         slika: require("../../assets/images/trznica.jpg"),
       },
     ],
+
+    muzeji: [
+      {
+        id: "m_1",
+        naziv: "Muzej Slavonije",
+        opis: isHR
+          ? "Najveći muzej općeg tipa u Hrvatskoj, smješten u povijesnoj jezgri Tvrđi. Čuva bogatu baštinu Slavonije."
+          : "The largest general-type museum in Croatia, located in the historic core of Tvrđa. Preserves the rich heritage of Slavonia.",
+        info: isHR
+          ? "Radno vrijeme: 10:00 - 18:00 (Osim ponedjeljka)"
+          : "Working hours: 10:00 AM - 06:00 PM (Closed on Mondays)",
+        qrLink: "https://mso.hr",
+        slika: require("../../assets/images/mso.jpg"),
+      },
+      {
+        id: "m_2",
+        naziv: "Arheološki muzej Osijek",
+        opis: isHR
+          ? "Smješten u zgradi Glavne straže u Tvrđi, prikazuje povijest regije od prapovijesti do srednjeg vijeka."
+          : "Located in the Main Guard building in Tvrđa, it showcases the region's history from prehistory to the Middle Ages.",
+        info: isHR
+          ? "Radno vrijeme: 10:00 - 18:00 (Osim ponedjeljka)"
+          : "Working hours: 10:00 AM - 06:00 PM (Closed on Mondays)",
+        qrLink: "https://amo.hr",
+        slika: require("../../assets/images/arheoloski.png"),
+      },
+      {
+        id: "m_3",
+        naziv: "Muzej likovnih umjetnosti",
+        opis: isHR
+          ? "Smješten na Europskoj aveniji, posjeduje bogatu zbirku slika i skulptura od 18. do 20. stoljeća."
+          : "Located on European Avenue, it holds a rich collection of paintings and sculptures from the 18th to the 20th century.",
+        info: isHR
+          ? "Radno vrijeme: 10:00 - 20:00 (Osim ponedjeljka)"
+          : "Working hours: 10:00 AM - 08:00 PM (Closed on Mondays)",
+        qrLink: "https://mlu.hr",
+        slika: require("../../assets/images/mlu.jpg"),
+      },
+    ],
   };
 };
