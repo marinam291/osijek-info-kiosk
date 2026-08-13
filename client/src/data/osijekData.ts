@@ -307,5 +307,40 @@ export const getOsijekData = (language: string) => {
         },
       ],
     },
+
+    trgovine: [
+      {
+        id: "tr_1",
+        naziv: "Portanova Shopping Center",
+        opis: isHR
+          ? "Najveći i najmoderniji trgovački centar..."
+          : "The largest and most modern...",
+        info: isHR ? "Otvoreno 09:00 - 21:00" : "Open 09:00 AM - 09:00 PM",
+        qrLink: "https://www.portanova.hr",
+        slika: require("../../assets/images/portanova.jpg"),
+      },
+      {
+        id: "tr_2",
+        naziv: "Mall Osijek",
+        opis: isHR
+          ? "Popularno odredište za šoping..."
+          : "A popular shopping destination...",
+        info: isHR ? "Otvoreno 09:00 - 21:00" : "Open 09:00 AM - 09:00 PM",
+        qrLink: "https://mallosijek.hr",
+        slika: require("../../assets/images/mall.jpg"),
+      },
+      {
+        id: "tr_3",
+        naziv: isHR
+          ? "Glavna osječka tržnica (Pijaca)"
+          : "Osijek Main Farmers Market",
+        opis: isHR ? "Tradicionalno mjesto..." : "A traditional place...",
+        info: isHR
+          ? "Radno vrijeme: 07:00 - 13:00"
+          : "Working hours: 07:00 AM - 01:00 PM",
+        qrLink: "https://www.osjecka-trznica.hr",
+        slika: require("../../assets/images/trznica.jpg"),
+      },
+    ],
   };
 };

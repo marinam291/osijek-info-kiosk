@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -14,6 +14,8 @@ import { useTheme } from "../context/ThemeContext";
 import MapTab from "./MapTab";
 import ItemModal from "./ItemModal";
 import FadeInView from "./FadeInView";
+import EmergencyBox from "./EmergencyBox";
+import ServiceFilters from "./ServiceFilters";
 
 export type ContentItem = {
   id: string | number;
@@ -42,11 +44,6 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
   const [serviceCategory, setServiceCategory] = useState<string>("sve");
   const [accommodationSubCategory, setAccommodationSubCategory] =
     useState<string>("sve");
-
-  useEffect(() => {
-    setServiceCategory("sve");
-    setAccommodationSubCategory("sve");
-  }, [activeTab]);
 
   if (activeTab === "karta") {
     return (
@@ -94,6 +91,13 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
             ...(currentData.smjestaj.hosteli as ContentItem[]),
           ];
         }
+      } else if (serviceCategory === "trgovine") {
+        // Sigurno dohvaćamo trgovine iz podataka bez 'any'
+        dataToRender = (
+          "trgovine" in currentData
+            ? (currentData as { trgovine: ContentItem[] }).trgovine
+            : []
+        ) as ContentItem[];
       } else {
         dataToRender = [
           ...(currentData.usluge.zdravstvo as ContentItem[]),
@@ -108,6 +112,31 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
   const listItems =
     activeTab !== "usluge" ? dataToRender.slice(1) : dataToRender;
 
+  const serviceCategories = [
+    { key: "sve", label: language === "HR" ? "Sve usluge" : "All Services" },
+    { key: "zdravstvo", label: language === "HR" ? "Zdravstvo" : "Healthcare" },
+    { key: "prijevoz", label: language === "HR" ? "Prijevoz" : "Transport" },
+    {
+      key: "gradskeUsluge",
+      label: language === "HR" ? "Gradske usluge" : "City Services",
+    },
+    {
+      key: "smjestaj",
+      label: language === "HR" ? "Smještaj" : "Accommodation",
+    },
+    {
+      key: "trgovine",
+      label: language === "HR" ? "Trgovine i šoping" : "Shopping",
+    },
+  ];
+
+  const accommodationCategories = [
+    { key: "sve", label: language === "HR" ? "Svi smještaji" : "All" },
+    { key: "hoteli", label: language === "HR" ? "Hoteli" : "Hotels" },
+    { key: "apartmani", label: language === "HR" ? "Apartmani" : "Apartments" },
+    { key: "hosteli", label: language === "HR" ? "Hosteli" : "Hostels" },
+  ];
+
   return (
     <View style={[styles.mainContent, { backgroundColor: colors.background }]}>
       <FadeInView
@@ -119,163 +148,29 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
           </Text>
 
           {activeTab === "usluge" && (
-            <View style={styles.filterContainer}>
-              {[
-                {
-                  key: "sve",
-                  label: language === "HR" ? "Sve usluge" : "All Services",
-                },
-                {
-                  key: "zdravstvo",
-                  label: language === "HR" ? "Zdravstvo" : "Healthcare",
-                },
-                {
-                  key: "prijevoz",
-                  label: language === "HR" ? "Prijevoz" : "Transport",
-                },
-                {
-                  key: "gradskeUsluge",
-                  label: language === "HR" ? "Gradske usluge" : "City Services",
-                },
-                {
-                  key: "smjestaj",
-                  label: language === "HR" ? "Smještaj" : "Accommodation",
-                },
-              ].map((cat) => (
-                <TouchableOpacity
-                  key={cat.key}
-                  style={[
-                    styles.filterButton,
-                    {
-                      backgroundColor:
-                        serviceCategory === cat.key
-                          ? colors.accent
-                          : colors.cardBackground,
-                      borderColor: colors.border,
-                    },
-                  ]}
-                  onPress={() => {
-                    setServiceCategory(cat.key);
-                    setAccommodationSubCategory("sve");
-                  }}
-                >
-                  <Text
-                    style={[
-                      styles.filterButtonText,
-                      {
-                        color:
-                          serviceCategory === cat.key
-                            ? "#FFFFFF"
-                            : colors.textPrimary,
-                      },
-                    ]}
-                  >
-                    {cat.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <ServiceFilters
+              items={serviceCategories}
+              activeKey={serviceCategory}
+              onSelect={(key) => {
+                setServiceCategory(key);
+                setAccommodationSubCategory("sve");
+              }}
+              colors={colors}
+            />
           )}
 
           {activeTab === "usluge" && serviceCategory === "smjestaj" && (
-            <View
-              style={[
-                styles.filterContainer,
-                { marginTop: -10, marginBottom: 20 },
-              ]}
-            >
-              {[
-                {
-                  key: "sve",
-                  label: language === "HR" ? "Svi smještaji" : "All",
-                },
-                {
-                  key: "hoteli",
-                  label: language === "HR" ? "Hoteli" : "Hotels",
-                },
-                {
-                  key: "apartmani",
-                  label: language === "HR" ? "Apartmani" : "Apartments",
-                },
-                {
-                  key: "hosteli",
-                  label: language === "HR" ? "Hosteli" : "Hostels",
-                },
-              ].map((subCat) => (
-                <TouchableOpacity
-                  key={subCat.key}
-                  style={[
-                    styles.filterButton,
-                    {
-                      backgroundColor:
-                        accommodationSubCategory === subCat.key
-                          ? colors.accent
-                          : colors.cardBackground,
-                      borderColor: colors.accent,
-                      borderWidth: 1.5,
-                    },
-                  ]}
-                  onPress={() => setAccommodationSubCategory(subCat.key)}
-                >
-                  <Text
-                    style={[
-                      styles.filterButtonText,
-                      {
-                        color:
-                          accommodationSubCategory === subCat.key
-                            ? "#FFFFFF"
-                            : colors.textPrimary,
-                        fontSize: 14,
-                      },
-                    ]}
-                  >
-                    {subCat.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <ServiceFilters
+              items={accommodationCategories}
+              activeKey={accommodationSubCategory}
+              onSelect={setAccommodationSubCategory}
+              colors={colors}
+              isSubFilter={true}
+            />
           )}
 
           {activeTab === "usluge" && serviceCategory === "sve" && (
-            <View
-              style={[
-                styles.emergencyBox,
-                {
-                  backgroundColor: colors.cardBackground,
-                  borderColor: colors.border,
-                },
-              ]}
-            >
-              <Text style={[styles.emergencyTitle, { color: colors.accent }]}>
-                {language === "HR" ? "HITNI BROJEVI" : "EMERGENCY NUMBERS"}
-              </Text>
-              <View style={styles.emergencyGrid}>
-                <Text
-                  style={[styles.emergencyItem, { color: colors.textPrimary }]}
-                >
-                  {language === "HR" ? "Policija" : "Police"}:{" "}
-                  <Text style={{ fontWeight: "bold" }}>192</Text>
-                </Text>
-                <Text
-                  style={[styles.emergencyItem, { color: colors.textPrimary }]}
-                >
-                  {language === "HR" ? "Hitna pomoć" : "Ambulance"}:{" "}
-                  <Text style={{ fontWeight: "bold" }}>194</Text>
-                </Text>
-                <Text
-                  style={[styles.emergencyItem, { color: colors.textPrimary }]}
-                >
-                  {language === "HR" ? "Vatrogasci" : "Fire Department"}:{" "}
-                  <Text style={{ fontWeight: "bold" }}>193</Text>
-                </Text>
-                <Text
-                  style={[styles.emergencyItem, { color: colors.textPrimary }]}
-                >
-                  {language === "HR" ? "Žurni centar" : "Emergency Center"}:{" "}
-                  <Text style={{ fontWeight: "bold" }}>112</Text>
-                </Text>
-              </View>
-            </View>
+            <EmergencyBox language={language} colors={colors} />
           )}
 
           {heroItem && (
@@ -339,21 +234,8 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
                 ]}
                 onPress={() => setSelectedItem(item)}
               >
-                {item.slika ? (
+                {item.slika && (
                   <Image source={item.slika} style={styles.gridImage} />
-                ) : (
-                  <View
-                    style={[
-                      styles.gridImage,
-                      {
-                        backgroundColor: colors.border,
-                        justifyContent: "center",
-                        alignItems: "center",
-                      },
-                    ]}
-                  >
-                    <Text style={{ fontSize: 40 }}>🏨</Text>
-                  </View>
                 )}
                 <View style={styles.gridTextContainer}>
                   <Text
@@ -406,42 +288,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 40,
     marginBottom: 20,
-  },
-  filterContainer: {
-    flexDirection: "row",
-    gap: 12,
-    marginBottom: 24,
-    flexWrap: "wrap",
-  },
-  filterButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    borderWidth: 1,
-  },
-  filterButtonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  emergencyBox: {
-    padding: 20,
-    borderRadius: 16,
-    borderWidth: 1,
-    marginBottom: 30,
-  },
-  emergencyTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 12,
-  },
-  emergencyGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 20,
-  },
-  emergencyItem: {
-    fontSize: 16,
-    width: "45%",
   },
   heroContainer: {
     width: "100%",
