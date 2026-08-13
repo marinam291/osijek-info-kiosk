@@ -45,6 +45,13 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
   const [serviceCategory, setServiceCategory] = useState<string>("sve");
   const [accommodationSubCategory, setAccommodationSubCategory] =
     useState<string>("sve");
+  const [prevActiveTab, setPrevActiveTab] = useState<string>(activeTab);
+
+  if (activeTab !== prevActiveTab) {
+    setPrevActiveTab(activeTab);
+    setServiceCategory("sve");
+    setAccommodationSubCategory("sve");
+  }
 
   if (activeTab === "karta") {
     return (
