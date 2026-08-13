@@ -4,9 +4,6 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  Image,
-  TouchableOpacity,
-  ImageBackground,
   ImageSourcePropType,
 } from "react-native";
 import { getOsijekData } from "../data/osijekData";
@@ -17,6 +14,8 @@ import FadeInView from "./FadeInView";
 import EmergencyBox from "./EmergencyBox";
 import ServiceFilters from "./ServiceFilters";
 import TaxiDirectory, { TaxiService } from "./TaxiDirectory";
+import HeroCard from "./HeroCard";
+import GridCard from "./GridCard";
 
 export type ContentItem = {
   id: string | number;
@@ -187,45 +186,11 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
           )}
 
           {heroItem && (
-            <TouchableOpacity
-              activeOpacity={0.9}
-              onPress={() => setSelectedItem(heroItem)}
-            >
-              <ImageBackground
-                source={heroItem.slika as ImageSourcePropType}
-                style={styles.heroContainer}
-                imageStyle={{ borderRadius: 20 }}
-              >
-                <View
-                  style={[
-                    styles.heroOverlay,
-                    { backgroundColor: colors.background + "B3" },
-                  ]}
-                >
-                  <Text
-                    style={[styles.heroTitle, { color: colors.textPrimary }]}
-                  >
-                    {heroItem.naziv}
-                  </Text>
-                  {heroItem.vrijeme && (
-                    <Text
-                      style={[styles.heroSubtitle, { color: colors.accent }]}
-                    >
-                      {heroItem.vrijeme}
-                    </Text>
-                  )}
-                  <Text
-                    numberOfLines={2}
-                    style={[
-                      styles.heroDescription,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
-                    {heroItem.opis}
-                  </Text>
-                </View>
-              </ImageBackground>
-            </TouchableOpacity>
+            <HeroCard
+              item={heroItem}
+              colors={colors}
+              onPress={setSelectedItem}
+            />
           )}
 
           {heroItem && (
@@ -251,41 +216,12 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
           ) : (
             <View style={styles.gridContainer}>
               {listItems.map((item) => (
-                <TouchableOpacity
+                <GridCard
                   key={item.id}
-                  style={[
-                    styles.gridCard,
-                    {
-                      backgroundColor: colors.cardBackground,
-                      borderColor: colors.border,
-                    },
-                  ]}
-                  onPress={() => setSelectedItem(item)}
-                >
-                  {item.slika && (
-                    <Image source={item.slika} style={styles.gridImage} />
-                  )}
-                  <View style={styles.gridTextContainer}>
-                    <Text
-                      style={[styles.gridTitle, { color: colors.textPrimary }]}
-                      numberOfLines={1}
-                    >
-                      {item.naziv}
-                    </Text>
-                    {item.vrijeme && (
-                      <Text
-                        style={[styles.gridSubtitle, { color: colors.accent }]}
-                      >
-                        {item.vrijeme}
-                      </Text>
-                    )}
-                    {item.info && (
-                      <Text style={[styles.gridInfo, { color: colors.accent }]}>
-                        {item.info}
-                      </Text>
-                    )}
-                  </View>
-                </TouchableOpacity>
+                  item={item}
+                  colors={colors}
+                  onPress={setSelectedItem}
+                />
               ))}
             </View>
           )}
@@ -318,34 +254,5 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginBottom: 20,
   },
-  heroContainer: {
-    width: "100%",
-    height: 400,
-    justifyContent: "flex-end",
-    borderRadius: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.3,
-    shadowRadius: 15,
-    elevation: 8,
-  },
-  heroOverlay: {
-    padding: 30,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-  },
-  heroTitle: { fontSize: 36, fontWeight: "bold", marginBottom: 8 },
-  heroSubtitle: { fontSize: 18, fontWeight: "bold", marginBottom: 8 },
-  heroDescription: { fontSize: 18, maxWidth: "80%" },
   gridContainer: { flexDirection: "row", flexWrap: "wrap", gap: 24 },
-  gridCard: {
-    width: "31%",
-    borderRadius: 16,
-    overflow: "hidden",
-    borderWidth: 1,
-  },
-  gridImage: { width: "100%", height: 180 },
-  gridTextContainer: { padding: 16 },
-  gridTitle: { fontSize: 20, fontWeight: "bold" },
-  gridSubtitle: { fontSize: 14, marginTop: 4 },
-  gridInfo: { fontSize: 14, marginTop: 4, fontWeight: "bold" },
 });
