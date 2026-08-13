@@ -44,12 +44,16 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
   const [serviceCategory, setServiceCategory] = useState<string>("sve");
   const [accommodationSubCategory, setAccommodationSubCategory] =
     useState<string>("sve");
+  const [transportSubCategory, setTransportSubCategory] =
+    useState<string>("sve");
+
   const [prevActiveTab, setPrevActiveTab] = useState<string>(activeTab);
 
   if (activeTab !== prevActiveTab) {
     setPrevActiveTab(activeTab);
     setServiceCategory("sve");
     setAccommodationSubCategory("sve");
+    setTransportSubCategory("sve");
   }
 
   if (activeTab === "karta") {
@@ -83,10 +87,20 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
       if (serviceCategory === "zdravstvo") {
         dataToRender = currentData.usluge.zdravstvo as ContentItem[];
       } else if (serviceCategory === "prijevoz") {
-        dataToRender = currentData.usluge.prijevoz as ContentItem[];
-      } else if (serviceCategory === "taksi") {
-        isTaxiView = true;
-        taxiData = currentData.usluge.taksi as unknown as TaxiService[];
+        if (transportSubCategory === "taksi") {
+          isTaxiView = true;
+          taxiData =
+            (currentData.usluge as unknown as { taksi: TaxiService[] }).taksi ||
+            [];
+        } else if (transportSubCategory === "javni") {
+          dataToRender = currentData.usluge.prijevoz as ContentItem[];
+        } else {
+          dataToRender = currentData.usluge.prijevoz as ContentItem[];
+          isTaxiView = true;
+          taxiData =
+            (currentData.usluge as unknown as { taksi: TaxiService[] }).taksi ||
+            [];
+        }
       } else if (serviceCategory === "gradskeUsluge") {
         dataToRender = currentData.usluge.gradskeUsluge as ContentItem[];
       } else if (serviceCategory === "smjestaj") {
@@ -127,7 +141,6 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
     { key: "sve", label: language === "HR" ? "Sve usluge" : "All Services" },
     { key: "zdravstvo", label: language === "HR" ? "Zdravstvo" : "Healthcare" },
     { key: "prijevoz", label: language === "HR" ? "Prijevoz" : "Transport" },
-    { key: "taksi", label: language === "HR" ? "Taksi" : "Taxi" },
     {
       key: "gradskeUsluge",
       label: language === "HR" ? "Gradske usluge" : "City Services",
@@ -142,6 +155,18 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
     },
   ];
 
+  const transportCategories = [
+    {
+      key: "sve",
+      label: language === "HR" ? "Svi prijevozi" : "All Transport",
+    },
+    {
+      key: "javni",
+      label: language === "HR" ? "Javni prijevoz" : "Public Transport",
+    },
+    { key: "taksi", label: language === "HR" ? "Taksi" : "Taxi" },
+  ];
+
   const accommodationCategories = [
     { key: "sve", label: language === "HR" ? "Svi smještaji" : "All" },
     { key: "hoteli", label: language === "HR" ? "Hoteli" : "Hotels" },
@@ -152,7 +177,7 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
   return (
     <View style={[styles.mainContent, { backgroundColor: colors.background }]}>
       <FadeInView
-        triggerKey={`${activeTab}-${language}-${serviceCategory}-${accommodationSubCategory}`}
+        triggerKey={`${activeTab}-${language}-${serviceCategory}-${accommodationSubCategory}-${transportSubCategory}`}
       >
         <ScrollView showsVerticalScrollIndicator={false}>
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
@@ -166,8 +191,19 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
               onSelect={(key) => {
                 setServiceCategory(key);
                 setAccommodationSubCategory("sve");
+                setTransportSubCategory("sve");
               }}
               colors={colors}
+            />
+          )}
+
+          {activeTab === "usluge" && serviceCategory === "prijevoz" && (
+            <ServiceFilters
+              items={transportCategories}
+              activeKey={transportSubCategory}
+              onSelect={setTransportSubCategory}
+              colors={colors}
+              isSubFilter={true}
             />
           )}
 
@@ -199,21 +235,7 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
             </Text>
           )}
 
-          {isTaxiView ? (
-            <TaxiDirectory
-              items={taxiData}
-              colors={colors}
-              onItemPress={(item) =>
-                setSelectedItem({
-                  id: item.id,
-                  naziv: item.naziv,
-                  opis: item.opis,
-                  info: item.telefon,
-                  qrLink: item.qrLink,
-                })
-              }
-            />
-          ) : (
+          {listItems.length > 0 && (
             <View style={styles.gridContainer}>
               {listItems.map((item) => (
                 <GridCard
@@ -223,6 +245,34 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
                   onPress={setSelectedItem}
                 />
               ))}
+            </View>
+          )}
+
+          {isTaxiView && (
+            <View style={{ marginTop: listItems.length > 0 ? 40 : 0 }}>
+              {listItems.length > 0 && (
+                <Text
+                  style={[
+                    styles.subTitle,
+                    { color: colors.textSecondary, marginTop: 0 },
+                  ]}
+                >
+                  {language === "HR" ? "Taksi službe" : "Taxi Services"}
+                </Text>
+              )}
+              <TaxiDirectory
+                items={taxiData}
+                colors={colors}
+                onItemPress={(item) =>
+                  setSelectedItem({
+                    id: item.id,
+                    naziv: item.naziv,
+                    opis: item.opis,
+                    info: item.telefon,
+                    qrLink: item.qrLink,
+                  })
+                }
+              />
             </View>
           )}
         </ScrollView>
