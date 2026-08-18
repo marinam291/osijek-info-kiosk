@@ -104,7 +104,7 @@ export default function MapTab({ language, colors }: MapTabProps) {
 
   return (
     <ImageBackground
-      source={require("../../assets/images/pocetna.png")}
+      source={require("../../../assets/images/pocetna.png")}
       style={styles.bgContainer}
     >
       <View

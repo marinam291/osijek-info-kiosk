@@ -106,7 +106,7 @@ export default function ContentArea({
 
   return (
     <ImageBackground
-      source={require("../assets/pocetna.png")}
+      source={require("../../../assets/images/pocetna.png")}
       style={styles.backgroundImage}
       resizeMode="cover"
     >

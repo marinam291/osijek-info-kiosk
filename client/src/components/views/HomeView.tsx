@@ -43,7 +43,7 @@ export default function HomeView({
 
   return (
     <ImageBackground
-      source={require("../../assets/images/pocetna.png")}
+      source={require("../../../assets/images/pocetna.png")}
       style={styles.background}
     >
       <View

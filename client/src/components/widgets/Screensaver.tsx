@@ -70,7 +70,7 @@ export default function Screensaver({
         }}
       >
         <source
-          src={require("../../assets/videos/osijek.mp4")}
+          src={require("../../../assets/videos/osijek.mp4")}
           type="video/mp4"
         />
         Vaš preglednik ne podržava video.
@@ -164,7 +164,7 @@ export default function Screensaver({
         </View>
 
         <Image
-          source={require("../../assets/images/logo.png")}
+          source={require("../../../assets/images/logo.png")}
           style={styles.logoScreensaver}
           resizeMode="contain"
         />
