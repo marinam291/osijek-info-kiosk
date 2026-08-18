@@ -11,7 +11,6 @@ import { useTheme } from "../context/ThemeContext";
 import MapTab from "./MapTab";
 import ItemModal from "./ItemModal";
 import FadeInView from "./FadeInView";
-import HeroCard from "./HeroCard";
 import GridCard from "./GridCard";
 import HomeView from "./HomeView";
 import ServicesView from "./ServicesView";
@@ -104,17 +103,6 @@ export default function ContentArea({
     standardData = (currentData.dogadjanja as ContentItem[]) || [];
   }
 
-  const heroItem =
-    activeTab === "turizam" &&
-    tourismCategory === "sve" &&
-    standardData.length > 0
-      ? standardData[0]
-      : null;
-  const listItems =
-    activeTab === "turizam" && tourismCategory === "sve"
-      ? standardData.slice(1)
-      : standardData;
-
   return (
     <View style={[styles.mainContent, { backgroundColor: colors.background }]}>
       <FadeInView triggerKey={`${activeTab}-${language}-${tourismCategory}`}>
@@ -141,22 +129,8 @@ export default function ContentArea({
             />
           ) : (
             <View>
-              {heroItem && (
-                <HeroCard
-                  item={heroItem}
-                  colors={colors}
-                  onPress={setSelectedItem}
-                />
-              )}
-              {heroItem && (
-                <Text
-                  style={[styles.subTitle, { color: colors.textSecondary }]}
-                >
-                  {isHR ? "Ostalo u ponudi" : "More to explore"}
-                </Text>
-              )}
               <View style={styles.gridContainer}>
-                {listItems.map((item) => (
+                {standardData.map((item) => (
                   <GridCard
                     key={item.id}
                     item={item}
@@ -195,11 +169,10 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     letterSpacing: 1,
   },
-  subTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginTop: 40,
-    marginBottom: 20,
+  gridContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 24,
+    marginTop: 10,
   },
-  gridContainer: { flexDirection: "row", flexWrap: "wrap", gap: 24 },
 });

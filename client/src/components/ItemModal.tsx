@@ -40,6 +40,8 @@ export default function ItemModal({
   language,
   colors,
 }: ItemModalProps) {
+  const isHR = language === "HR";
+
   return (
     <>
       <Modal
@@ -92,17 +94,15 @@ export default function ItemModal({
 
               <View style={styles.galleryContainer}>
                 {selectedItem?.galerija ? (
-                  selectedItem.galerija.map(
-                    (img: ImageSourcePropType, index: number) => (
-                      <TouchableOpacity
-                        key={index}
-                        activeOpacity={0.8}
-                        onPress={() => setFullScreenImage(img)}
-                      >
-                        <Image source={img} style={styles.galleryImage} />
-                      </TouchableOpacity>
-                    ),
-                  )
+                  selectedItem.galerija.map((img, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      activeOpacity={0.8}
+                      onPress={() => setFullScreenImage(img)}
+                    >
+                      <Image source={img} style={styles.galleryImage} />
+                    </TouchableOpacity>
+                  ))
                 ) : selectedItem?.slika ? (
                   <TouchableOpacity
                     activeOpacity={0.8}
@@ -140,16 +140,15 @@ export default function ItemModal({
               >
                 <View style={styles.qrTextContent}>
                   <Text style={[styles.qrTitle, { color: colors.textPrimary }]}>
-                    {language === "HR"
+                    {isHR
                       ? "Ponesi informacije sa sobom"
                       : "Take info with you"}
                   </Text>
                   <Text style={[styles.qrSub, { color: colors.textSecondary }]}>
-                    {language === "HR"
-                      ? "Skeniraj za navigaciju"
-                      : "Scan for navigation"}
+                    {isHR ? "Skeniraj za navigaciju" : "Scan for navigation"}
                   </Text>
                 </View>
+
                 {selectedItem?.qrLink ? (
                   <View style={styles.qrCodeWrapper}>
                     <QRCode
@@ -167,13 +166,12 @@ export default function ItemModal({
                     ]}
                   >
                     <Text
-                      style={{
-                        fontSize: 10,
-                        fontWeight: "bold",
-                        color: colors.textSecondary,
-                      }}
+                      style={[
+                        styles.qrPlaceholderText,
+                        { color: colors.textSecondary },
+                      ]}
                     >
-                      NEMA LINKA
+                      {isHR ? "NEMA LINKA" : "NO LINK"}
                     </Text>
                   </View>
                 )}
@@ -280,6 +278,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
+  },
+  qrPlaceholderText: {
+    fontSize: 10,
+    fontWeight: "bold",
   },
   fullScreenOverlay: {
     flex: 1,
