@@ -159,6 +159,37 @@ export const getOsijekData = (language: string) => {
         slika: require("../../assets/images/oljk1.jpg"),
         qrLink: "https://www.tzosijek.hr",
       },
+      // Primjer kako strukturirati podatke
+      {
+        id: "dani-piva-1",
+        naziv: "Dani prvog hrvatskog piva (1. dan)",
+        datum: "2026-08-26",
+        opis: "Koncert: Dražen Zečić",
+      },
+      {
+        id: "dani-piva-2",
+        naziv: "Dani prvog hrvatskog piva (2. dan)",
+        datum: "2026-08-27",
+        opis: "Koncert: Džejla Ramović i Dženan Lončarević",
+      },
+      {
+        id: "dani-piva-3",
+        naziv: "Dani prvog hrvatskog piva (3. dan)",
+        datum: "2026-08-28",
+        opis: "Koncert: Plavi orkestar",
+      },
+      {
+        id: "dani-piva-4",
+        naziv: "Dani prvog hrvatskog piva (4. dan)",
+        datum: "2026-08-29",
+        opis: "Koncert: Slavonske lole",
+      },
+      {
+        id: "dani-piva-5",
+        naziv: "Dani prvog hrvatskog piva (5. dan)",
+        datum: "2026-08-30",
+        opis: "Koncert: Grupa Dalmatino",
+      },
     ],
 
     usluge: {
