@@ -7,6 +7,7 @@ import TaxiDirectory, { TaxiService } from "./TaxiDirectory";
 import { ContentItem } from "./ContentArea";
 import { ThemeColors } from "@/context/ThemeContext";
 import { getOsijekData } from "@/data/osijekData";
+import FadeInView from "./FadeInView";
 
 const getServiceCategories = (isHR: boolean) => [
   { key: "sve", label: isHR ? "Sve usluge" : "All Services" },
@@ -129,41 +130,45 @@ export default function ServicesView({
         <EmergencyBox language={language} colors={colors} />
       )}
 
-      {dataToRender.length > 0 && (
-        <View style={styles.gridContainer}>
-          {dataToRender.map((item) => (
-            <GridCard
-              key={item.id}
-              item={item}
-              colors={colors}
-              onPress={onItemPress}
-            />
-          ))}
-        </View>
-      )}
+      <FadeInView
+        triggerKey={`${serviceCategory}-${transportSubCategory}-${accommodationSubCategory}`}
+      >
+        {dataToRender.length > 0 && (
+          <View style={styles.gridContainer}>
+            {dataToRender.map((item) => (
+              <GridCard
+                key={item.id}
+                item={item}
+                colors={colors}
+                onPress={onItemPress}
+              />
+            ))}
+          </View>
+        )}
 
-      {isTaxiView && (
-        <View style={{ marginTop: dataToRender.length > 0 ? 40 : 0 }}>
-          {dataToRender.length > 0 && (
-            <Text style={[styles.subTitle, { color: colors.textSecondary }]}>
-              {isHR ? "Taksi službe" : "Taxi Services"}
-            </Text>
-          )}
-          <TaxiDirectory
-            items={taxiData}
-            colors={colors}
-            onItemPress={(item) =>
-              onItemPress({
-                id: item.id,
-                naziv: item.naziv,
-                opis: item.opis,
-                info: item.telefon,
-                qrLink: item.qrLink,
-              } as ContentItem)
-            }
-          />
-        </View>
-      )}
+        {isTaxiView && (
+          <View style={{ marginTop: dataToRender.length > 0 ? 40 : 0 }}>
+            {dataToRender.length > 0 && (
+              <Text style={[styles.subTitle, { color: colors.textSecondary }]}>
+                {isHR ? "Taksi službe" : "Taxi Services"}
+              </Text>
+            )}
+            <TaxiDirectory
+              items={taxiData}
+              colors={colors}
+              onItemPress={(item) =>
+                onItemPress({
+                  id: item.id,
+                  naziv: item.naziv,
+                  opis: item.opis,
+                  info: item.telefon,
+                  qrLink: item.qrLink,
+                } as ContentItem)
+              }
+            />
+          </View>
+        )}
+      </FadeInView>
     </View>
   );
 }
