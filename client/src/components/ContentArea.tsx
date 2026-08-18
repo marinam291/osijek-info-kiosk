@@ -15,6 +15,7 @@ import HeroCard from "./HeroCard";
 import GridCard from "./GridCard";
 import HomeView from "./HomeView";
 import ServicesView from "./ServicesView";
+import ServiceFilters from "./ServiceFilters";
 
 export type ContentItem = {
   id: string | number;
@@ -42,6 +43,12 @@ const tabTitles: Record<string, { HR: string; EN: string }> = {
   },
 };
 
+const getTourismCategories = (isHR: boolean) => [
+  { key: "sve", label: isHR ? "Sve" : "All" },
+  { key: "znamenitosti", label: isHR ? "Znamenitosti" : "Landmarks" },
+  { key: "muzeji", label: isHR ? "Muzeji" : "Museums" },
+];
+
 export default function ContentArea({
   activeTab,
   language,
@@ -52,6 +59,16 @@ export default function ContentArea({
   const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
   const [fullScreenImage, setFullScreenImage] =
     useState<ImageSourcePropType | null>(null);
+
+  const [tourismCategory, setTourismCategory] = useState<string>("sve");
+  const [prevActiveTab, setPrevActiveTab] = useState<string>(activeTab);
+
+  if (activeTab !== prevActiveTab) {
+    setPrevActiveTab(activeTab);
+    if (tourismCategory !== "sve") {
+      setTourismCategory("sve");
+    }
+  }
 
   if (activeTab === "pocetna") {
     return (
@@ -70,20 +87,50 @@ export default function ContentArea({
   }
 
   const title = tabTitles[activeTab]?.[language as "HR" | "EN"] || "";
-  const isStandardTab = activeTab === "turizam" || activeTab === "dogadjanja";
-  const standardData = isStandardTab
-    ? (currentData[activeTab as keyof typeof currentData] as ContentItem[])
-    : [];
-  const heroItem = standardData.length > 0 ? standardData[0] : null;
-  const listItems = standardData.length > 1 ? standardData.slice(1) : [];
+  const isHR = language === "HR";
+
+  let standardData: ContentItem[] = [];
+  if (activeTab === "turizam") {
+    const landmarks = currentData.turizam || [];
+    const museums = currentData.muzeji || [];
+    if (tourismCategory === "znamenitosti") {
+      standardData = landmarks;
+    } else if (tourismCategory === "muzeji") {
+      standardData = museums;
+    } else {
+      standardData = [...landmarks, ...museums];
+    }
+  } else if (activeTab === "dogadjanja") {
+    standardData = (currentData.dogadjanja as ContentItem[]) || [];
+  }
+
+  const heroItem =
+    activeTab === "turizam" &&
+    tourismCategory === "sve" &&
+    standardData.length > 0
+      ? standardData[0]
+      : null;
+  const listItems =
+    activeTab === "turizam" && tourismCategory === "sve"
+      ? standardData.slice(1)
+      : standardData;
 
   return (
     <View style={[styles.mainContent, { backgroundColor: colors.background }]}>
-      <FadeInView triggerKey={`${activeTab}-${language}`}>
+      <FadeInView triggerKey={`${activeTab}-${language}-${tourismCategory}`}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
             {title}
           </Text>
+
+          {activeTab === "turizam" && (
+            <ServiceFilters
+              items={getTourismCategories(isHR)}
+              activeKey={tourismCategory}
+              onSelect={setTourismCategory}
+              colors={colors}
+            />
+          )}
 
           {activeTab === "usluge" ? (
             <ServicesView
@@ -105,7 +152,7 @@ export default function ContentArea({
                 <Text
                   style={[styles.subTitle, { color: colors.textSecondary }]}
                 >
-                  {language === "HR" ? "Ostalo u ponudi" : "More to explore"}
+                  {isHR ? "Ostalo u ponudi" : "More to explore"}
                 </Text>
               )}
               <View style={styles.gridContainer}>

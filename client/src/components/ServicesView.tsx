@@ -12,7 +12,6 @@ const getServiceCategories = (isHR: boolean) => [
   { key: "sve", label: isHR ? "Sve usluge" : "All Services" },
   { key: "zdravstvo", label: isHR ? "Zdravstvo" : "Healthcare" },
   { key: "prijevoz", label: isHR ? "Prijevoz" : "Transport" },
-  { key: "muzeji", label: isHR ? "Muzeji" : "Museums" },
   { key: "gradskeUsluge", label: isHR ? "Gradske usluge" : "City Services" },
   { key: "smjestaj", label: isHR ? "Smještaj" : "Accommodation" },
   { key: "trgovine", label: isHR ? "Trgovine i šoping" : "Shopping" },
@@ -70,8 +69,6 @@ export default function ServicesView({
     }
   } else if (serviceCategory === "gradskeUsluge") {
     dataToRender = currentData.usluge.gradskeUsluge;
-  } else if (serviceCategory === "muzeji") {
-    dataToRender = currentData.muzeji || [];
   } else if (serviceCategory === "smjestaj") {
     if (accommodationSubCategory === "hoteli") {
       dataToRender = currentData.smjestaj.hoteli;
