@@ -44,6 +44,17 @@ export const getOsijekData = (language: string) => {
         slika: require("../../assets/images/zoo.jpg"),
         qrLink: "https://www.zoo-osijek.hr",
       },
+      {
+        id: "t5",
+        naziv: isHR
+          ? "Europska avenija i Secesija"
+          : "European Avenue & Secession",
+        opis: isHR
+          ? "Jedinstveni niz secesijskih palača s kraja 19. i početka 20. stoljeća, najljepši primjer secesijske arhitekture u ovom dijelu Europe."
+          : "A unique row of Secessionist palaces from the late 19th and early 20th centuries, the finest example of Secessionist architecture in this part of Europe.",
+        slika: require("../../assets/images/promenada.jpg"), // Možeš zamijeniti vlastitom slikom secesije
+        qrLink: "https://www.tzosijek.hr",
+      },
     ],
 
     dogadjanja: [
@@ -91,41 +102,319 @@ export const getOsijekData = (language: string) => {
         ],
         qrLink: "https://www.tzosijek.hr/stranica.php?id=1475",
       },
+      {
+        id: "d4",
+        naziv: isHR ? "Dani vina i turizma" : "Wine & Tourism Days",
+        vrijeme: isHR ? "Listopad" : "October",
+        opis: isHR
+          ? "Manifestacija posvećena vrhunskim vinima Slavonije i Baranje uz bogat glazbeni i gastronomski program."
+          : "An event dedicated to top wines of Slavonia and Baranja with a rich music and gastronomic program.",
+        slika: require("../../assets/images/oljk1.jpg"),
+        qrLink: "https://www.tzosijek.hr",
+      },
     ],
 
-    usluge: [
+    usluge: {
+      zdravstvo: [
+        {
+          id: "u_z1",
+          naziv: isHR ? "Hitna medicinska služba" : "Emergency Medical Service",
+          opis: isHR
+            ? "Hitni medicinski prijem i intervencije 0-24h."
+            : "Emergency medical care 24/7.",
+          info: "Tel: 194 / 031 225 555",
+          slika: require("../../assets/images/hitna.png"),
+          qrLink: "https://www.hznzih.hr",
+        },
+        {
+          id: "u_z2",
+          naziv: isHR
+            ? "Dom zdravlja Osječko-baranjske županije"
+            : "Health Center Osijek",
+          opis: isHR
+            ? "Opća medicina, pedijatrija, laboratorij i specijalističke ordinacije."
+            : "General medicine, pediatrics, laboratory and specialist clinics.",
+          info: "Tel: 031 225 100",
+          slika: require("../../assets/images/domzdravlja.jpg"),
+          qrLink: "https://www.dzoob.hr",
+        },
+        {
+          id: "u_z3",
+          naziv: isHR ? "Dežurna ljekarna (Centar)" : "Duty Pharmacy (Center)",
+          opis: isHR
+            ? 'Ljekarna "Centar" na Trgu Ante Starčevića dežurna je 0-24h.'
+            : '"Centar" Pharmacy at Ante Starčević Square is on duty 24/7.',
+          info: "Tel: 031 211 744",
+          slika: require("../../assets/images/ljekarna.jpg"),
+          qrLink: "https://ljekarne-srce.hr",
+        },
+        {
+          id: "u_z4",
+          naziv: isHR
+            ? "Klinički bolnički centar Osijek (KBC)"
+            : "Osijek Clinical Hospital Center",
+          opis: isHR
+            ? "Glavna bolnica u Osijeku za sve zdravstvene potrebe."
+            : "Main hospital in Osijek for all healthcare needs.",
+          info: "Tel: 031 223 111",
+          slika: require("../../assets/images/kbc.jpg"),
+          qrLink: "https://www.kbco.hr",
+        },
+      ],
+      prijevoz: [
+        {
+          id: "u_p1",
+          naziv: isHR ? "Javni prijevoz (GPP)" : "Public Transport (GPP)",
+          opis: isHR
+            ? "Mreža tramvaja i autobusa diljem grada."
+            : "Tram and bus network across the city.",
+          info: "Tel: 031 228 300",
+          slika: require("../../assets/images/gpp.jpg"),
+          qrLink: "https://web.gpp-osijek.com",
+        },
+        {
+          id: "u_p2",
+          naziv: isHR
+            ? "Željeznički kolodvor Osijek"
+            : "Osijek Railway Station",
+          opis: isHR
+            ? "Informacije o dolascima i odlascima vlakova (HŽ)."
+            : "Train arrivals and departures information.",
+          info: "Tel: 060 333 444",
+          slika: require("../../assets/images/hz.jpg"),
+          qrLink: "https://www.hzpp.hr",
+        },
+        {
+          id: "u_p4",
+          naziv: isHR
+            ? "Sustav javnih bicikala (eMobi)"
+            : "Public Bike System (eMobi)",
+          opis: isHR
+            ? "Najam bicikala na stanicama diljem grada."
+            : "Bike rental at stations across the city.",
+          info: "App: Nextbike",
+          slika: require("../../assets/images/emobi.jpg"),
+          qrLink: "https://bikesharemap.com/osijek",
+        },
+      ],
+      taksi: [
+        {
+          id: "t_1",
+          naziv: "Cammeo Taxi Osijek",
+          telefon: "031 288 888",
+          opis: isHR
+            ? "Najveći taksi prijevoznik u gradu s mogućnošću poziva ili aplikacije."
+            : "The largest taxi provider in the city with call or app options.",
+          qrLink: "https://cammeo.hr",
+        },
+        {
+          id: "t_2",
+          naziv: "Uber Osijek",
+          telefon: "Aplikacija",
+          opis: isHR
+            ? "Globalna usluga prijevoza dostupna putem mobilne aplikacije."
+            : "Global ride-hailing service available via mobile app.",
+          qrLink: "https://m.uber.com",
+        },
+        {
+          id: "t_3",
+          naziv: "Bolt Osijek",
+          telefon: "Aplikacija",
+          opis: isHR
+            ? "Popularna platforma za naručivanje vožnji putem pametnog telefona."
+            : "Popular platform for ordering rides via smartphone.",
+          qrLink: "https://bolt.eu",
+        },
+        {
+          id: "t_4",
+          naziv: "Osiječki taxi",
+          telefon: "031 200 200",
+          opis: isHR
+            ? "Osječki taxi koji je uvijek bio više od taxi službe."
+            : "The Osijek taxi that has always been more than a taxi service.",
+        },
+      ],
+      gradskeUsluge: [
+        {
+          id: "u_g1",
+          naziv: isHR
+            ? "Turistička zajednica grada Osijeka"
+            : "Osijek Tourist Board",
+          opis: isHR
+            ? "Sve informacije za posjetitelje i turiste."
+            : "All information for visitors and tourists.",
+          info: "Tel: 031 203 782",
+          slika: require("../../assets/images/tzgo.jpg"),
+          qrLink: "https://www.tzosijek.hr",
+        },
+        {
+          id: "u_g2",
+          naziv: isHR ? "Policijska postaja" : "Police Station",
+          opis: isHR
+            ? "Hitne policijske intervencije i prijave."
+            : "Emergency police interventions and reports.",
+          info: "Tel: 192 / 031 237 237",
+          slika: require("../../assets/images/mup.jpg"),
+          qrLink: "https://osijek-baranjska.policija.hr",
+        },
+      ],
+    },
+
+    smjestaj: {
+      hoteli: [
+        {
+          id: "s_h1",
+          naziv: "Hotel Osijek",
+          opis: isHR
+            ? "Luksuzni hotel s 4 zvjezdice smješten uz samu obalu Drave s predivnim pogledom."
+            : "Luxury 4-star hotel located right on the Drava riverbank with a wonderful view.",
+          info: "★★★★ | Tel: 031 230 000",
+          slika: require("../../assets/images/hotelosijek.png"),
+          qrLink: "https://www.hotelosijek.png",
+        },
+        {
+          id: "s_h2",
+          naziv: "Hotel Waldinger",
+          opis: isHR
+            ? "Elegantni boutique hotel u secesijskoj zgradi u samom pješačkom središtu grada."
+            : "Elegant boutique hotel in a Secessionist building right in the pedestrian city center.",
+          info: "★★★★ | Tel: 031 250 400",
+          slika: require("../../assets/images/hotelwaldinger.jpg"),
+          qrLink: "https://www.waldinger.jpg",
+        },
+      ],
+      apartmani: [
+        {
+          id: "s_a1",
+          naziv: "Apartmani Tvrđa / Old Town",
+          opis: isHR
+            ? "Ugodno uređeni apartmani unutar povijesne jezgre Tvrđe."
+            : "Cozy furnished apartments within the historic core of Tvrđa.",
+          info: isHR ? "Privatni smještaj" : "Private Accommodation",
+          slika: require("../../assets/images/apartmanitvrda.jpeg"),
+          qrLink:
+            "https://www.booking.com/searchresults.hr.html?ss=Tvrđa+Osijek",
+        },
+        {
+          id: "s_a2",
+          naziv: "City Center Apartments Osijek",
+          opis: isHR
+            ? "Moderni apartmani u blizini glavnog trga i svih sadržaja."
+            : "Modern apartments close to the main square and all amenities.",
+          info: isHR ? "Privatni smještaj" : "Private Accommodation",
+          slika: require("../../assets/images/apartmanicentar.png"),
+          qrLink:
+            "https://www.booking.com/searchresults.hr.html?ss=Center+Osijek",
+        },
+      ],
+      hosteli: [
+        {
+          id: "s_ho1",
+          naziv: "Hostel Street",
+          opis: isHR
+            ? "Moderan i originalno uređen hostel u Gundulićevoj ulici, poznat po hodniku oslikanom poput gradske ulice."
+            : "Modern and uniquely designed hostel in Gundulićeva Street, famous for its hallway painted like a city street.",
+          info: isHR
+            ? "Povoljan smještaj | Tel: 031 200 230"
+            : "Budget Accommodation | Tel: +385 31 200 230",
+          slika: require("../../assets/images/hostelstreet.jpg"),
+          qrLink: "https://www.tzosijek.hr/hosteli-85",
+        },
+        {
+          id: "s_ho2",
+          naziv: "Hostel OS",
+          opis: isHR
+            ? "Smješten u samom centru grada u povijesnoj zgradi, nudi udoban smještaj u privatnim i zajedničkim sobama."
+            : "Located right in the city center in a historic building, offering comfortable private and shared rooms.",
+          info: isHR
+            ? "U centru grada | Tel: 031 300 000"
+            : "City Center | Tel: +385 31 300 000",
+          slika: require("../../assets/images/hostelos.jpg"),
+          qrLink: "https://www.tzosijek.hr",
+        },
+      ],
+    },
+
+    trgovine: [
       {
-        id: "u1",
-        naziv: isHR ? "Javni prijevoz (GPP)" : "Public Transport (GPP)",
+        id: "tr_1",
+        naziv: "Portanova Shopping Center",
         opis: isHR
-          ? "Grad je povezan odličnom mrežom tramvaja i autobusa. Glavna tramvajska linija (Linija 1) povezuje istok (Zeleno polje) i zapad (Višnjevac)."
-          : "The city is connected by an excellent network of trams and buses. The main tram line (Line 1) connects the east (Zeleno polje) and west (Višnjevac).",
-        info: "Tel: 031 228 300",
-        slika: require("../../assets/images/gpp.png"),
-        qrLink: "https://web.gpp-osijek.com",
+          ? "Najveći i najmoderniji trgovački centar..."
+          : "The largest and most modern...",
+        info: isHR ? "Otvoreno 09:00 - 21:00" : "Open 09:00 AM - 09:00 PM",
+        qrLink: "https://www.portanova.hr",
+        slika: require("../../assets/images/portanova.jpg"),
       },
       {
-        id: "u2",
-        naziv: isHR ? "Dežurna ljekarna" : "Duty Pharmacy",
+        id: "tr_2",
+        naziv: "Mall Osijek",
         opis: isHR
-          ? 'Ljekarna "Centar" na Trgu Ante Starčevića dežurna je 0-24h za sve hitne slučajeve i potrebe građana.'
-          : '"Centar" Pharmacy at Ante Starčević Square is on duty 24/7 for all emergencies and citizen needs.',
-        info: "Tel: 031 211 744",
-        slika: require("../../assets/images/ljekarna.jpg"),
-        qrLink: "https://ljekarne-srce.hr/ljekarne/centralna-ljekarna-osijek/",
+          ? "Popularno odredište za šoping..."
+          : "A popular shopping destination...",
+        info: isHR ? "Otvoreno 09:00 - 21:00" : "Open 09:00 AM - 09:00 PM",
+        qrLink: "https://mallosijek.hr",
+        slika: require("../../assets/images/mall.jpg"),
       },
       {
-        id: "u3",
+        id: "tr_3",
         naziv: isHR
-          ? "eMobi sustav javnih bicikala"
-          : "eMobi Public Bike System",
+          ? "Glavna osječka tržnica (Pijaca)"
+          : "Osijek Main Farmers Market",
+        opis: isHR ? "Tradicionalno mjesto..." : "A traditional place...",
+        info: isHR
+          ? "Radno vrijeme: 07:00 - 13:00"
+          : "Working hours: 07:00 AM - 01:00 PM",
+        qrLink: "https://www.osjecka-trznica.hr",
+        slika: require("../../assets/images/trznica.jpg"),
+      },
+    ],
+
+    muzeji: [
+      {
+        id: "m_1",
+        naziv: "Muzej Slavonije",
+        vrijeme: isHR
+          ? "Uto - Sub: 10:00 - 18:00"
+          : "Tue - Sat: 10:00 AM - 06:00 PM",
         opis: isHR
-          ? "Iznajmite bicikl na jednoj od brojnih stanica u gradu i provozajte se najdužom i najsigurnijom mrežom biciklističkih staza u Hrvatskoj."
-          : "Rent a bike at one of the many city stations and ride along the longest and safest bicycle path network in Croatia.",
-        info: isHR ? "Aplikacija: Nextbike" : "App: Nextbike",
-        slika: require("../../assets/images/emobi.jpg"),
-        qrLink:
-          "https://bikesharemap.com/osijek/#/13.204798330578056/18.6779/45.5395/",
+          ? "Najveći muzej općeg tipa u Hrvatskoj.\n\nCijene ulaznica:\n• Odrasli: 3,00 €\n• Učenici, studenti i umirovljenici: 1,50 €\n• Djeca (do 7 god.): Besplatno\n• Obiteljska ulaznica: 5,00 €"
+          : "The largest general-type museum in Croatia.\n\nTicket prices:\n• Adults: 3.00 €\n• Students and Seniors: 1.50 €\n• Children (under 7): Free\n• Family ticket: 5.00 €",
+        info: isHR
+          ? "Skeniraj QR za kupnju ulaznice"
+          : "Scan QR to buy tickets",
+        qrLink: "https://mso.hr",
+        slika: require("../../assets/images/mso.jpg"),
+      },
+      {
+        id: "m_2",
+        naziv: "Arheološki muzej Osijek",
+        vrijeme: isHR
+          ? "Uto - Sub: 10:00 - 18:00"
+          : "Tue - Sat: 10:00 AM - 06:00 PM",
+        opis: isHR
+          ? "Prikazuje povijest regije od prapovijesti do srednjeg vijeka.\n\nCijene ulaznica:\n• Odrasli: 3,00 €\n• Učenici, studenti i umirovljenici: 1,50 €\n• Djeca (do 7 god.): Besplatno\n• Obiteljska ulaznica: 5,00 €"
+          : "Showcases the region's history from prehistory to the Middle Ages.\n\nTicket prices:\n• Adults: 3.00 €\n• Students and Seniors: 1.50 €\n• Children (under 7): Free\n• Family ticket: 5.00 €",
+        info: isHR
+          ? "Skeniraj QR za kupnju ulaznice"
+          : "Scan QR to buy tickets",
+        qrLink: "https://amo.hr",
+        slika: require("../../assets/images/arheoloski.png"),
+      },
+      {
+        id: "m_3",
+        naziv: "Muzej likovnih umjetnosti",
+        vrijeme: isHR
+          ? "Uto - Pet: 10:00 - 20:00 | Sub - Ned: 10:00 - 13:00"
+          : "Tue - Fri: 10:00 AM - 08:00 PM | Sat - Sun: 10:00 AM - 01:00 PM",
+        opis: isHR
+          ? "Bogata zbirka slika i skulptura od 18. do 20. stoljeća.\n\nCijene ulaznica:\n• Odrasli: 5,00 €\n• Učenici, studenti i umirovljenici: 3,50 €\n• Djeca (do 7 god.): Besplatno\n• Obiteljska ulaznica: 8,50 €"
+          : "Rich collection of paintings and sculptures from the 18th to the 20th century.\n\nTicket prices:\n• Adults: 5.00 €\n• Students and Seniors: 3.50 €\n• Children (under 7): Free\n• Family ticket: 8.50 €",
+        info: isHR
+          ? "Skeniraj QR za kupnju ulaznice"
+          : "Scan QR to buy tickets",
+        qrLink: "https://mlu.hr",
+        slika: require("../../assets/images/mlu.jpg"),
       },
     ],
   };

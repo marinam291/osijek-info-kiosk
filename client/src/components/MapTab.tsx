@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  ImageBackground,
+} from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { useTheme } from "../context/ThemeContext";
 
@@ -96,151 +103,199 @@ export default function MapTab({ language, colors }: MapTabProps) {
   const mapEmbedUrl = `https://maps.google.com/maps?q=45.5585522,18.678293&hl=${langKey.toLowerCase()}&z=15&output=embed`;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.mapWrapper}>
-        {React.createElement("iframe", {
-          src: mapEmbedUrl,
-          style: {
-            width: "100%",
-            height: "100%",
-            border: 0,
-            borderRadius: 20,
-          },
-          title: language === "HR" ? "Karta Osijeka" : "Map of Osijek",
-        })}
-      </View>
-
+    <ImageBackground
+      source={require("../../assets/images/pocetna.png")}
+      style={styles.bgContainer}
+    >
       <View
         style={[
-          styles.kioskBadge,
-          {
-            backgroundColor: colors.cardBackground,
-            borderColor: colors.accent,
-          },
+          styles.bgOverlay,
+          { backgroundColor: colors.background + "99" },
         ]}
       >
-        <View style={[styles.kioskDot, { backgroundColor: colors.accent }]} />
-        <Text style={[styles.kioskBadgeText, { color: colors.textPrimary }]}>
-          {language === "HR" ? "VI STE OVDJE" : "YOU ARE HERE"}
-        </Text>
-      </View>
+        <View style={styles.container}>
+          <View style={styles.mapWrapper}>
+            {React.createElement("iframe", {
+              src: mapEmbedUrl,
+              style: {
+                width: "100%",
+                height: "100%",
+                border: 0,
+                borderRadius: 20,
+              },
+              title: language === "HR" ? "Karta Osijeka" : "Map of Osijek",
+            })}
+          </View>
 
-      <View style={styles.markersBar}>
-        {osijekLocations.map((loc, index) => (
-          <TouchableOpacity
-            key={index}
+          <View
             style={[
-              styles.markerButton,
+              styles.kioskBadge,
               {
                 backgroundColor: colors.cardBackground,
                 borderColor: colors.accent,
               },
             ]}
-            onPress={() => setSelectedLocation(loc)}
           >
+            <View
+              style={[styles.kioskDot, { backgroundColor: colors.accent }]}
+            />
             <Text
-              style={[styles.markerButtonText, { color: colors.textPrimary }]}
+              style={[styles.kioskBadgeText, { color: colors.textPrimary }]}
             >
-              {loc.naziv[langKey]}
+              {language === "HR" ? "VI STE OVDJE" : "YOU ARE HERE"}
             </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+          </View>
 
-      <Modal
-        visible={selectedLocation !== null}
-        transparent={true}
-        animationType="slide"
-      >
-        <View style={styles.modalOverlay}>
-          <View
-            style={[
-              styles.modalContent,
-              {
-                backgroundColor: colors.cardBackground,
-                borderColor: colors.border,
-              },
-            ]}
-          >
-            <TouchableOpacity
-              style={[
-                styles.closeButton,
-                { backgroundColor: colors.background },
-              ]}
-              onPress={() => setSelectedLocation(null)}
-            >
-              <Text style={[styles.closeText, { color: colors.textPrimary }]}>
-                ✕
-              </Text>
-            </TouchableOpacity>
-
-            {selectedLocation && (
-              <>
-                <View style={styles.modalHeader}>
-                  <Text
-                    style={[styles.modalTitle, { color: colors.textPrimary }]}
-                  >
-                    {selectedLocation.naziv[langKey]}
-                  </Text>
-                  <Text
-                    style={[styles.modalDesc, { color: colors.textSecondary }]}
-                  >
-                    {selectedLocation.opis[langKey]}
-                  </Text>
-                  <Text
-                    style={[styles.modalDistance, { color: colors.accent }]}
-                  >
-                    {language === "HR"
-                      ? "Procijenjeno vrijeme hoda od Šetača: "
-                      : "Est. walking time from Šetač: "}
-                    {selectedLocation.vrijemeHoda[langKey]}
-                  </Text>
-                </View>
-
-                <View
+          <View style={styles.markersBar}>
+            {osijekLocations.map((loc, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.markerButton,
+                  {
+                    backgroundColor: colors.cardBackground,
+                    borderColor: colors.accent,
+                  },
+                ]}
+                onPress={() => setSelectedLocation(loc)}
+              >
+                <Text
                   style={[
-                    styles.qrBox,
-                    {
-                      backgroundColor: colors.background,
-                      borderColor: colors.border,
-                    },
+                    styles.markerButtonText,
+                    { color: colors.textPrimary },
                   ]}
                 >
-                  <Text style={[styles.qrTitle, { color: colors.textPrimary }]}>
-                    {language === "HR"
-                      ? "Preuzmite navigaciju"
-                      : "Get Directions"}
-                  </Text>
-                  <Text style={[styles.qrSub, { color: colors.textSecondary }]}>
-                    {language === "HR"
-                      ? "Skenirajte kod mobitelom za točnu pješačku rutu od Šetača do cilja."
-                      : "Scan with your phone to open walking directions starting from Šetač."}
-                  </Text>
-
-                  <View style={styles.qrWrapper}>
-                    <QRCode
-                      value={selectedLocation.googleMapsUrl}
-                      size={200}
-                      color="#000000"
-                      backgroundColor="#FFFFFF"
-                    />
-                  </View>
-                </View>
-              </>
-            )}
+                  {loc.naziv[langKey]}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
+
+          <Modal
+            visible={selectedLocation !== null}
+            transparent={true}
+            animationType="slide"
+          >
+            <View style={styles.modalOverlay}>
+              <View
+                style={[
+                  styles.modalContent,
+                  {
+                    backgroundColor: colors.cardBackground,
+                    borderColor: colors.border,
+                  },
+                ]}
+              >
+                <TouchableOpacity
+                  style={[
+                    styles.closeButton,
+                    { backgroundColor: colors.background },
+                  ]}
+                  onPress={() => setSelectedLocation(null)}
+                >
+                  <Text
+                    style={[styles.closeText, { color: colors.textPrimary }]}
+                  >
+                    ✕
+                  </Text>
+                </TouchableOpacity>
+
+                {selectedLocation && (
+                  <>
+                    <View style={styles.modalHeader}>
+                      <Text
+                        style={[
+                          styles.modalTitle,
+                          { color: colors.textPrimary },
+                        ]}
+                      >
+                        {selectedLocation.naziv[langKey]}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.modalDesc,
+                          { color: colors.textSecondary },
+                        ]}
+                      >
+                        {selectedLocation.opis[langKey]}
+                      </Text>
+                      <Text
+                        style={[styles.modalDistance, { color: colors.accent }]}
+                      >
+                        {language === "HR"
+                          ? "Procijenjeno vrijeme hoda od Šetača: "
+                          : "Est. walking time from Šetač: "}
+                        {selectedLocation.vrijemeHoda[langKey]}
+                      </Text>
+                    </View>
+
+                    <View
+                      style={[
+                        styles.qrBox,
+                        {
+                          backgroundColor: colors.background,
+                          borderColor: colors.border,
+                        },
+                      ]}
+                    >
+                      <Text
+                        style={[styles.qrTitle, { color: colors.textPrimary }]}
+                      >
+                        {language === "HR"
+                          ? "Preuzmite navigaciju"
+                          : "Get Directions"}
+                      </Text>
+                      <Text
+                        style={[styles.qrSub, { color: colors.textSecondary }]}
+                      >
+                        {language === "HR"
+                          ? "Skenirajte kod mobitelom za točnu pješačku rutu od Šetača do cilja."
+                          : "Scan with your phone to open walking directions starting from Šetač."}
+                      </Text>
+
+                      <View style={styles.qrWrapper}>
+                        <QRCode
+                          value={selectedLocation.googleMapsUrl}
+                          size={200}
+                          color="#000000"
+                          backgroundColor="#FFFFFF"
+                        />
+                      </View>
+                    </View>
+                  </>
+                )}
+              </View>
+            </View>
+          </Modal>
         </View>
-      </Modal>
-    </View>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  bgContainer: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
+  bgOverlay: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
   container: {
     flex: 1,
     borderRadius: 20,
     overflow: "hidden",
     position: "relative",
+    marginTop: 110,
+    marginBottom: 40,
+    marginHorizontal: 40,
+    elevation: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowRadius: 15,
   },
   mapWrapper: {
     width: "100%",
@@ -250,8 +305,8 @@ const styles = StyleSheet.create({
   },
   kioskBadge: {
     position: "absolute",
-    top: 20,
-    left: 20,
+    top: 30,
+    right: 30,
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 12,
