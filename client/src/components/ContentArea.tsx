@@ -4,6 +4,7 @@ import {
   Text,
   ScrollView,
   StyleSheet,
+  ImageBackground,
   ImageSourcePropType,
 } from "react-native";
 import { getOsijekData } from "../data/osijekData";
@@ -104,59 +105,75 @@ export default function ContentArea({
   }
 
   return (
-    <View style={[styles.mainContent, { backgroundColor: colors.background }]}>
-      <FadeInView triggerKey={`${activeTab}-${language}-${tourismCategory}`}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            {title}
-          </Text>
+    <ImageBackground
+      source={require("../../assets/images/pocetna.png")}
+      style={styles.backgroundImage}
+      resizeMode="cover"
+    >
+      <View
+        style={[
+          styles.mainContent,
+          { backgroundColor: colors.background + "E6" },
+        ]}
+      >
+        <FadeInView triggerKey={`${activeTab}-${language}-${tourismCategory}`}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+              {title}
+            </Text>
 
-          {activeTab === "turizam" && (
-            <ServiceFilters
-              items={getTourismCategories(isHR)}
-              activeKey={tourismCategory}
-              onSelect={setTourismCategory}
-              colors={colors}
-            />
-          )}
+            {activeTab === "turizam" && (
+              <ServiceFilters
+                items={getTourismCategories(isHR)}
+                activeKey={tourismCategory}
+                onSelect={setTourismCategory}
+                colors={colors}
+              />
+            )}
 
-          {activeTab === "usluge" ? (
-            <ServicesView
-              currentData={currentData}
-              language={language}
-              colors={colors}
-              onItemPress={setSelectedItem}
-            />
-          ) : (
-            <View>
-              <View style={styles.gridContainer}>
-                {standardData.map((item) => (
-                  <GridCard
-                    key={item.id}
-                    item={item}
-                    colors={colors}
-                    onPress={setSelectedItem}
-                  />
-                ))}
+            {activeTab === "usluge" ? (
+              <ServicesView
+                currentData={currentData}
+                language={language}
+                colors={colors}
+                onItemPress={setSelectedItem}
+              />
+            ) : (
+              <View>
+                <View style={styles.gridContainer}>
+                  {standardData.map((item) => (
+                    <GridCard
+                      key={item.id}
+                      item={item}
+                      colors={colors}
+                      onPress={setSelectedItem}
+                    />
+                  ))}
+                </View>
               </View>
-            </View>
-          )}
-        </ScrollView>
-      </FadeInView>
+            )}
+          </ScrollView>
+        </FadeInView>
 
-      <ItemModal
-        selectedItem={selectedItem}
-        setSelectedItem={setSelectedItem}
-        fullScreenImage={fullScreenImage}
-        setFullScreenImage={setFullScreenImage}
-        language={language}
-        colors={colors}
-      />
-    </View>
+        <ItemModal
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
+          fullScreenImage={fullScreenImage}
+          setFullScreenImage={setFullScreenImage}
+          language={language}
+          colors={colors}
+        />
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
   mainContent: {
     flex: 1,
     paddingHorizontal: 40,
