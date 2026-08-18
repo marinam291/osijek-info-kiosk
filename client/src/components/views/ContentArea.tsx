@@ -16,8 +16,8 @@ import GridCard from "../common/GridCard";
 import HomeView from "../views/HomeView";
 import ServicesView from "../views/ServicesView";
 import ServiceFilters from "../common/ServiceFilters";
-import CalendarWidget from "../widgets/CalendarWidget";
 import MayorContactWidget from "../widgets/MayorContactWidget";
+import EventsView from "../views/EventsView";
 
 export type ContentItem = {
   id: string | number;
@@ -40,10 +40,7 @@ type ContentProps = {
 const TAB_TITLES: Record<string, { HR: string; EN: string }> = {
   turizam: { HR: "Turizam i znamenitosti", EN: "Tourism & Landmarks" },
   dogadjanja: { HR: "Događanja", EN: "Events" },
-  usluge: {
-    HR: "Važne usluge i imenik",
-    EN: "Important Services & Directory",
-  },
+  usluge: { HR: "Važne usluge i imenik", EN: "Important Services & Directory" },
   gradonacelnik: {
     HR: "Kontaktirajte gradonačelnika",
     EN: "Contact the Mayor",
@@ -72,9 +69,7 @@ export default function ContentArea({
 
   if (activeTab !== prevActiveTab) {
     setPrevActiveTab(activeTab);
-    if (tourismCategory !== "sve") {
-      setTourismCategory("sve");
-    }
+    if (tourismCategory !== "sve") setTourismCategory("sve");
   }
 
   if (activeTab === "pocetna") {
@@ -100,13 +95,9 @@ export default function ContentArea({
   if (activeTab === "turizam") {
     const landmarks = currentData.turizam || [];
     const museums = currentData.muzeji || [];
-    if (tourismCategory === "znamenitosti") {
-      standardData = landmarks;
-    } else if (tourismCategory === "muzeji") {
-      standardData = museums;
-    } else {
-      standardData = [...landmarks, ...museums];
-    }
+    if (tourismCategory === "znamenitosti") standardData = landmarks;
+    else if (tourismCategory === "muzeji") standardData = museums;
+    else standardData = [...landmarks, ...museums];
   } else if (activeTab === "dogadjanja") {
     standardData = (currentData.dogadjanja as ContentItem[]) || [];
   }
@@ -125,101 +116,14 @@ export default function ContentArea({
       >
         <FadeInView triggerKey={`${activeTab}-${language}-${tourismCategory}`}>
           {activeTab === "dogadjanja" ? (
-            <View style={{ flex: 1 }}>
-              <Text
-                style={[styles.sectionTitle, { color: colors.textPrimary }]}
-              >
-                {title}
-              </Text>
-
-              <View style={styles.calendarWrapper}>
-                <ScrollView
-                  style={styles.calendarLeft}
-                  showsVerticalScrollIndicator={false}
-                >
-                  <CalendarWidget
-                    events={standardData.filter(
-                      (item): item is ContentItem & { datum: string } =>
-                        !!item.datum,
-                    )}
-                    colors={colors}
-                    language={language}
-                    onEventPress={setSelectedItem}
-                  />
-                </ScrollView>
-
-                <ScrollView
-                  style={[
-                    styles.calendarRight,
-                    {
-                      backgroundColor: colors.cardBackground,
-                      borderColor: colors.border,
-                    },
-                  ]}
-                  contentContainerStyle={styles.calendarRightContent}
-                  showsVerticalScrollIndicator={false}
-                >
-                  <Text
-                    style={[styles.detailsTitle, { color: colors.textPrimary }]}
-                  >
-                    {isHR ? "Detalji događaja" : "Event Details"}
-                  </Text>
-                  {selectedItem ? (
-                    <View style={styles.detailsContent}>
-                      <Text
-                        style={[
-                          styles.detailsItemTitle,
-                          { color: colors.textPrimary },
-                        ]}
-                      >
-                        {selectedItem.naziv}
-                      </Text>
-                      {selectedItem.datum && (
-                        <Text
-                          style={[
-                            styles.detailsItemSub,
-                            { color: colors.accent },
-                          ]}
-                        >
-                          {isHR ? "Datum: " : "Date: "} {selectedItem.datum}
-                        </Text>
-                      )}
-                      {selectedItem.opis && (
-                        <Text
-                          style={[
-                            styles.detailsItemDescription,
-                            { color: colors.textSecondary },
-                          ]}
-                        >
-                          {selectedItem.opis}
-                        </Text>
-                      )}
-                      {selectedItem.info && (
-                        <Text
-                          style={[
-                            styles.detailsItemInfo,
-                            { color: colors.textSecondary },
-                          ]}
-                        >
-                          {selectedItem.info}
-                        </Text>
-                      )}
-                    </View>
-                  ) : (
-                    <Text
-                      style={[
-                        styles.detailsPlaceholder,
-                        { color: colors.textSecondary },
-                      ]}
-                    >
-                      {isHR
-                        ? "Odaberite događaj iz kalendara za prikaz informacija."
-                        : "Select an event from the calendar to view information."}
-                    </Text>
-                  )}
-                </ScrollView>
-              </View>
-            </View>
+            <EventsView
+              title={title}
+              standardData={standardData}
+              selectedItem={selectedItem}
+              setSelectedItem={setSelectedItem}
+              colors={colors}
+              language={language}
+            />
           ) : activeTab === "gradonacelnik" ? (
             <ScrollView showsVerticalScrollIndicator={false}>
               <Text
@@ -305,56 +209,5 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 24,
     marginTop: 10,
-  },
-  calendarWrapper: {
-    flex: 1,
-    flexDirection: "row",
-    gap: 30,
-    marginTop: 10,
-  },
-  calendarLeft: {
-    flex: 0.65,
-  },
-  calendarRight: {
-    flex: 0.35,
-    borderRadius: 20,
-    borderWidth: 1,
-  },
-  calendarRightContent: {
-    padding: 24,
-    justifyContent: "flex-start",
-  },
-  detailsTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
-  detailsContent: {
-    marginTop: 10,
-  },
-  detailsItemTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  detailsItemSub: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 12,
-  },
-  detailsItemDescription: {
-    fontSize: 16,
-    lineHeight: 24,
-    marginBottom: 10,
-  },
-  detailsItemInfo: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontStyle: "italic",
-  },
-  detailsPlaceholder: {
-    fontSize: 16,
-    fontStyle: "italic",
-    marginTop: 20,
   },
 });
