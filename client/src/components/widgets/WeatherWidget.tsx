@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -52,11 +52,13 @@ export default function WeatherWidget({
     return () => clearInterval(interval);
   }, []);
 
-  if (!weather) return null;
+  // useMemo je smješten ovdje, iznad bilo kakvih uvjeta (returna)
+  const weeklyForecast = useMemo(() => {
+    return getNextDays(7, isHR);
+  }, [isHR]);
 
   const isScreen = variant === "screensaver";
   const color = isScreen ? "#FFFFFF" : textColor;
-  const weeklyForecast = getNextDays(7, isHR);
 
   return (
     <>
@@ -66,11 +68,13 @@ export default function WeatherWidget({
         style={[styles.container, isScreen ? styles.screen : styles.side]}
       >
         <Feather
-          name={weather.icon as keyof typeof Feather.glyphMap}
+          name={(weather?.icon || "sun") as keyof typeof Feather.glyphMap}
           size={24}
           color={color}
         />
-        <Text style={[styles.text, { color }]}>{weather.temperature}°C</Text>
+        <Text style={[styles.text, { color }]}>
+          {weather ? `${weather.temperature}°C` : "--°C"}
+        </Text>
       </TouchableOpacity>
 
       <Modal visible={modalVisible} transparent={true} animationType="fade">
@@ -107,12 +111,12 @@ export default function WeatherWidget({
 
             <View style={styles.currentSection}>
               <Feather
-                name={weather.icon as keyof typeof Feather.glyphMap}
+                name={(weather?.icon || "sun") as keyof typeof Feather.glyphMap}
                 size={48}
                 color={colors.accent}
               />
               <Text style={[styles.modalTemp, { color: colors.textPrimary }]}>
-                {weather.temperature}°C
+                {weather ? `${weather.temperature}°C` : "--°C"}
               </Text>
               <Text style={[styles.modalSub, { color: colors.textSecondary }]}>
                 {isHR

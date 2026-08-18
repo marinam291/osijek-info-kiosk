@@ -13,20 +13,11 @@ import {
 import { useTheme } from "../../context/ThemeContext";
 import ItemImageGallery from "./ItemImageGallery";
 import ItemQrSection from "./ItemQrSection";
-
-type ItemType = {
-  id: string | number;
-  naziv?: string;
-  opis?: string;
-  slika?: ImageSourcePropType;
-  galerija?: ImageSourcePropType[];
-  qrLink?: string;
-  vrijeme?: string;
-} | null;
+import { ContentItem } from "../views/ContentArea";
 
 type ItemModalProps = {
-  selectedItem: ItemType;
-  setSelectedItem: (item: ItemType) => void;
+  selectedItem: ContentItem | null;
+  setSelectedItem: (item: ContentItem | null) => void;
   fullScreenImage: ImageSourcePropType | null;
   setFullScreenImage: (img: ImageSourcePropType | null) => void;
   language: string;
@@ -42,6 +33,11 @@ export default function ItemModal({
   colors,
 }: ItemModalProps) {
   const isHR = language === "HR";
+
+  const displayNaziv =
+    typeof selectedItem?.naziv === "object" && selectedItem.naziv !== null
+      ? selectedItem.naziv[isHR ? "HR" : "EN"]
+      : selectedItem?.naziv;
 
   return (
     <>
@@ -90,7 +86,7 @@ export default function ItemModal({
               }
             >
               <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
-                {selectedItem?.naziv}
+                {displayNaziv}
               </Text>
 
               <ItemImageGallery

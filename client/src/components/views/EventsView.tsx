@@ -23,6 +23,12 @@ export default function EventsView({
 }: EventsViewProps) {
   const isHR = language === "HR";
 
+  // Sigurno izvlačenje naziva ovisno o jeziku
+  const displayNaziv =
+    typeof selectedItem?.naziv === "object" && selectedItem.naziv !== null
+      ? selectedItem.naziv[isHR ? "HR" : "EN"]
+      : selectedItem?.naziv;
+
   return (
     <View style={{ flex: 1 }}>
       <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
@@ -35,9 +41,17 @@ export default function EventsView({
           showsVerticalScrollIndicator={false}
         >
           <CalendarWidget
-            events={standardData.filter(
-              (item): item is ContentItem & { datum: string } => !!item.datum,
-            )}
+            events={standardData
+              .filter(
+                (item): item is ContentItem & { datum: string } => !!item.datum,
+              )
+              .map((item) => ({
+                ...item,
+                naziv:
+                  typeof item.naziv === "object" && item.naziv !== null
+                    ? item.naziv[isHR ? "HR" : "EN"]
+                    : item.naziv,
+              }))}
             colors={colors}
             language={language}
             onEventPress={setSelectedItem}
@@ -63,7 +77,7 @@ export default function EventsView({
               <Text
                 style={[styles.detailsItemTitle, { color: colors.textPrimary }]}
               >
-                {selectedItem.naziv}
+                {displayNaziv}
               </Text>
               {selectedItem.datum && (
                 <Text style={[styles.detailsItemSub, { color: colors.accent }]}>

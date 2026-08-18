@@ -21,7 +21,7 @@ import EventsView from "../views/EventsView";
 
 export type ContentItem = {
   id: string | number;
-  naziv?: string;
+  naziv?: string | { HR: string; EN: string };
   opis?: string;
   info?: string;
   slika?: ImageSourcePropType;

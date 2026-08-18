@@ -52,14 +52,17 @@ export const getOsijekData = (language: string) => {
         opis: isHR
           ? "Jedinstveni niz secesijskih palača s kraja 19. i početka 20. stoljeća, najljepši primjer secesijske arhitekture u ovom dijelu Europe."
           : "A unique row of Secessionist palaces from the late 19th and early 20th centuries, the finest example of Secessionist architecture in this part of Europe.",
-        slika: require("../../assets/images/promenada.jpg"), // Možeš zamijeniti vlastitom slikom secesije
+        slika: require("../../assets/images/promenada.jpg"),
         qrLink: "https://www.tzosijek.hr",
       },
     ],
     muzeji: [
       {
         id: "m_1",
-        naziv: "Muzej Slavonije",
+        naziv: {
+          HR: "Muzej Slavonije",
+          EN: "Museum of Slavonia",
+        },
         vrijeme: isHR
           ? "Uto - Sub: 10:00 - 18:00"
           : "Tue - Sat: 10:00 AM - 06:00 PM",
@@ -74,7 +77,10 @@ export const getOsijekData = (language: string) => {
       },
       {
         id: "m_2",
-        naziv: "Arheološki muzej Osijek",
+        naziv: {
+          HR: "Arheološki muzej Osijek",
+          EN: "Archaeological Museum Osijek",
+        },
         vrijeme: isHR
           ? "Uto - Sub: 10:00 - 18:00"
           : "Tue - Sat: 10:00 AM - 06:00 PM",
@@ -89,7 +95,10 @@ export const getOsijekData = (language: string) => {
       },
       {
         id: "m_3",
-        naziv: "Muzej likovnih umjetnosti",
+        naziv: {
+          HR: "Muzej likovnih umjetnosti",
+          EN: "Museum of Fine Arts",
+        },
         vrijeme: isHR
           ? "Uto - Pet: 10:00 - 20:00 | Sub - Ned: 10:00 - 13:00"
           : "Tue - Fri: 10:00 AM - 08:00 PM | Sat - Sun: 10:00 AM - 01:00 PM",
@@ -159,7 +168,6 @@ export const getOsijekData = (language: string) => {
         slika: require("../../assets/images/oljk1.jpg"),
         qrLink: "https://www.tzosijek.hr",
       },
-      // Primjer kako strukturirati podatke
       {
         id: "dani-piva-1",
         naziv: "Dani prvog hrvatskog piva (1. dan)",

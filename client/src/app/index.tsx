@@ -111,6 +111,7 @@ function KioskMain() {
                   <View style={{ marginTop: 8 }}>
                     <WeatherWidget
                       variant="sidebar"
+                      language={language}
                       textColor={colors.textPrimary}
                     />
                   </View>
