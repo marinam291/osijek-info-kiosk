@@ -1,10 +1,19 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Animated } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Animated,
+  Image,
+  Text,
+  TouchableOpacity,
+} from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
 import Screensaver from "../components/Screensaver";
-import Sidebar from "../components/Sidebar";
 import ContentArea from "../components/ContentArea";
 import FadeInView from "../components/FadeInView";
+import Clock from "../components/Clock";
+import WeatherWidget from "../components/WeatherWidget";
 
 function KioskMain() {
   const { theme, setTheme, colors } = useTheme();
@@ -12,7 +21,8 @@ function KioskMain() {
   const [isAppStarted, setIsAppStarted] = useState(false);
   const [screensaverOpacity] = useState(() => new Animated.Value(1));
   const [language, setLanguage] = useState<string>("HR");
-  const [activeTab, setActiveTab] = useState<string>("turizam");
+
+  const [activeTab, setActiveTab] = useState<string>("pocetna");
 
   const handleStartApp = () => {
     setIsAppStarted(true);
@@ -31,12 +41,82 @@ function KioskMain() {
       {isAppStarted && (
         <FadeInView triggerKey="main-layout" duration={600}>
           <View style={styles.mainLayout}>
-            <Sidebar
+            {activeTab !== "pocetna" && (
+              <TouchableOpacity
+                style={[
+                  styles.backButton,
+                  {
+                    backgroundColor: colors.cardBackground,
+                    borderColor: colors.border,
+                  },
+                ]}
+                onPress={() => setActiveTab("pocetna")}
+                activeOpacity={0.8}
+              >
+                <Feather
+                  name="arrow-left"
+                  size={28}
+                  color={colors.textPrimary}
+                />
+                <Text
+                  style={[styles.backButtonText, { color: colors.textPrimary }]}
+                >
+                  {language === "HR" ? "Natrag" : "Back"}
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            <ContentArea
               activeTab={activeTab}
-              setActiveTab={setActiveTab}
               language={language}
+              onNavigate={setActiveTab}
             />
-            <ContentArea activeTab={activeTab} language={language} />
+
+            {activeTab === "pocetna" && (
+              <View
+                style={[
+                  styles.homeHeaderAbsolute,
+                  {
+                    backgroundColor:
+                      theme === "light"
+                        ? "rgba(255, 255, 255, 0.7)"
+                        : "rgba(0, 0, 0, 0.5)",
+                  },
+                ]}
+              >
+                <View style={styles.homeLogoContainer}>
+                  <Image
+                    source={require("../../assets/images/logo.png")}
+                    style={styles.homeLogoImage}
+                    resizeMode="contain"
+                  />
+                  <View>
+                    <Text
+                      style={[styles.homeLogoBadge, { color: colors.accent }]}
+                    >
+                      INFO KIOSK
+                    </Text>
+                    <Text
+                      style={[
+                        styles.homeLogoText,
+                        { color: colors.textPrimary },
+                      ]}
+                    >
+                      GRAD OSIJEK
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.homeTimeContainer}>
+                  <Clock language={language} colors={colors} />
+                  <View style={{ marginTop: 8 }}>
+                    <WeatherWidget
+                      variant="sidebar"
+                      textColor={colors.textPrimary}
+                    />
+                  </View>
+                </View>
+              </View>
+            )}
           </View>
         </FadeInView>
       )}
@@ -81,5 +161,64 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     zIndex: 9999,
+  },
+  homeHeaderAbsolute: {
+    position: "absolute",
+    top: 40,
+    left: 40,
+    right: 40,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    zIndex: 10,
+    padding: 20,
+    borderRadius: 20,
+  },
+  homeLogoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+  },
+  homeLogoImage: {
+    width: 60,
+    height: 70,
+  },
+  homeLogoBadge: {
+    fontSize: 12,
+    fontWeight: "bold",
+    letterSpacing: 2,
+    marginBottom: 4,
+  },
+  homeLogoText: {
+    fontSize: 26,
+    fontWeight: "bold",
+    letterSpacing: 1,
+  },
+  homeTimeContainer: {
+    alignItems: "flex-end",
+  },
+  backButton: {
+    position: "absolute",
+    top: 30,
+    left: 30,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 50,
+    borderWidth: 2,
+    zIndex: 100,
+    elevation: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+  },
+  backButtonText: {
+    fontSize: 22,
+    fontWeight: "bold",
+    textTransform: "uppercase",
+    letterSpacing: 1,
   },
 });

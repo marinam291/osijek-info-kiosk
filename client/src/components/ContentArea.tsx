@@ -16,6 +16,7 @@ import ServiceFilters from "./ServiceFilters";
 import TaxiDirectory, { TaxiService } from "./TaxiDirectory";
 import HeroCard from "./HeroCard";
 import GridCard from "./GridCard";
+import HomeView from "./HomeView";
 
 export type ContentItem = {
   id: string | number;
@@ -31,9 +32,14 @@ export type ContentItem = {
 type ContentProps = {
   activeTab: string;
   language: string;
+  onNavigate: (tab: string) => void;
 };
 
-export default function ContentArea({ activeTab, language }: ContentProps) {
+export default function ContentArea({
+  activeTab,
+  language,
+  onNavigate,
+}: ContentProps) {
   const { colors } = useTheme();
   const currentData = getOsijekData(language);
 
@@ -54,6 +60,14 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
     setServiceCategory("sve");
     setAccommodationSubCategory("sve");
     setTransportSubCategory("sve");
+  }
+
+  if (activeTab === "pocetna") {
+    return (
+      <FadeInView triggerKey={`${activeTab}-${language}`}>
+        <HomeView language={language} colors={colors} onNavigate={onNavigate} />
+      </FadeInView>
+    );
   }
 
   if (activeTab === "karta") {
@@ -298,7 +312,12 @@ export default function ContentArea({ activeTab, language }: ContentProps) {
 }
 
 const styles = StyleSheet.create({
-  mainContent: { flex: 1, padding: 40 },
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: 40,
+    paddingBottom: 40,
+    paddingTop: 110,
+  },
   sectionTitle: {
     fontSize: 42,
     fontWeight: "bold",
