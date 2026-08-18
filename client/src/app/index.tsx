@@ -9,11 +9,11 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
-import Screensaver from "../components/Screensaver";
-import ContentArea from "../components/ContentArea";
-import FadeInView from "../components/FadeInView";
-import Clock from "../components/Clock";
-import WeatherWidget from "../components/WeatherWidget";
+import Screensaver from "../components/widgets/Screensaver";
+import ContentArea from "../components/views/ContentArea";
+import FadeInView from "../components/common/FadeInView";
+import Clock from "../components/common/Clock";
+import WeatherWidget from "../components/widgets/WeatherWidget";
 
 function KioskMain() {
   const { theme, setTheme, colors } = useTheme();

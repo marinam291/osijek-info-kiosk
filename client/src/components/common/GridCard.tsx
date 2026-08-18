@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Image, View, Text, StyleSheet } from "react-native";
-import { ContentItem } from "./ContentArea";
+import { ContentItem } from "../views/ContentArea";
 
 type ThemeColors = {
   cardBackground: string;

@@ -4,7 +4,6 @@ export type ThemeMode = "dark" | "light";
 
 export interface ThemeColors {
   background: string;
-  sidebarBackground: string;
   cardBackground: string;
   textPrimary: string;
   textSecondary: string;
@@ -18,7 +17,6 @@ export interface ThemeColors {
 export const themes: Record<ThemeMode, ThemeColors> = {
   dark: {
     background: "#0B0F19",
-    sidebarBackground: "#070A12",
     cardBackground: "#1E293B",
     textPrimary: "#FFFFFF",
     textSecondary: "#94A3B8",
@@ -30,7 +28,6 @@ export const themes: Record<ThemeMode, ThemeColors> = {
   },
   light: {
     background: "#F4F6F8",
-    sidebarBackground: "#FFFFFF",
     cardBackground: "#FFFFFF",
     textPrimary: "#0A2540",
     textSecondary: "#4A5568",

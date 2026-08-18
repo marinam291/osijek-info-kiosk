@@ -8,7 +8,7 @@ import {
   ImageBackground,
 } from "react-native";
 import QRCode from "react-native-qrcode-svg";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "../../context/ThemeContext";
 
 export const osijekLocations = [
   {
@@ -104,7 +104,7 @@ export default function MapTab({ language, colors }: MapTabProps) {
 
   return (
     <ImageBackground
-      source={require("../../assets/images/pocetna.png")}
+      source={require("../../../assets/images/pocetna.png")}
       style={styles.bgContainer}
     >
       <View
