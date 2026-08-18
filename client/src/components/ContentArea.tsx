@@ -34,7 +34,7 @@ type ContentProps = {
   onNavigate: (tab: string) => void;
 };
 
-const tabTitles: Record<string, { HR: string; EN: string }> = {
+const TAB_TITLES: Record<string, { HR: string; EN: string }> = {
   turizam: { HR: "Turizam i znamenitosti", EN: "Tourism & Landmarks" },
   dogadjanja: { HR: "Događanja", EN: "Events" },
   usluge: {
@@ -86,7 +86,7 @@ export default function ContentArea({
     );
   }
 
-  const title = tabTitles[activeTab]?.[language as "HR" | "EN"] || "";
+  const title = TAB_TITLES[activeTab]?.[language as "HR" | "EN"] || "";
   const isHR = language === "HR";
 
   let standardData: ContentItem[] = [];
@@ -106,7 +106,7 @@ export default function ContentArea({
 
   return (
     <ImageBackground
-      source={require("../../assets/images/pocetna.png")}
+      source={require("../assets/pocetna.png")}
       style={styles.backgroundImage}
       resizeMode="cover"
     >
@@ -139,17 +139,15 @@ export default function ContentArea({
                 onItemPress={setSelectedItem}
               />
             ) : (
-              <View>
-                <View style={styles.gridContainer}>
-                  {standardData.map((item) => (
-                    <GridCard
-                      key={item.id}
-                      item={item}
-                      colors={colors}
-                      onPress={setSelectedItem}
-                    />
-                  ))}
-                </View>
+              <View style={styles.gridContainer}>
+                {standardData.map((item) => (
+                  <GridCard
+                    key={item.id}
+                    item={item}
+                    colors={colors}
+                    onPress={setSelectedItem}
+                  />
+                ))}
               </View>
             )}
           </ScrollView>
