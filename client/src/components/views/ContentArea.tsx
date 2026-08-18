@@ -17,6 +17,7 @@ import HomeView from "../views/HomeView";
 import ServicesView from "../views/ServicesView";
 import ServiceFilters from "../common/ServiceFilters";
 import CalendarWidget from "../widgets/CalendarWidget";
+import MayorContactWidget from "../widgets/MayorContactWidget";
 
 export type ContentItem = {
   id: string | number;
@@ -42,6 +43,10 @@ const TAB_TITLES: Record<string, { HR: string; EN: string }> = {
   usluge: {
     HR: "Važne usluge i imenik",
     EN: "Important Services & Directory",
+  },
+  gradonacelnik: {
+    HR: "Kontaktirajte gradonačelnika",
+    EN: "Contact the Mayor",
   },
 };
 
@@ -215,6 +220,15 @@ export default function ContentArea({
                 </ScrollView>
               </View>
             </View>
+          ) : activeTab === "gradonacelnik" ? (
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Text
+                style={[styles.sectionTitle, { color: colors.textPrimary }]}
+              >
+                {title}
+              </Text>
+              <MayorContactWidget colors={colors} language={language} />
+            </ScrollView>
           ) : (
             <ScrollView showsVerticalScrollIndicator={false}>
               <Text
