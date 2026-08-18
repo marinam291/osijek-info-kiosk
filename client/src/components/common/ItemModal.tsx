@@ -10,8 +10,9 @@ import {
   ImageSourcePropType,
   ViewStyle,
 } from "react-native";
-import QRCode from "react-native-qrcode-svg";
 import { useTheme } from "../../context/ThemeContext";
+import ItemImageGallery from "./ItemImageGallery";
+import ItemQrSection from "./ItemQrSection";
 
 type ItemType = {
   id: string | number;
@@ -92,33 +93,11 @@ export default function ItemModal({
                 {selectedItem?.naziv}
               </Text>
 
-              <View style={styles.galleryContainer}>
-                {selectedItem?.galerija ? (
-                  selectedItem.galerija.map((img, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      activeOpacity={0.8}
-                      onPress={() => setFullScreenImage(img)}
-                    >
-                      <Image source={img} style={styles.galleryImage} />
-                    </TouchableOpacity>
-                  ))
-                ) : selectedItem?.slika ? (
-                  <TouchableOpacity
-                    activeOpacity={0.8}
-                    onPress={() =>
-                      setFullScreenImage(
-                        selectedItem.slika as ImageSourcePropType,
-                      )
-                    }
-                  >
-                    <Image
-                      source={selectedItem.slika as ImageSourcePropType}
-                      style={styles.fullImage}
-                    />
-                  </TouchableOpacity>
-                ) : null}
-              </View>
+              <ItemImageGallery
+                galerija={selectedItem?.galerija}
+                slika={selectedItem?.slika}
+                onImagePress={setFullScreenImage}
+              />
 
               <Text
                 style={[
@@ -129,53 +108,11 @@ export default function ItemModal({
                 {selectedItem?.opis}
               </Text>
 
-              <View
-                style={[
-                  styles.qrSection,
-                  {
-                    backgroundColor: colors.cardBackground,
-                    borderColor: colors.border,
-                  },
-                ]}
-              >
-                <View style={styles.qrTextContent}>
-                  <Text style={[styles.qrTitle, { color: colors.textPrimary }]}>
-                    {isHR
-                      ? "Ponesi informacije sa sobom"
-                      : "Take info with you"}
-                  </Text>
-                  <Text style={[styles.qrSub, { color: colors.textSecondary }]}>
-                    {isHR ? "Skeniraj za navigaciju" : "Scan for navigation"}
-                  </Text>
-                </View>
-
-                {selectedItem?.qrLink ? (
-                  <View style={styles.qrCodeWrapper}>
-                    <QRCode
-                      value={selectedItem.qrLink}
-                      size={100}
-                      color="#000000"
-                      backgroundColor="#FFFFFF"
-                    />
-                  </View>
-                ) : (
-                  <View
-                    style={[
-                      styles.qrPlaceholder,
-                      { backgroundColor: colors.border },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.qrPlaceholderText,
-                        { color: colors.textSecondary },
-                      ]}
-                    >
-                      {isHR ? "NEMA LINKA" : "NO LINK"}
-                    </Text>
-                  </View>
-                )}
-              </View>
+              <ItemQrSection
+                qrLink={selectedItem?.qrLink}
+                isHR={isHR}
+                colors={colors}
+              />
             </ScrollView>
           </View>
         </View>
@@ -245,43 +182,11 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     textAlign: "center",
   },
-  galleryContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: 20,
-    marginBottom: 30,
-  },
-  galleryImage: { width: 350, height: 250, borderRadius: 20 },
-  fullImage: { width: 600, height: 400, borderRadius: 20 },
   modalDescription: {
     fontSize: 22,
     lineHeight: 34,
     textAlign: "center",
     maxWidth: 800,
-  },
-  qrSection: {
-    marginTop: 50,
-    flexDirection: "row",
-    padding: 30,
-    borderRadius: 20,
-    alignItems: "center",
-    borderWidth: 1,
-  },
-  qrTextContent: { marginRight: 30 },
-  qrTitle: { fontSize: 24, fontWeight: "bold" },
-  qrSub: { fontSize: 16 },
-  qrCodeWrapper: { padding: 10, backgroundColor: "#FFFFFF", borderRadius: 8 },
-  qrPlaceholder: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  qrPlaceholderText: {
-    fontSize: 10,
-    fontWeight: "bold",
   },
   fullScreenOverlay: {
     flex: 1,
