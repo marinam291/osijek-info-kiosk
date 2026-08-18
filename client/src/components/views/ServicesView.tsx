@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import ServiceFilters from "./ServiceFilters";
-import EmergencyBox from "./EmergencyBox";
-import GridCard from "./GridCard";
-import TaxiDirectory, { TaxiService } from "./TaxiDirectory";
+import ServiceFilters from "../common/ServiceFilters";
+import EmergencyBox from "../widgets/EmergencyBox";
+import GridCard from "../common/GridCard";
+import TaxiDirectory, { TaxiService } from "../widgets/TaxiDirectory";
 import { ContentItem } from "./ContentArea";
 import { ThemeColors } from "@/context/ThemeContext";
 import { getOsijekData } from "@/data/osijekData";
-import FadeInView from "./FadeInView";
+import FadeInView from "../common/FadeInView";
 
 const getServiceCategories = (isHR: boolean) => [
   { key: "sve", label: isHR ? "Sve usluge" : "All Services" },

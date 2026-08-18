@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { ThemeColors } from "../context/ThemeContext";
+import { ThemeColors } from "../../context/ThemeContext";
 
 type EmergencyProps = {
   language: string;

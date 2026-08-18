@@ -11,7 +11,7 @@ import {
   ViewStyle,
 } from "react-native";
 import QRCode from "react-native-qrcode-svg";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "../../context/ThemeContext";
 
 type ItemType = {
   id: string | number;

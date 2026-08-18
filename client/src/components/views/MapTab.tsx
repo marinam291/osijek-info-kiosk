@@ -8,7 +8,7 @@ import {
   ImageBackground,
 } from "react-native";
 import QRCode from "react-native-qrcode-svg";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "../../context/ThemeContext";
 
 export const osijekLocations = [
   {

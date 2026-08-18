@@ -7,15 +7,15 @@ import {
   ImageBackground,
   ImageSourcePropType,
 } from "react-native";
-import { getOsijekData } from "../data/osijekData";
-import { useTheme } from "../context/ThemeContext";
+import { getOsijekData } from "../../data/osijekData";
+import { useTheme } from "../../context/ThemeContext";
 import MapTab from "./MapTab";
-import ItemModal from "./ItemModal";
-import FadeInView from "./FadeInView";
-import GridCard from "./GridCard";
+import ItemModal from "../common/ItemModal";
+import FadeInView from "../common/FadeInView";
+import GridCard from "../common/GridCard";
 import HomeView from "./HomeView";
 import ServicesView from "./ServicesView";
-import ServiceFilters from "./ServiceFilters";
+import ServiceFilters from "../common/ServiceFilters";
 
 export type ContentItem = {
   id: string | number;

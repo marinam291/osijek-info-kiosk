@@ -8,7 +8,7 @@ import {
   Image,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { ThemeMode, useTheme } from "../context/ThemeContext";
+import { ThemeMode, useTheme } from "../../context/ThemeContext";
 import WeatherWidget from "./WeatherWidget";
 
 type ScreensaverProps = {
