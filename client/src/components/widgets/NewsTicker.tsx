@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Image,
   Animated,
-  ActivityIndicator,
   Platform,
   Dimensions,
 } from "react-native";
@@ -45,21 +44,14 @@ type NewsTickerProps = {
 type WPPost = {
   id: number;
   date: string;
-  title: {
-    rendered: string;
-  };
-  _embedded?: {
-    "wp:featuredmedia"?: Array<{
-      source_url: string;
-    }>;
-  };
+  title: { rendered: string };
+  _embedded?: { "wp:featuredmedia"?: Array<{ source_url: string }> };
 };
 
 export default function NewsTicker({ language, colors }: NewsTickerProps) {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-
   const [fadeAnim] = useState(() => new Animated.Value(1));
 
   const isHR = language === "HR";
@@ -71,7 +63,6 @@ export default function NewsTicker({ language, colors }: NewsTickerProps) {
           "https://www.osijek.hr/wp-json/wp/v2/posts?_embed&per_page=5",
         );
         const data = await response.json();
-
         const formattedNews = data.map((post: WPPost) => ({
           id: post.id,
           title: stripHtml(post.title?.rendered || ""),
@@ -79,7 +70,6 @@ export default function NewsTicker({ language, colors }: NewsTickerProps) {
           imageUrl:
             post._embedded?.["wp:featuredmedia"]?.[0]?.source_url || null,
         }));
-
         setNews(formattedNews);
       } catch {
         // ignore
@@ -92,15 +82,13 @@ export default function NewsTicker({ language, colors }: NewsTickerProps) {
 
   useEffect(() => {
     if (news.length === 0) return;
-
     const timer = setInterval(() => {
       Animated.timing(fadeAnim, {
         toValue: 0,
         duration: 400,
         useNativeDriver: Platform.OS !== "web",
       }).start(() => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % news.length);
-
+        setCurrentIndex((prev) => (prev + 1) % news.length);
         Animated.timing(fadeAnim, {
           toValue: 1,
           duration: 400,
@@ -108,12 +96,16 @@ export default function NewsTicker({ language, colors }: NewsTickerProps) {
         }).start();
       });
     }, 6000);
-
     return () => clearInterval(timer);
   }, [news, fadeAnim]);
 
-  if (loading) {
-    return (
+  if (loading) return null;
+  if (news.length === 0) return null;
+
+  const currentNews = news[currentIndex];
+
+  return (
+    <View style={styles.wrapper}>
       <View
         style={[
           styles.container,
@@ -123,57 +115,46 @@ export default function NewsTicker({ language, colors }: NewsTickerProps) {
           },
         ]}
       >
-        <ActivityIndicator size="small" color={colors.accent} />
-        <Text style={{ color: colors.textSecondary, marginLeft: 10 }}>
-          {isHR ? "Učitavanje vijesti..." : "Loading news..."}
-        </Text>
-      </View>
-    );
-  }
-
-  if (news.length === 0) return null;
-
-  const currentNews = news[currentIndex];
-
-  return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: colors.cardBackground, borderColor: colors.border },
-      ]}
-    >
-      <View style={[styles.headerBadge, { backgroundColor: colors.accent }]}>
-        <Feather name="bell" size={isLargeScreen ? 18 : 14} color="#FFF" />
-        <Text style={styles.headerBadgeText}>
-          {isHR ? "AKTUALNO" : "LATEST NEWS"}
-        </Text>
-      </View>
-
-      <Animated.View style={[styles.newsWrapper, { opacity: fadeAnim }]}>
-        {currentNews.imageUrl && (
-          <Image
-            source={{ uri: currentNews.imageUrl }}
-            style={styles.image}
-            resizeMode="cover"
-          />
-        )}
-        <View style={styles.textContainer}>
-          <Text style={[styles.date, { color: colors.accent }]}>
-            {currentNews.date}
-          </Text>
-          <Text
-            style={[styles.title, { color: colors.textPrimary }]}
-            numberOfLines={2}
-          >
-            {currentNews.title}
+        <View style={[styles.headerBadge, { backgroundColor: colors.accent }]}>
+          <Feather name="bell" size={isLargeScreen ? 18 : 14} color="#FFF" />
+          <Text style={styles.headerBadgeText}>
+            {isHR ? "AKTUALNO - GRAD OSIJEK" : "LATEST NEWS - CITY OF OSIJEK"}
           </Text>
         </View>
-      </Animated.View>
+
+        <Animated.View style={[styles.newsWrapper, { opacity: fadeAnim }]}>
+          {currentNews.imageUrl && (
+            <Image
+              source={{ uri: currentNews.imageUrl }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          )}
+          <View style={styles.textContainer}>
+            <Text style={[styles.date, { color: colors.accent }]}>
+              {currentNews.date}
+            </Text>
+            <Text
+              style={[styles.title, { color: colors.textPrimary }]}
+              numberOfLines={2}
+            >
+              {currentNews.title}
+            </Text>
+          </View>
+        </Animated.View>
+      </View>
+
+      {!isHR && (
+        <Text style={[styles.notice, { color: colors.textSecondary }]}>
+          * News available in Croatian language only.
+        </Text>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: { width: "100%" },
   container: {
     height: isLargeScreen ? 180 : 120,
     borderRadius: isLargeScreen ? 30 : 20,
@@ -182,6 +163,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     position: "relative",
     width: "100%",
+  },
+  notice: {
+    fontSize: isLargeScreen ? 16 : 12,
+    textAlign: "center",
+    marginTop: 10,
+    fontStyle: "italic",
   },
   headerBadge: {
     position: "absolute",
@@ -207,10 +194,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  image: {
-    width: isLargeScreen ? 240 : 140,
-    height: "100%",
-  },
+  image: { width: isLargeScreen ? 240 : 140, height: "100%" },
   textContainer: {
     flex: 1,
     paddingHorizontal: isLargeScreen ? 30 : 20,

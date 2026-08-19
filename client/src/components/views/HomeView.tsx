@@ -60,7 +60,7 @@ export default function HomeView({
           styles.overlay,
           {
             backgroundColor: colors.background + "99",
-            paddingTop: isLargeScreen ? 140 : 120, 
+            paddingTop: isLargeScreen ? 200 : 180,
           },
         ]}
       >

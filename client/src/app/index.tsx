@@ -125,7 +125,7 @@ function KioskMain() {
                       <Text
                         style={[styles.homeLogoBadge, { color: colors.accent }]}
                       >
-                        INFO KIOSK
+                        {language === "HR" ? "INFO KIOSK" : "INFO KIOSK"}
                       </Text>
                       <Text
                         style={[
@@ -133,7 +133,7 @@ function KioskMain() {
                           { color: colors.textPrimary },
                         ]}
                       >
-                        GRAD OSIJEK
+                        {language === "HR" ? "GRAD OSIJEK" : "CITY OF OSIJEK"}
                       </Text>
                     </View>
                   </View>
