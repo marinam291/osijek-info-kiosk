@@ -70,6 +70,7 @@ export default function ContentArea({
   if (activeTab !== prevActiveTab) {
     setPrevActiveTab(activeTab);
     if (tourismCategory !== "sve") setTourismCategory("sve");
+    setSelectedItem(null);
   }
 
   if (activeTab === "pocetna") {
