@@ -13,9 +13,23 @@ type GridCardProps = {
   item: ContentItem;
   colors: ThemeColors;
   onPress: (item: ContentItem) => void;
+  language?: string;
 };
 
-export default function GridCard({ item, colors, onPress }: GridCardProps) {
+export default function GridCard({
+  item,
+  colors,
+  onPress,
+  language = "HR",
+}: GridCardProps) {
+  const isHR = language === "HR";
+
+  // Sigurno izvlačenje naziva (podržava i string i objekt)
+  const displayName =
+    typeof item.naziv === "object" && item.naziv !== null
+      ? item.naziv[isHR ? "HR" : "EN"]
+      : item.naziv;
+
   return (
     <TouchableOpacity
       style={[
@@ -30,7 +44,7 @@ export default function GridCard({ item, colors, onPress }: GridCardProps) {
           style={[styles.gridTitle, { color: colors.textPrimary }]}
           numberOfLines={1}
         >
-          {item.naziv}
+          {displayName}
         </Text>
         {item.vrijeme && (
           <Text style={[styles.gridSubtitle, { color: colors.accent }]}>

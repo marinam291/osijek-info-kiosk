@@ -186,7 +186,7 @@ export default function Screensaver({
         </TouchableOpacity>
       </View>
       <View style={styles.topLeftContainer}>
-        <WeatherWidget />
+        <WeatherWidget language={language} />
       </View>
     </View>
   );
