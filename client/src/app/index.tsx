@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  useWindowDimensions,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "../context/ThemeContext";
@@ -24,6 +25,8 @@ function KioskMain() {
   const [language, setLanguage] = useState<string>("HR");
   const [activeTab, setActiveTab] = useState<string>("pocetna");
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { width } = useWindowDimensions();
+  const scale = width / 1920;
 
   const resetInactivityTimer = useCallback(() => {
     if (timer.current) {
@@ -76,6 +79,11 @@ function KioskMain() {
                     {
                       backgroundColor: colors.cardBackground,
                       borderColor: colors.border,
+                      paddingVertical: 14 * scale,
+                      paddingHorizontal: 24 * scale,
+                      borderRadius: 50 * scale,
+                      top: 30 * scale,
+                      left: 30 * scale,
                     },
                   ]}
                   onPress={() => setActiveTab("pocetna")}
@@ -83,13 +91,16 @@ function KioskMain() {
                 >
                   <Feather
                     name="arrow-left"
-                    size={28}
+                    size={28 * scale}
                     color={colors.textPrimary}
                   />
                   <Text
                     style={[
                       styles.backButtonText,
-                      { color: colors.textPrimary },
+                      {
+                        color: colors.textPrimary,
+                        fontSize: 22 * scale,
+                      },
                     ]}
                   >
                     {language === "HR" ? "Natrag" : "Back"}
@@ -112,34 +123,62 @@ function KioskMain() {
                         theme === "light"
                           ? "rgba(255, 255, 255, 0.7)"
                           : "rgba(0, 0, 0, 0.5)",
+                      top: 40 * scale,
+                      left: 40 * scale,
+                      right: 40 * scale,
+                      padding: 20 * scale,
+                      borderRadius: 20 * scale,
                     },
                   ]}
                 >
-                  <View style={styles.homeLogoContainer}>
+                  <View style={[styles.homeLogoContainer, { gap: 16 * scale }]}>
                     <Image
                       source={require("../../assets/images/logo.png")}
-                      style={styles.homeLogoImage}
+                      style={[
+                        styles.homeLogoImage,
+                        {
+                          width: 80 * scale,
+                          height: 95 * scale,
+                        },
+                      ]}
                       resizeMode="contain"
                     />
                     <View>
                       <Text
-                        style={[styles.homeLogoBadge, { color: colors.accent }]}
+                        style={[
+                          styles.homeLogoBadge,
+                          {
+                            color: colors.accent,
+                            fontSize: 14 * scale,
+                            marginBottom: 4 * scale,
+                          },
+                        ]}
                       >
                         {language === "HR" ? "INFO KIOSK" : "INFO KIOSK"}
                       </Text>
                       <Text
                         style={[
                           styles.homeLogoText,
-                          { color: colors.textPrimary },
+                          {
+                            color: colors.textPrimary,
+                            fontSize: 36 * scale,
+                          },
                         ]}
                       >
                         {language === "HR" ? "GRAD OSIJEK" : "CITY OF OSIJEK"}
                       </Text>
                     </View>
                   </View>
+
                   <View style={styles.homeTimeContainer}>
-                    <Clock language={language} colors={colors} />
-                    <View style={{ marginTop: 8 }}>
+                    <Clock language={language} colors={colors} scale={scale} />
+                    <View
+                      style={{
+                        marginTop: 8 * scale,
+                        transform: [{ scale: scale }],
+                        transformOrigin: "top right",
+                      }}
+                    >
                       <WeatherWidget
                         variant="sidebar"
                         language={language}
@@ -163,6 +202,7 @@ function KioskMain() {
               setLanguage={setLanguage}
               theme={theme}
               setTheme={setTheme}
+              scale={scale}
             />
           </Animated.View>
         )}
@@ -193,33 +233,21 @@ const styles = StyleSheet.create({
   },
   homeHeaderAbsolute: {
     position: "absolute",
-    top: 40,
-    left: 40,
-    right: 40,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
     zIndex: 10,
-    padding: 20,
-    borderRadius: 20,
   },
   homeLogoContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 16,
   },
-  homeLogoImage: {
-    width: 60,
-    height: 70,
-  },
+  homeLogoImage: {},
   homeLogoBadge: {
-    fontSize: 12,
     fontWeight: "bold",
     letterSpacing: 2,
-    marginBottom: 4,
   },
   homeLogoText: {
-    fontSize: 26,
     fontWeight: "bold",
     letterSpacing: 1,
   },
@@ -228,15 +256,9 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: "absolute",
-    top: 30,
-    left: 30,
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 50,
-    borderWidth: 2,
     zIndex: 100,
     elevation: 8,
     shadowColor: "#000",
@@ -245,7 +267,6 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
   },
   backButtonText: {
-    fontSize: 22,
     fontWeight: "bold",
     textTransform: "uppercase",
     letterSpacing: 1,

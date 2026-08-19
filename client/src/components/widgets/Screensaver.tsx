@@ -17,6 +17,7 @@ type ScreensaverProps = {
   setLanguage: (lang: string) => void;
   theme: ThemeMode;
   setTheme: (theme: ThemeMode) => void;
+  scale?: number;
 };
 
 export default function Screensaver({
@@ -25,20 +26,21 @@ export default function Screensaver({
   setLanguage,
   theme,
   setTheme,
+  scale = 1,
 }: ScreensaverProps) {
   const { colors } = useTheme();
 
   const [slideAnim] = useState(
-    () => new Animated.Value(theme === "light" ? 0 : 40),
+    () => new Animated.Value(theme === "light" ? 0 : 65 * scale),
   );
 
   useEffect(() => {
     Animated.timing(slideAnim, {
-      toValue: theme === "light" ? 0 : 40,
+      toValue: theme === "light" ? 0 : 65 * scale,
       duration: 300,
       useNativeDriver: true,
     }).start();
-  }, [theme, slideAnim]);
+  }, [theme, slideAnim, scale]);
 
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
@@ -77,12 +79,28 @@ export default function Screensaver({
       </video>
 
       <View style={[styles.overlay, { backgroundColor: overlayColor }]}>
-        <View style={styles.controlsContainer}>
-          <View style={styles.buttonGroup}>
+        <View
+          style={[
+            styles.controlsContainer,
+            {
+              top: 40 * scale,
+              right: 40 * scale,
+              gap: 24 * scale,
+            },
+          ]}
+        >
+          <View style={[styles.buttonGroup, { gap: 12 * scale }]}>
             <TouchableOpacity
               style={[
                 styles.langButton,
-                { borderColor: controlBorder, backgroundColor: controlBg },
+                {
+                  borderColor: controlBorder,
+                  backgroundColor: controlBg,
+                  paddingVertical: 15 * scale,
+                  paddingHorizontal: 28 * scale,
+                  borderRadius: 14 * scale,
+                  borderWidth: 2 * scale,
+                },
                 language === "HR" && {
                   backgroundColor: colors.accent,
                   borderColor: colors.accent,
@@ -93,8 +111,10 @@ export default function Screensaver({
               <Text
                 style={[
                   styles.langText,
-                  { color: textColor },
-                  language === "HR" && { color: colors.accentText },
+                  {
+                    fontSize: 22 * scale,
+                    color: language === "HR" ? colors.accentText : textColor,
+                  },
                 ]}
               >
                 HR
@@ -104,7 +124,14 @@ export default function Screensaver({
             <TouchableOpacity
               style={[
                 styles.langButton,
-                { borderColor: controlBorder, backgroundColor: controlBg },
+                {
+                  borderColor: controlBorder,
+                  backgroundColor: controlBg,
+                  paddingVertical: 15 * scale,
+                  paddingHorizontal: 28 * scale,
+                  borderRadius: 14 * scale,
+                  borderWidth: 2 * scale,
+                },
                 language === "EN" && {
                   backgroundColor: colors.accent,
                   borderColor: colors.accent,
@@ -115,8 +142,10 @@ export default function Screensaver({
               <Text
                 style={[
                   styles.langText,
-                  { color: textColor },
-                  language === "EN" && { color: colors.accentText },
+                  {
+                    fontSize: 22 * scale,
+                    color: language === "EN" ? colors.accentText : textColor,
+                  },
                 ]}
               >
                 EN
@@ -129,18 +158,31 @@ export default function Screensaver({
             onPress={toggleTheme}
             style={[
               styles.themeToggleContainer,
-              { backgroundColor: controlBg, borderColor: controlBorder },
+              {
+                backgroundColor: controlBg,
+                borderColor: controlBorder,
+                width: 125 * scale,
+                height: 60 * scale,
+                borderRadius: 30 * scale,
+                borderWidth: 2 * scale,
+                paddingHorizontal: 5 * scale,
+              },
             ]}
           >
-            <View style={styles.toggleBackgroundIcons}>
+            <View
+              style={[
+                styles.toggleBackgroundIcons,
+                { paddingHorizontal: 12 * scale },
+              ]}
+            >
               <Feather
                 name="sun"
-                size={16}
+                size={22 * scale}
                 color={isLight ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.3)"}
               />
               <Feather
                 name="moon"
-                size={16}
+                size={22 * scale}
                 color={isLight ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.3)"}
               />
             </View>
@@ -151,12 +193,17 @@ export default function Screensaver({
                 {
                   transform: [{ translateX: slideAnim }],
                   backgroundColor: isLight ? "#0A2540" : "#FFFFFF",
+                  width: 50 * scale,
+                  height: 50 * scale,
+                  borderRadius: 25 * scale,
+                  top: 3 * scale,
+                  left: 3 * scale,
                 },
               ]}
             >
               <Feather
                 name={isLight ? "sun" : "moon"}
-                size={18}
+                size={26 * scale}
                 color={isLight ? "#FFFFFF" : "#0A2540"}
               />
             </Animated.View>
@@ -165,27 +212,76 @@ export default function Screensaver({
 
         <Image
           source={require("../../../assets/images/logo.png")}
-          style={styles.logoScreensaver}
+          style={[
+            styles.logoScreensaver,
+            {
+              width: 150 * scale,
+              height: 180 * scale,
+              marginBottom: 20 * scale,
+            },
+          ]}
           resizeMode="contain"
         />
 
-        <Text style={[styles.title, { color: textColor }]}>
+        <Text
+          style={[
+            styles.title,
+            {
+              color: textColor,
+              fontSize: 72 * scale,
+              marginBottom: 16 * scale,
+            },
+          ]}
+        >
           {language === "HR" ? "Dobrodošli u Osijek" : "Welcome to Osijek"}
         </Text>
-        <Text style={[styles.subtitle, { color: colors.accent }]}>
+        <Text
+          style={[
+            styles.subtitle,
+            {
+              color: colors.accent,
+              fontSize: 32 * scale,
+              marginBottom: 80 * scale,
+            },
+          ]}
+        >
           {language === "HR" ? "Grad na Dravi" : "City on the Drava River"}
         </Text>
 
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: colors.accent }]}
+          style={[
+            styles.button,
+            {
+              backgroundColor: colors.accent,
+              paddingVertical: 24 * scale,
+              paddingHorizontal: 64 * scale,
+              borderRadius: 50 * scale,
+            },
+          ]}
           onPress={onStart}
         >
-          <Text style={[styles.buttonText, { color: colors.accentText }]}>
+          <Text
+            style={[
+              styles.buttonText,
+              { color: colors.accentText, fontSize: 32 * scale },
+            ]}
+          >
             {language === "HR" ? "Dodirni za početak" : "Touch to start"}
           </Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.topLeftContainer}>
+
+      <View
+        style={[
+          styles.topLeftContainer,
+          {
+            top: 40 * scale,
+            left: 40 * scale,
+            transform: [{ scale: scale }],
+            transformOrigin: "top left",
+          },
+        ]}
+      >
         <WeatherWidget language={language} />
       </View>
     </View>
@@ -212,87 +308,55 @@ const styles = StyleSheet.create({
   },
   controlsContainer: {
     position: "absolute",
-    top: 40,
-    right: 40,
     flexDirection: "row",
     alignItems: "center",
-    gap: 24,
   },
   buttonGroup: {
     flexDirection: "row",
-    gap: 8,
   },
   langButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    borderWidth: 2,
     alignItems: "center",
+    justifyContent: "center",
   },
   langText: {
     fontWeight: "bold",
-    fontSize: 16,
   },
   themeToggleContainer: {
-    width: 80,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 2,
     justifyContent: "center",
-    paddingHorizontal: 4,
   },
   toggleBackgroundIcons: {
     position: "absolute",
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 10,
   },
   toggleThumb: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
     justifyContent: "center",
     alignItems: "center",
     elevation: 5,
+    position: "absolute",
   },
   logoScreensaver: {
-    width: 150,
-    height: 180,
-    marginBottom: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
   },
   title: {
-    fontSize: 72,
     fontWeight: "bold",
-    marginBottom: 16,
     textAlign: "center",
   },
   subtitle: {
-    fontSize: 32,
     fontWeight: "600",
-    marginBottom: 80,
     textAlign: "center",
   },
-  button: {
-    paddingVertical: 24,
-    paddingHorizontal: 64,
-    borderRadius: 50,
-  },
+  button: {},
   buttonText: {
-    fontSize: 32,
     fontWeight: "bold",
     textTransform: "uppercase",
     letterSpacing: 2,
   },
   topLeftContainer: {
     position: "absolute",
-    top: 40,
-    left: 40,
-    alignItems: "flex-start",
-    gap: 8,
   },
 });

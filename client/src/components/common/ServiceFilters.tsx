@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  useWindowDimensions,
+} from "react-native";
 
 type FilterItem = {
   key: string;
@@ -28,11 +34,15 @@ export default function ServiceFilters({
   colors,
   isSubFilter = false,
 }: FilterProps) {
+  const { width } = useWindowDimensions();
+  const scale = width / 1920;
+
   return (
     <View
       style={[
         styles.filterContainer,
-        isSubFilter && { marginTop: -10, marginBottom: 20 },
+        { gap: 16 * scale, marginBottom: 24 * scale },
+        isSubFilter && { marginTop: -10 * scale, marginBottom: 20 * scale },
       ]}
     >
       {items.map((cat) => {
@@ -47,7 +57,10 @@ export default function ServiceFilters({
                   ? colors.accent
                   : colors.cardBackground,
                 borderColor: isSubFilter ? colors.accent : colors.border,
-                borderWidth: isSubFilter ? 1.5 : 1,
+                borderWidth: (isSubFilter ? 1.5 : 1) * Math.max(scale, 0.8),
+                paddingVertical: 16 * scale,
+                paddingHorizontal: 30 * scale,
+                borderRadius: 25 * scale,
               },
             ]}
             onPress={() => onSelect(cat.key)}
@@ -57,7 +70,7 @@ export default function ServiceFilters({
                 styles.filterButtonText,
                 {
                   color: isActive ? "#FFFFFF" : colors.textPrimary,
-                  fontSize: isSubFilter ? 14 : 16,
+                  fontSize: (isSubFilter ? 18 : 22) * scale,
                 },
               ]}
             >
@@ -73,14 +86,11 @@ export default function ServiceFilters({
 const styles = StyleSheet.create({
   filterContainer: {
     flexDirection: "row",
-    gap: 12,
-    marginBottom: 24,
     flexWrap: "wrap",
   },
   filterButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
   filterButtonText: {
     fontWeight: "bold",

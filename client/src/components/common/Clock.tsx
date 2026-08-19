@@ -5,6 +5,7 @@ import { useTheme } from "../../context/ThemeContext";
 type ClockProps = {
   language: string;
   colors: ReturnType<typeof useTheme>["colors"];
+  scale?: number;
 };
 
 export default function Clock({ language, colors }: ClockProps) {

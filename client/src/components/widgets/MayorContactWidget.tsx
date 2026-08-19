@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Linking,
+  useWindowDimensions,
 } from "react-native";
 import { ThemeColors } from "../../context/ThemeContext";
 
@@ -19,6 +20,8 @@ export default function MayorContactWidget({
   language,
 }: MayorContactWidgetProps) {
   const isHR = language === "HR";
+  const { width } = useWindowDimensions();
+  const scale = width / 1920;
 
   const [senderName, setSenderName] = useState("");
   const [senderEmail, setSenderEmail] = useState("");
@@ -46,16 +49,39 @@ export default function MayorContactWidget({
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={[styles.description, { color: colors.textSecondary }]}>
+    <View
+      style={[
+        styles.container,
+        { maxWidth: 1000 * scale, paddingBottom: 30 * scale },
+      ]}
+    >
+      <Text
+        style={[
+          styles.description,
+          {
+            color: colors.textSecondary,
+            fontSize: 22 * scale,
+            marginBottom: 28 * scale,
+            lineHeight: 32 * scale,
+          },
+        ]}
+      >
         {isHR
           ? "Imate prijedlog, pitanje ili problem? Pošaljite poruku direktno u Ured gradonačelnika."
           : "Do you have a suggestion, question, or issue? Send a message directly to the Mayor's Office."}
       </Text>
 
-      <View style={styles.formContainer}>
-        <View style={styles.inputGroup}>
-          <Text style={[styles.label, { color: colors.textPrimary }]}>
+      <View style={[styles.formContainer, { gap: 24 * scale }]}>
+        <View style={[styles.inputGroup, { gap: 8 * scale }]}>
+          <Text
+            style={[
+              styles.label,
+              {
+                color: colors.textPrimary,
+                fontSize: 20 * scale,
+              },
+            ]}
+          >
             {isHR ? "Vaše ime i prezime" : "Full Name"}
           </Text>
           <TextInput
@@ -65,6 +91,11 @@ export default function MayorContactWidget({
                 backgroundColor: colors.cardBackground,
                 color: colors.textPrimary,
                 borderColor: colors.border,
+                height: 70 * scale,
+                borderRadius: 16 * scale,
+                paddingHorizontal: 22 * scale,
+                fontSize: 20 * scale,
+                borderWidth: 1.5 * scale,
               },
             ]}
             placeholder={isHR ? "npr. Ivan Horvat" : "e.g. John Doe"}
@@ -74,8 +105,16 @@ export default function MayorContactWidget({
           />
         </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={[styles.label, { color: colors.textPrimary }]}>
+        <View style={[styles.inputGroup, { gap: 8 * scale }]}>
+          <Text
+            style={[
+              styles.label,
+              {
+                color: colors.textPrimary,
+                fontSize: 20 * scale,
+              },
+            ]}
+          >
             {isHR ? "Vaša e-mail adresa" : "Email Address"}
           </Text>
           <TextInput
@@ -85,6 +124,11 @@ export default function MayorContactWidget({
                 backgroundColor: colors.cardBackground,
                 color: colors.textPrimary,
                 borderColor: colors.border,
+                height: 70 * scale,
+                borderRadius: 16 * scale,
+                paddingHorizontal: 22 * scale,
+                fontSize: 20 * scale,
+                borderWidth: 1.5 * scale,
               },
             ]}
             placeholder={isHR ? "npr. ivan@email.com" : "e.g. john@email.com"}
@@ -96,8 +140,16 @@ export default function MayorContactWidget({
           />
         </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={[styles.label, { color: colors.textPrimary }]}>
+        <View style={[styles.inputGroup, { gap: 8 * scale }]}>
+          <Text
+            style={[
+              styles.label,
+              {
+                color: colors.textPrimary,
+                fontSize: 20 * scale,
+              },
+            ]}
+          >
             {isHR ? "Vaša poruka" : "Your Message"}
           </Text>
           <TextInput
@@ -107,6 +159,12 @@ export default function MayorContactWidget({
                 backgroundColor: colors.cardBackground,
                 color: colors.textPrimary,
                 borderColor: colors.border,
+                height: 220 * scale,
+                borderRadius: 16 * scale,
+                paddingHorizontal: 22 * scale,
+                paddingTop: 18 * scale,
+                fontSize: 20 * scale,
+                borderWidth: 1.5 * scale,
               },
             ]}
             placeholder={
@@ -121,11 +179,26 @@ export default function MayorContactWidget({
         </View>
 
         <TouchableOpacity
-          style={[styles.sendButton, { backgroundColor: colors.accent }]}
+          style={[
+            styles.sendButton,
+            {
+              backgroundColor: colors.accent,
+              height: 75 * scale,
+              borderRadius: 16 * scale,
+              marginTop: 15 * scale,
+            },
+          ]}
           onPress={handleSendEmail}
           activeOpacity={0.8}
         >
-          <Text style={styles.sendButtonText}>
+          <Text
+            style={[
+              styles.sendButtonText,
+              {
+                fontSize: 24 * scale,
+              },
+            ]}
+          >
             {isHR ? "Pošalji poruku" : "Send Message"}
           </Text>
         </TouchableOpacity>
@@ -137,52 +210,28 @@ export default function MayorContactWidget({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    maxWidth: 700,
     alignSelf: "center",
     width: "100%",
-    paddingBottom: 20,
   },
   description: {
-    fontSize: 16,
-    marginBottom: 20,
-    lineHeight: 24,
+    fontWeight: "400",
   },
-  formContainer: {
-    gap: 16,
-  },
-  inputGroup: {
-    gap: 6,
-  },
+  formContainer: {},
+  inputGroup: {},
   label: {
-    fontSize: 14,
     fontWeight: "bold",
   },
-  input: {
-    height: 50,
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    fontSize: 16,
-  },
+  input: {},
   textArea: {
-    height: 120,
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    fontSize: 16,
     textAlignVertical: "top",
   },
   sendButton: {
-    height: 55,
-    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 10,
   },
   sendButtonText: {
     color: "#FFFFFF",
-    fontSize: 18,
     fontWeight: "bold",
+    letterSpacing: 1,
   },
 });
