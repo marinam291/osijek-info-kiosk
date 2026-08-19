@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -6,9 +6,10 @@ import {
   Image,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { ThemeProvider, useTheme } from "../context/ThemeContext";
+import { useTheme } from "../context/ThemeContext";
 import Screensaver from "../components/widgets/Screensaver";
 import ContentArea from "../components/views/ContentArea";
 import FadeInView from "../components/common/FadeInView";
@@ -21,8 +22,34 @@ function KioskMain() {
   const [isAppStarted, setIsAppStarted] = useState(false);
   const [screensaverOpacity] = useState(() => new Animated.Value(1));
   const [language, setLanguage] = useState<string>("HR");
-
   const [activeTab, setActiveTab] = useState<string>("pocetna");
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const resetInactivityTimer = useCallback(() => {
+    if (timer.current) {
+      clearTimeout(timer.current);
+    }
+
+    if (isAppStarted && !isScreensaverActive) {
+      timer.current = setTimeout(() => {
+        setIsScreensaverActive(true);
+        setIsAppStarted(false);
+        setActiveTab("pocetna");
+        Animated.timing(screensaverOpacity, {
+          toValue: 1,
+          duration: 600,
+          useNativeDriver: true,
+        }).start();
+      }, 60000);
+    }
+  }, [isAppStarted, isScreensaverActive, screensaverOpacity]);
+
+  useEffect(() => {
+    resetInactivityTimer();
+    return () => {
+      if (timer.current) clearTimeout(timer.current);
+    };
+  }, [resetInactivityTimer]);
 
   const handleStartApp = () => {
     setIsAppStarted(true);
@@ -37,114 +64,115 @@ function KioskMain() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {isAppStarted && (
-        <FadeInView triggerKey="main-layout" duration={600}>
-          <View style={styles.mainLayout}>
-            {activeTab !== "pocetna" && (
-              <TouchableOpacity
-                style={[
-                  styles.backButton,
-                  {
-                    backgroundColor: colors.cardBackground,
-                    borderColor: colors.border,
-                  },
-                ]}
-                onPress={() => setActiveTab("pocetna")}
-                activeOpacity={0.8}
-              >
-                <Feather
-                  name="arrow-left"
-                  size={28}
-                  color={colors.textPrimary}
-                />
-                <Text
-                  style={[styles.backButtonText, { color: colors.textPrimary }]}
+    <TouchableWithoutFeedback onPress={resetInactivityTimer}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        {isAppStarted && (
+          <FadeInView triggerKey="main-layout" duration={600}>
+            <View style={styles.mainLayout}>
+              {activeTab !== "pocetna" && (
+                <TouchableOpacity
+                  style={[
+                    styles.backButton,
+                    {
+                      backgroundColor: colors.cardBackground,
+                      borderColor: colors.border,
+                    },
+                  ]}
+                  onPress={() => setActiveTab("pocetna")}
+                  activeOpacity={0.8}
                 >
-                  {language === "HR" ? "Natrag" : "Back"}
-                </Text>
-              </TouchableOpacity>
-            )}
-
-            <ContentArea
-              activeTab={activeTab}
-              language={language}
-              onNavigate={setActiveTab}
-            />
-
-            {activeTab === "pocetna" && (
-              <View
-                style={[
-                  styles.homeHeaderAbsolute,
-                  {
-                    backgroundColor:
-                      theme === "light"
-                        ? "rgba(255, 255, 255, 0.7)"
-                        : "rgba(0, 0, 0, 0.5)",
-                  },
-                ]}
-              >
-                <View style={styles.homeLogoContainer}>
-                  <Image
-                    source={require("../../assets/images/logo.png")}
-                    style={styles.homeLogoImage}
-                    resizeMode="contain"
+                  <Feather
+                    name="arrow-left"
+                    size={28}
+                    color={colors.textPrimary}
                   />
-                  <View>
-                    <Text
-                      style={[styles.homeLogoBadge, { color: colors.accent }]}
-                    >
-                      INFO KIOSK
-                    </Text>
-                    <Text
-                      style={[
-                        styles.homeLogoText,
-                        { color: colors.textPrimary },
-                      ]}
-                    >
-                      GRAD OSIJEK
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.homeTimeContainer}>
-                  <Clock language={language} colors={colors} />
-                  <View style={{ marginTop: 8 }}>
-                    <WeatherWidget
-                      variant="sidebar"
-                      language={language}
-                      textColor={colors.textPrimary}
-                    />
-                  </View>
-                </View>
-              </View>
-            )}
-          </View>
-        </FadeInView>
-      )}
+                  <Text
+                    style={[
+                      styles.backButtonText,
+                      { color: colors.textPrimary },
+                    ]}
+                  >
+                    {language === "HR" ? "Natrag" : "Back"}
+                  </Text>
+                </TouchableOpacity>
+              )}
 
-      {isScreensaverActive && (
-        <Animated.View
-          style={[styles.screensaverWrapper, { opacity: screensaverOpacity }]}
-        >
-          <Screensaver
-            onStart={handleStartApp}
-            language={language}
-            setLanguage={setLanguage}
-            theme={theme}
-            setTheme={setTheme}
-          />
-        </Animated.View>
-      )}
-    </View>
+              <ContentArea
+                activeTab={activeTab}
+                language={language}
+                onNavigate={setActiveTab}
+              />
+
+              {activeTab === "pocetna" && (
+                <View
+                  style={[
+                    styles.homeHeaderAbsolute,
+                    {
+                      backgroundColor:
+                        theme === "light"
+                          ? "rgba(255, 255, 255, 0.7)"
+                          : "rgba(0, 0, 0, 0.5)",
+                    },
+                  ]}
+                >
+                  <View style={styles.homeLogoContainer}>
+                    <Image
+                      source={require("../../assets/images/logo.png")}
+                      style={styles.homeLogoImage}
+                      resizeMode="contain"
+                    />
+                    <View>
+                      <Text
+                        style={[styles.homeLogoBadge, { color: colors.accent }]}
+                      >
+                        INFO KIOSK
+                      </Text>
+                      <Text
+                        style={[
+                          styles.homeLogoText,
+                          { color: colors.textPrimary },
+                        ]}
+                      >
+                        GRAD OSIJEK
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.homeTimeContainer}>
+                    <Clock language={language} colors={colors} />
+                    <View style={{ marginTop: 8 }}>
+                      <WeatherWidget
+                        variant="sidebar"
+                        language={language}
+                        textColor={colors.textPrimary}
+                      />
+                    </View>
+                  </View>
+                </View>
+              )}
+            </View>
+          </FadeInView>
+        )}
+
+        {isScreensaverActive && (
+          <Animated.View
+            style={[styles.screensaverWrapper, { opacity: screensaverOpacity }]}
+          >
+            <Screensaver
+              onStart={handleStartApp}
+              language={language}
+              setLanguage={setLanguage}
+              theme={theme}
+              setTheme={setTheme}
+            />
+          </Animated.View>
+        )}
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
 export default function Index() {
-  return (
-    <ThemeProvider>
-      <KioskMain />
-    </ThemeProvider>
-  );
+  return <KioskMain />;
 }
 
 const styles = StyleSheet.create({

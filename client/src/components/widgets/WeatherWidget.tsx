@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+  useCallback,
+} from "react";
 import {
   View,
   Text,
@@ -6,6 +12,7 @@ import {
   TouchableOpacity,
   Modal,
   ScrollView,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { getOsijekWeather, WeatherData } from "../../services/weatherService";
@@ -21,7 +28,6 @@ const getNextDays = (count: number, isHR: boolean) => {
   const daysHR = ["NED", "PON", "UTO", "SRI", "ČET", "PET", "SUB"];
   const daysEN = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
   const days = isHR ? daysHR : daysEN;
-
   const today = new Date().getDay();
 
   return Array.from({ length: count }).map((_, i) => {
@@ -42,8 +48,27 @@ export default function WeatherWidget({
   const { colors } = useTheme();
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-
   const isHR = language === "HR";
+  const modalTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const resetModalTimer = useCallback(() => {
+    if (modalTimer.current) {
+      clearTimeout(modalTimer.current);
+    }
+
+    if (modalVisible) {
+      modalTimer.current = setTimeout(() => {
+        setModalVisible(false);
+      }, 60000);
+    }
+  }, [modalVisible]);
+
+  useEffect(() => {
+    resetModalTimer();
+    return () => {
+      if (modalTimer.current) clearTimeout(modalTimer.current);
+    };
+  }, [resetModalTimer]);
 
   useEffect(() => {
     const fetchWeather = () => getOsijekWeather().then(setWeather);
@@ -52,7 +77,6 @@ export default function WeatherWidget({
     return () => clearInterval(interval);
   }, []);
 
-  // useMemo je smješten ovdje, iznad bilo kakvih uvjeta (returna)
   const weeklyForecast = useMemo(() => {
     return getNextDays(7, isHR);
   }, [isHR]);
@@ -78,86 +102,107 @@ export default function WeatherWidget({
       </TouchableOpacity>
 
       <Modal visible={modalVisible} transparent={true} animationType="fade">
-        <View
-          style={[
-            styles.modalOverlay,
-            { backgroundColor: colors.background + "E6" },
-          ]}
-        >
+        <TouchableWithoutFeedback onPress={resetModalTimer}>
           <View
             style={[
-              styles.modalContent,
-              {
-                backgroundColor: colors.cardBackground,
-                borderColor: colors.border,
-              },
+              styles.modalOverlay,
+              { backgroundColor: colors.background + "E6" },
             ]}
           >
-            <TouchableOpacity
-              style={[
-                styles.closeButton,
-                { backgroundColor: colors.background },
-              ]}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={[styles.closeText, { color: colors.textPrimary }]}>
-                ✕
-              </Text>
-            </TouchableOpacity>
-
-            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
-              {isHR ? "Tjedna vremenska prognoza" : "Weekly Weather Forecast"}
-            </Text>
-
-            <View style={styles.currentSection}>
-              <Feather
-                name={(weather?.icon || "sun") as keyof typeof Feather.glyphMap}
-                size={48}
-                color={colors.accent}
-              />
-              <Text style={[styles.modalTemp, { color: colors.textPrimary }]}>
-                {weather ? `${weather.temperature}°C` : "--°C"}
-              </Text>
-              <Text style={[styles.modalSub, { color: colors.textSecondary }]}>
-                {isHR
-                  ? "Osijek - Trenutno stanje"
-                  : "Osijek - Current conditions"}
-              </Text>
-            </View>
-
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.forecastScroll}
-            >
-              {weeklyForecast.map((item, index) => (
-                <View
-                  key={index}
+            <TouchableWithoutFeedback>
+              <View
+                style={[
+                  styles.modalContent,
+                  {
+                    backgroundColor: colors.cardBackground,
+                    borderColor: colors.border,
+                  },
+                ]}
+              >
+                <TouchableOpacity
                   style={[
-                    styles.dayCard,
-                    {
-                      backgroundColor: colors.background,
-                      borderColor: colors.border,
-                    },
+                    styles.closeButton,
+                    { backgroundColor: colors.background },
                   ]}
+                  onPress={() => setModalVisible(false)}
                 >
-                  <Text style={[styles.dayText, { color: colors.textPrimary }]}>
-                    {item.day}
+                  <Text
+                    style={[styles.closeText, { color: colors.textPrimary }]}
+                  >
+                    ✕
                   </Text>
+                </TouchableOpacity>
+
+                <Text
+                  style={[styles.modalTitle, { color: colors.textPrimary }]}
+                >
+                  {isHR
+                    ? "Tjedna vremenska prognoza"
+                    : "Weekly Weather Forecast"}
+                </Text>
+
+                <View style={styles.currentSection}>
                   <Feather
-                    name={item.icon as keyof typeof Feather.glyphMap}
-                    size={28}
+                    name={
+                      (weather?.icon || "sun") as keyof typeof Feather.glyphMap
+                    }
+                    size={48}
                     color={colors.accent}
-                    style={styles.dayIcon}
                   />
-                  <Text style={[styles.dayTemp, { color: colors.textPrimary }]}>
-                    {item.temp}
+                  <Text
+                    style={[styles.modalTemp, { color: colors.textPrimary }]}
+                  >
+                    {weather ? `${weather.temperature}°C` : "--°C"}
+                  </Text>
+                  <Text
+                    style={[styles.modalSub, { color: colors.textSecondary }]}
+                  >
+                    {isHR
+                      ? "Osijek - Trenutno stanje"
+                      : "Osijek - Current conditions"}
                   </Text>
                 </View>
-              ))}
-            </ScrollView>
+
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  style={styles.forecastScroll}
+                  onScrollBeginDrag={resetModalTimer}
+                >
+                  {weeklyForecast.map((item, index) => (
+                    <View
+                      key={index}
+                      style={[
+                        styles.dayCard,
+                        {
+                          backgroundColor: colors.background,
+                          borderColor: colors.border,
+                        },
+                      ]}
+                    >
+                      <Text
+                        style={[styles.dayText, { color: colors.textPrimary }]}
+                      >
+                        {item.day}
+                      </Text>
+                      <Feather
+                        name={item.icon as keyof typeof Feather.glyphMap}
+                        size={28}
+                        color={colors.accent}
+                        style={styles.dayIcon}
+                      />
+                      <Text
+                        style={[styles.dayTemp, { color: colors.textPrimary }]}
+                      >
+                        {item.temp}
+                      </Text>
+                    </View>
+                  ))}
+                </ScrollView>
+              </View>
+            </TouchableWithoutFeedback>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </>
   );
