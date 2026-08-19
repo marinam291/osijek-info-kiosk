@@ -39,6 +39,11 @@ export default function ItemModal({
       ? selectedItem.naziv[isHR ? "HR" : "EN"]
       : selectedItem?.naziv;
 
+  const displayOpis =
+    typeof selectedItem?.opis === "object" && selectedItem.opis !== null
+      ? selectedItem.opis[isHR ? "HR" : "EN"]
+      : selectedItem?.opis;
+
   return (
     <>
       <Modal
@@ -101,7 +106,7 @@ export default function ItemModal({
                   { color: colors.textSecondary },
                 ]}
               >
-                {selectedItem?.opis}
+                {displayOpis}
               </Text>
 
               <ItemQrSection

@@ -59,16 +59,14 @@ export const getOsijekData = (language: string) => {
     muzeji: [
       {
         id: "m_1",
-        naziv: {
-          HR: "Muzej Slavonije",
-          EN: "Museum of Slavonia",
-        },
+        // Ovdje stavi običan string koji se sam mijenja ovisno o jeziku
+        naziv: isHR ? "Muzej Slavonije" : "Museum of Slavonia",
         vrijeme: isHR
           ? "Uto - Sub: 10:00 - 18:00"
           : "Tue - Sat: 10:00 AM - 06:00 PM",
         opis: isHR
-          ? "Najveći muzej općeg tipa u Hrvatskoj.\n\nCijene ulaznica:\n• Odrasli: 3,00 €\n• Učenici, studenti i umirovljenici: 1,50 €\n• Djeca (do 7 god.): Besplatno\n• Obiteljska ulaznica: 5,00 €"
-          : "The largest general-type museum in Croatia.\n\nTicket prices:\n• Adults: 3.00 €\n• Students and Seniors: 1.50 €\n• Children (under 7): Free\n• Family ticket: 5.00 €",
+          ? "Najveći muzej općeg tipa u Hrvatskoj..."
+          : "The largest general-type museum in Croatia...",
         info: isHR
           ? "Skeniraj QR za kupnju ulaznice"
           : "Scan QR to buy tickets",
@@ -77,16 +75,15 @@ export const getOsijekData = (language: string) => {
       },
       {
         id: "m_2",
-        naziv: {
-          HR: "Arheološki muzej Osijek",
-          EN: "Archaeological Museum Osijek",
-        },
+        naziv: isHR
+          ? "Arheološki muzej Osijek"
+          : "Archaeological Museum Osijek",
         vrijeme: isHR
           ? "Uto - Sub: 10:00 - 18:00"
           : "Tue - Sat: 10:00 AM - 06:00 PM",
         opis: isHR
-          ? "Prikazuje povijest regije od prapovijesti do srednjeg vijeka.\n\nCijene ulaznica:\n• Odrasli: 3,00 €\n• Učenici, studenti i umirovljenici: 1,50 €\n• Djeca (do 7 god.): Besplatno\n• Obiteljska ulaznica: 5,00 €"
-          : "Showcases the region's history from prehistory to the Middle Ages.\n\nTicket prices:\n• Adults: 3.00 €\n• Students and Seniors: 1.50 €\n• Children (under 7): Free\n• Family ticket: 5.00 €",
+          ? "Prikazuje povijest regije..."
+          : "Showcases the region's history...",
         info: isHR
           ? "Skeniraj QR za kupnju ulaznice"
           : "Scan QR to buy tickets",
@@ -95,16 +92,13 @@ export const getOsijekData = (language: string) => {
       },
       {
         id: "m_3",
-        naziv: {
-          HR: "Muzej likovnih umjetnosti",
-          EN: "Museum of Fine Arts",
-        },
+        naziv: isHR ? "Muzej likovnih umjetnosti" : "Museum of Fine Arts",
         vrijeme: isHR
-          ? "Uto - Pet: 10:00 - 20:00 | Sub - Ned: 10:00 - 13:00"
-          : "Tue - Fri: 10:00 AM - 08:00 PM | Sat - Sun: 10:00 AM - 01:00 PM",
+          ? "Uto - Pet: 10:00 - 20:00"
+          : "Tue - Fri: 10:00 AM - 08:00 PM",
         opis: isHR
-          ? "Bogata zbirka slika i skulptura od 18. do 20. stoljeća.\n\nCijene ulaznica:\n• Odrasli: 5,00 €\n• Učenici, studenti i umirovljenici: 3,50 €\n• Djeca (do 7 god.): Besplatno\n• Obiteljska ulaznica: 8,50 €"
-          : "Rich collection of paintings and sculptures from the 18th to the 20th century.\n\nTicket prices:\n• Adults: 5.00 €\n• Students and Seniors: 3.50 €\n• Children (under 7): Free\n• Family ticket: 8.50 €",
+          ? "Bogata zbirka slika..."
+          : "Rich collection of paintings...",
         info: isHR
           ? "Skeniraj QR za kupnju ulaznice"
           : "Scan QR to buy tickets",
