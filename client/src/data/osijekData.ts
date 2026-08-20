@@ -203,7 +203,8 @@ export const getOsijekData = (language: string) => {
             : "Emergency medical care 24/7.",
           info: "Tel: 194 / 031 225 555",
           slika: require("../../assets/images/hitna.png"),
-          qrLink: "https://www.hznzih.hr",
+          qrLink:
+            "https://www.google.com/maps/dir/?api=1&origin=45.5585522,18.678293&destination=45.5428,18.6938",
         },
         {
           id: "u_z2",
@@ -215,7 +216,8 @@ export const getOsijekData = (language: string) => {
             : "General medicine, pediatrics, laboratory and specialist clinics.",
           info: "Tel: 031 225 100",
           slika: require("../../assets/images/domzdravlja.jpg"),
-          qrLink: "https://www.dzoob.hr",
+          qrLink:
+            "https://www.google.com/maps/dir/?api=1&origin=45.5585522,18.678293&destination=45.5562,18.6836",
         },
         {
           id: "u_z3",
@@ -225,7 +227,8 @@ export const getOsijekData = (language: string) => {
             : '"Centar" Pharmacy at Ante Starčević Square is on duty 24/7.',
           info: "Tel: 031 211 744",
           slika: require("../../assets/images/ljekarna.jpg"),
-          qrLink: "https://ljekarne-srce.hr",
+          qrLink:
+            "https://www.google.com/maps/dir/?api=1&origin=45.5585522,18.678293&destination=45.5561,18.6778",
         },
         {
           id: "u_z4",
@@ -237,7 +240,8 @@ export const getOsijekData = (language: string) => {
             : "Main hospital in Osijek for all healthcare needs.",
           info: "Tel: 031 223 111",
           slika: require("../../assets/images/kbc.jpg"),
-          qrLink: "https://www.kbco.hr",
+          qrLink:
+            "https://www.google.com/maps/dir/?api=1&origin=45.5585522,18.678293&destination=45.5422,18.6941",
         },
       ],
       prijevoz: [
