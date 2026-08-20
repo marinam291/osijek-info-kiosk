@@ -6,12 +6,9 @@ import {
   Image,
   Animated,
   Platform,
-  Dimensions,
+  useWindowDimensions,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-
-const screenWidth = Dimensions.get("window").width;
-const isLargeScreen = screenWidth > 1600;
 
 const stripHtml = (html: string) => {
   return html
@@ -53,7 +50,8 @@ export default function NewsTicker({ language, colors }: NewsTickerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [fadeAnim] = useState(() => new Animated.Value(1));
-
+  const { width } = useWindowDimensions();
+  const scale = width / 1920;
   const isHR = language === "HR";
 
   useEffect(() => {
@@ -112,12 +110,33 @@ export default function NewsTicker({ language, colors }: NewsTickerProps) {
           {
             backgroundColor: colors.cardBackground,
             borderColor: colors.border,
+            height: 200 * scale,
+            borderRadius: 30 * scale,
+            borderWidth: 2 * scale,
           },
         ]}
       >
-        <View style={[styles.headerBadge, { backgroundColor: colors.accent }]}>
-          <Feather name="bell" size={isLargeScreen ? 18 : 14} color="#FFF" />
-          <Text style={styles.headerBadgeText}>
+        <View
+          style={[
+            styles.headerBadge,
+            {
+              backgroundColor: colors.accent,
+              paddingHorizontal: 18 * scale,
+              paddingVertical: 8 * scale,
+              borderBottomRightRadius: 16 * scale,
+              gap: 8 * scale,
+            },
+          ]}
+        >
+          <Feather name="bell" size={20 * scale} color="#FFF" />
+          <Text
+            style={[
+              styles.headerBadgeText,
+              {
+                fontSize: 16 * scale,
+              },
+            ]}
+          >
             {isHR ? "AKTUALNO - GRAD OSIJEK" : "LATEST NEWS - CITY OF OSIJEK"}
           </Text>
         </View>
@@ -126,16 +145,45 @@ export default function NewsTicker({ language, colors }: NewsTickerProps) {
           {currentNews.imageUrl && (
             <Image
               source={{ uri: currentNews.imageUrl }}
-              style={styles.image}
+              style={[
+                styles.image,
+                {
+                  width: 260 * scale,
+                },
+              ]}
               resizeMode="cover"
             />
           )}
-          <View style={styles.textContainer}>
-            <Text style={[styles.date, { color: colors.accent }]}>
+          <View
+            style={[
+              styles.textContainer,
+              {
+                paddingHorizontal: 35 * scale,
+                paddingTop: 30 * scale,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.date,
+                {
+                  color: colors.accent,
+                  fontSize: 20 * scale,
+                  marginBottom: 8 * scale,
+                },
+              ]}
+            >
               {currentNews.date}
             </Text>
             <Text
-              style={[styles.title, { color: colors.textPrimary }]}
+              style={[
+                styles.title,
+                {
+                  color: colors.textPrimary,
+                  fontSize: 32 * scale,
+                  lineHeight: 40 * scale,
+                },
+              ]}
               numberOfLines={2}
             >
               {currentNews.title}
@@ -145,7 +193,16 @@ export default function NewsTicker({ language, colors }: NewsTickerProps) {
       </View>
 
       {!isHR && (
-        <Text style={[styles.notice, { color: colors.textSecondary }]}>
+        <Text
+          style={[
+            styles.notice,
+            {
+              color: colors.textSecondary,
+              fontSize: 16 * scale,
+              marginTop: 12 * scale,
+            },
+          ]}
+        >
           * News available in Croatian language only.
         </Text>
       )}
@@ -156,18 +213,13 @@ export default function NewsTicker({ language, colors }: NewsTickerProps) {
 const styles = StyleSheet.create({
   wrapper: { width: "100%" },
   container: {
-    height: isLargeScreen ? 180 : 120,
-    borderRadius: isLargeScreen ? 30 : 20,
-    borderWidth: 2,
     overflow: "hidden",
     justifyContent: "center",
     position: "relative",
     width: "100%",
   },
   notice: {
-    fontSize: isLargeScreen ? 16 : 12,
     textAlign: "center",
-    marginTop: 10,
     fontStyle: "italic",
   },
   headerBadge: {
@@ -176,15 +228,10 @@ const styles = StyleSheet.create({
     left: 0,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: isLargeScreen ? 16 : 12,
-    paddingVertical: isLargeScreen ? 6 : 4,
-    borderBottomRightRadius: isLargeScreen ? 15 : 10,
-    gap: 6,
     zIndex: 10,
   },
   headerBadgeText: {
     color: "#FFF",
-    fontSize: isLargeScreen ? 14 : 12,
     fontWeight: "bold",
     letterSpacing: 1,
   },
@@ -194,20 +241,16 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  image: { width: isLargeScreen ? 240 : 140, height: "100%" },
+  image: {
+    height: "100%",
+  },
   textContainer: {
     flex: 1,
-    paddingHorizontal: isLargeScreen ? 30 : 20,
-    paddingTop: isLargeScreen ? 25 : 15,
   },
   date: {
-    fontSize: isLargeScreen ? 18 : 14,
     fontWeight: "bold",
-    marginBottom: isLargeScreen ? 8 : 4,
   },
   title: {
-    fontSize: isLargeScreen ? 28 : 20,
     fontWeight: "bold",
-    lineHeight: isLargeScreen ? 36 : 28,
   },
 });

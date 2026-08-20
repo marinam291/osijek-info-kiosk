@@ -31,7 +31,7 @@ export default function HomeView({
 }: HomeViewProps) {
   const isHR = language === "HR";
   const { width } = useWindowDimensions();
-  const isLargeScreen = width > 1600;
+  const scale = width / 1920;
 
   const menuItems = [
     {
@@ -60,7 +60,7 @@ export default function HomeView({
           styles.overlay,
           {
             backgroundColor: colors.background + "99",
-            paddingTop: isLargeScreen ? 200 : 180,
+            paddingTop: 180 * scale,
           },
         ]}
       >
@@ -68,8 +68,8 @@ export default function HomeView({
           style={[
             styles.grid,
             {
-              gap: isLargeScreen ? 35 : 24,
-              maxWidth: isLargeScreen ? 1400 : 1000,
+              gap: 30 * scale,
+              maxWidth: 1400 * scale,
             },
           ]}
         >
@@ -81,9 +81,10 @@ export default function HomeView({
                 {
                   backgroundColor: colors.cardBackground,
                   borderColor: colors.accent,
-                  maxWidth: isLargeScreen ? 320 : 240,
-                  borderRadius: isLargeScreen ? 30 : 24,
-                  padding: isLargeScreen ? 28 : 20,
+                  maxWidth: 320 * scale,
+                  borderRadius: 30 * scale,
+                  padding: 28 * scale,
+                  borderWidth: 2 * scale,
                 },
               ]}
               activeOpacity={0.8}
@@ -94,7 +95,8 @@ export default function HomeView({
                   styles.cardTitle,
                   {
                     color: colors.textPrimary,
-                    fontSize: isLargeScreen ? 30 : 24,
+                    fontSize: 32 * scale,
+                    lineHeight: 40 * scale,
                   },
                 ]}
               >
@@ -108,8 +110,8 @@ export default function HomeView({
           style={[
             styles.tickerContainer,
             {
-              maxWidth: isLargeScreen ? 1400 : 1000,
-              marginTop: isLargeScreen ? 50 : 30,
+              maxWidth: 1400 * scale,
+              marginTop: 50 * scale,
             },
           ]}
         >
@@ -146,7 +148,6 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
