@@ -14,7 +14,15 @@ import { useTheme } from "../../context/ThemeContext";
 import ItemImageGallery from "./ItemImageGallery";
 import ItemQrSection from "./ItemQrSection";
 import TrainScheduleWidget from "../widgets/TrainScheduleWidget";
+import GppScheduleWidget from "../widgets/GppScheduleWidget";
 import { ContentItem } from "../views/ContentArea";
+
+type GppLine = {
+  id: string;
+  naziv: string;
+  vrsta: string;
+  polasci?: string[];
+};
 
 type ItemModalProps = {
   selectedItem: ContentItem | null;
@@ -44,6 +52,9 @@ export default function ItemModal({
     typeof selectedItem?.opis === "object" && selectedItem.opis !== null
       ? selectedItem.opis[isHR ? "HR" : "EN"]
       : selectedItem?.opis;
+
+  const gppLinije =
+    (selectedItem as ContentItem & { linije?: GppLine[] })?.linije || [];
 
   return (
     <>
@@ -98,6 +109,14 @@ export default function ItemModal({
               {selectedItem?.id === "u_p2" ? (
                 <View style={{ width: "100%", marginTop: 10 }}>
                   <TrainScheduleWidget language={language} colors={colors} />
+                </View>
+              ) : selectedItem?.id === "u_p1" ? (
+                <View style={{ width: "100%", marginTop: 10 }}>
+                  <GppScheduleWidget
+                    linije={gppLinije}
+                    language={language}
+                    colors={colors}
+                  />
                 </View>
               ) : (
                 <>

@@ -59,7 +59,6 @@ export const getOsijekData = (language: string) => {
     muzeji: [
       {
         id: "m_1",
-        // Ovdje stavi običan string koji se sam mijenja ovisno o jeziku
         naziv: isHR ? "Muzej Slavonije" : "Museum of Slavonia",
         vrijeme: isHR
           ? "Uto - Sub: 10:00 - 18:00"
@@ -204,7 +203,8 @@ export const getOsijekData = (language: string) => {
             : "Emergency medical care 24/7.",
           info: "Tel: 194 / 031 225 555",
           slika: require("../../assets/images/hitna.png"),
-          qrLink: "https://www.hznzih.hr",
+          qrLink:
+            "https://www.google.com/maps/dir/?api=1&origin=45.5585522,18.678293&destination=45.5428,18.6938",
         },
         {
           id: "u_z2",
@@ -216,7 +216,8 @@ export const getOsijekData = (language: string) => {
             : "General medicine, pediatrics, laboratory and specialist clinics.",
           info: "Tel: 031 225 100",
           slika: require("../../assets/images/domzdravlja.jpg"),
-          qrLink: "https://www.dzoob.hr",
+          qrLink:
+            "https://www.google.com/maps/dir/?api=1&origin=45.5585522,18.678293&destination=45.5562,18.6836",
         },
         {
           id: "u_z3",
@@ -226,7 +227,8 @@ export const getOsijekData = (language: string) => {
             : '"Centar" Pharmacy at Ante Starčević Square is on duty 24/7.',
           info: "Tel: 031 211 744",
           slika: require("../../assets/images/ljekarna.jpg"),
-          qrLink: "https://ljekarne-srce.hr",
+          qrLink:
+            "https://www.google.com/maps/dir/?api=1&origin=45.5585522,18.678293&destination=45.5561,18.6778",
         },
         {
           id: "u_z4",
@@ -238,7 +240,8 @@ export const getOsijekData = (language: string) => {
             : "Main hospital in Osijek for all healthcare needs.",
           info: "Tel: 031 223 111",
           slika: require("../../assets/images/kbc.jpg"),
-          qrLink: "https://www.kbco.hr",
+          qrLink:
+            "https://www.google.com/maps/dir/?api=1&origin=45.5585522,18.678293&destination=45.5422,18.6941",
         },
       ],
       prijevoz: [
@@ -251,6 +254,49 @@ export const getOsijekData = (language: string) => {
           info: "Tel: 031 228 300",
           slika: require("../../assets/images/gpp.jpg"),
           qrLink: "https://web.gpp-osijek.com",
+          // Ovdje moramo imati definirane linije da bi se widget prikazao:
+          linije: [
+            {
+              id: "T1",
+              naziv: "Višnjevac – Zeleno polje",
+              vrsta: "tramvaj",
+              polasci: [
+                "06:00",
+                "06:30",
+                "07:00",
+                "07:30",
+                "08:15",
+                "09:00",
+                "10:00",
+                "11:00",
+                "12:00",
+                "13:00",
+                "14:00",
+                "15:00",
+                "16:00",
+              ],
+            },
+            {
+              id: "T2",
+              naziv: "Trg A. Starčevića – Bikara",
+              vrsta: "tramvaj",
+              polasci: [
+                "06:10",
+                "06:40",
+                "07:15",
+                "07:45",
+                "08:30",
+                "09:15",
+                "10:15",
+                "11:15",
+                "12:15",
+                "13:15",
+                "14:15",
+                "15:15",
+                "16:15",
+              ],
+            },
+          ],
         },
         {
           id: "u_p2",

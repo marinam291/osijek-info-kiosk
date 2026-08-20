@@ -60,7 +60,7 @@ export default function HomeView({
           styles.overlay,
           {
             backgroundColor: colors.background + "99",
-            paddingTop: 180 * scale,
+            paddingTop: 220 * scale,
           },
         ]}
       >
@@ -95,8 +95,8 @@ export default function HomeView({
                   styles.cardTitle,
                   {
                     color: colors.textPrimary,
-                    fontSize: 32 * scale,
-                    lineHeight: 40 * scale,
+                    fontSize: (language === "EN" ? 27 : 32) * scale,
+                    lineHeight: (language === "EN" ? 36 : 40) * scale,
                   },
                 ]}
               >
