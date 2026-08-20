@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  useWindowDimensions,
+} from "react-native";
 import CalendarWidget from "../widgets/CalendarWidget";
 import { ContentItem } from "./ContentArea";
 import { useTheme } from "../../context/ThemeContext";
@@ -22,8 +28,9 @@ export default function EventsView({
   language,
 }: EventsViewProps) {
   const isHR = language === "HR";
+  const { width } = useWindowDimensions();
+  const scale = width / 1920;
 
-  // Sigurno izvlačenje naziva ovisno o jeziku
   const displayNaziv =
     typeof selectedItem?.naziv === "object" && selectedItem.naziv !== null
       ? selectedItem.naziv[isHR ? "HR" : "EN"]
@@ -31,11 +38,25 @@ export default function EventsView({
 
   return (
     <View style={{ flex: 1 }}>
-      <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+      <Text
+        style={[
+          styles.sectionTitle,
+          {
+            color: colors.textPrimary,
+            fontSize: 42 * scale,
+            marginBottom: 24 * scale,
+          },
+        ]}
+      >
         {title}
       </Text>
 
-      <View style={styles.calendarWrapper}>
+      <View
+        style={[
+          styles.calendarWrapper,
+          { gap: 30 * scale, marginTop: 10 * scale },
+        ]}
+      >
         <ScrollView
           style={styles.calendarLeft}
           showsVerticalScrollIndicator={false}
@@ -64,23 +85,53 @@ export default function EventsView({
             {
               backgroundColor: colors.cardBackground,
               borderColor: colors.border,
+              borderRadius: 20 * scale,
+              borderWidth: 1.5 * scale,
             },
           ]}
-          contentContainerStyle={styles.calendarRightContent}
+          contentContainerStyle={[
+            styles.calendarRightContent,
+            { padding: 28 * scale },
+          ]}
           showsVerticalScrollIndicator={false}
         >
-          <Text style={[styles.detailsTitle, { color: colors.textPrimary }]}>
+          <Text
+            style={[
+              styles.detailsTitle,
+              {
+                color: colors.textPrimary,
+                fontSize: 26 * scale,
+                marginBottom: 20 * scale,
+              },
+            ]}
+          >
             {isHR ? "Detalji događaja" : "Event Details"}
           </Text>
           {selectedItem ? (
-            <View style={styles.detailsContent}>
+            <View style={[styles.detailsContent, { marginTop: 10 * scale }]}>
               <Text
-                style={[styles.detailsItemTitle, { color: colors.textPrimary }]}
+                style={[
+                  styles.detailsItemTitle,
+                  {
+                    color: colors.textPrimary,
+                    fontSize: 28 * scale,
+                    marginBottom: 12 * scale,
+                  },
+                ]}
               >
                 {displayNaziv}
               </Text>
               {selectedItem.datum && (
-                <Text style={[styles.detailsItemSub, { color: colors.accent }]}>
+                <Text
+                  style={[
+                    styles.detailsItemSub,
+                    {
+                      color: colors.accent,
+                      fontSize: 20 * scale,
+                      marginBottom: 16 * scale,
+                    },
+                  ]}
+                >
                   {isHR ? "Datum: " : "Date: "} {selectedItem.datum}
                 </Text>
               )}
@@ -88,7 +139,12 @@ export default function EventsView({
                 <Text
                   style={[
                     styles.detailsItemDescription,
-                    { color: colors.textSecondary },
+                    {
+                      color: colors.textSecondary,
+                      fontSize: 20 * scale,
+                      lineHeight: 30 * scale,
+                      marginBottom: 14 * scale,
+                    },
                   ]}
                 >
                   {selectedItem.opis}
@@ -98,7 +154,11 @@ export default function EventsView({
                 <Text
                   style={[
                     styles.detailsItemInfo,
-                    { color: colors.textSecondary },
+                    {
+                      color: colors.textSecondary,
+                      fontSize: 18 * scale,
+                      lineHeight: 26 * scale,
+                    },
                   ]}
                 >
                   {selectedItem.info}
@@ -109,7 +169,11 @@ export default function EventsView({
             <Text
               style={[
                 styles.detailsPlaceholder,
-                { color: colors.textSecondary },
+                {
+                  color: colors.textSecondary,
+                  fontSize: 20 * scale,
+                  marginTop: 20 * scale,
+                },
               ]}
             >
               {isHR
@@ -125,60 +189,37 @@ export default function EventsView({
 
 const styles = StyleSheet.create({
   sectionTitle: {
-    fontSize: 42,
     fontWeight: "bold",
-    marginBottom: 24,
     letterSpacing: 1,
   },
   calendarWrapper: {
     flex: 1,
     flexDirection: "row",
-    gap: 30,
-    marginTop: 10,
   },
   calendarLeft: {
     flex: 0.65,
   },
   calendarRight: {
     flex: 0.35,
-    borderRadius: 20,
-    borderWidth: 1,
   },
   calendarRightContent: {
-    padding: 24,
     justifyContent: "flex-start",
   },
   detailsTitle: {
-    fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 15,
   },
-  detailsContent: {
-    marginTop: 10,
-  },
+  detailsContent: {},
   detailsItemTitle: {
-    fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 8,
   },
   detailsItemSub: {
-    fontSize: 16,
     fontWeight: "600",
-    marginBottom: 12,
   },
-  detailsItemDescription: {
-    fontSize: 16,
-    lineHeight: 24,
-    marginBottom: 10,
-  },
+  detailsItemDescription: {},
   detailsItemInfo: {
-    fontSize: 14,
-    lineHeight: 20,
     fontStyle: "italic",
   },
   detailsPlaceholder: {
-    fontSize: 16,
     fontStyle: "italic",
-    marginTop: 20,
   },
 });

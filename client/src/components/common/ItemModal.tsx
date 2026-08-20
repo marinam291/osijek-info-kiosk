@@ -13,6 +13,7 @@ import {
 import { useTheme } from "../../context/ThemeContext";
 import ItemImageGallery from "./ItemImageGallery";
 import ItemQrSection from "./ItemQrSection";
+import TrainScheduleWidget from "../widgets/TrainScheduleWidget";
 import { ContentItem } from "../views/ContentArea";
 
 type ItemModalProps = {
@@ -94,26 +95,34 @@ export default function ItemModal({
                 {displayNaziv}
               </Text>
 
-              <ItemImageGallery
-                galerija={selectedItem?.galerija}
-                slika={selectedItem?.slika}
-                onImagePress={setFullScreenImage}
-              />
+              {selectedItem?.id === "u_p2" ? (
+                <View style={{ width: "100%", marginTop: 10 }}>
+                  <TrainScheduleWidget language={language} colors={colors} />
+                </View>
+              ) : (
+                <>
+                  <ItemImageGallery
+                    galerija={selectedItem?.galerija}
+                    slika={selectedItem?.slika}
+                    onImagePress={setFullScreenImage}
+                  />
 
-              <Text
-                style={[
-                  styles.modalDescription,
-                  { color: colors.textSecondary },
-                ]}
-              >
-                {displayOpis}
-              </Text>
+                  <Text
+                    style={[
+                      styles.modalDescription,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    {displayOpis}
+                  </Text>
 
-              <ItemQrSection
-                qrLink={selectedItem?.qrLink}
-                isHR={isHR}
-                colors={colors}
-              />
+                  <ItemQrSection
+                    qrLink={selectedItem?.qrLink}
+                    isHR={isHR}
+                    colors={colors}
+                  />
+                </>
+              )}
             </ScrollView>
           </View>
         </View>

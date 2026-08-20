@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ImageBackground,
+  useWindowDimensions,
 } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 import { osijekLocations, LocationItem } from "../../data/mapLocations";
@@ -20,6 +21,8 @@ export default function MapTab({ language, colors }: MapTabProps) {
     null,
   );
 
+  const { width } = useWindowDimensions();
+  const scale = width / 1920;
   const langKey = language === "HR" ? "HR" : "EN";
   const mapEmbedUrl = `https://maps.google.com/maps?q=45.5585522,18.678293&hl=${langKey.toLowerCase()}&z=15&output=embed`;
 
@@ -34,42 +37,81 @@ export default function MapTab({ language, colors }: MapTabProps) {
           { backgroundColor: colors.background + "99" },
         ]}
       >
-        <View style={styles.container}>
-          {/* Karta */}
-          <View style={styles.mapWrapper}>
+        <View
+          style={[
+            styles.container,
+            {
+              marginTop: 110 * scale,
+              marginBottom: 40 * scale,
+              marginHorizontal: 40 * scale,
+              borderRadius: 25 * scale,
+            },
+          ]}
+        >
+          <View style={[styles.mapWrapper, { borderRadius: 25 * scale }]}>
             {React.createElement("iframe", {
               src: mapEmbedUrl,
               style: {
                 width: "100%",
                 height: "100%",
                 border: 0,
-                borderRadius: 20,
+                borderRadius: 25 * scale,
               },
               title: language === "HR" ? "Karta Osijeka" : "Map of Osijek",
             })}
           </View>
 
-          {/* Badge "Vi ste ovdje" */}
           <View
             style={[
               styles.kioskBadge,
               {
                 backgroundColor: colors.cardBackground,
                 borderColor: colors.accent,
+                top: 35 * scale,
+                right: 35 * scale,
+                paddingVertical: 16 * scale,
+                paddingHorizontal: 28 * scale,
+                borderRadius: 35 * scale,
+                borderWidth: 2.5 * scale,
               },
             ]}
           >
             <View
-              style={[styles.kioskDot, { backgroundColor: colors.accent }]}
+              style={[
+                styles.kioskDot,
+                {
+                  backgroundColor: colors.accent,
+                  width: 18 * scale,
+                  height: 18 * scale,
+                  borderRadius: 9 * scale,
+                  marginRight: 12 * scale,
+                },
+              ]}
             />
             <Text
-              style={[styles.kioskBadgeText, { color: colors.textPrimary }]}
+              style={[
+                styles.kioskBadgeText,
+                {
+                  color: colors.textPrimary,
+                  fontSize: 22 * scale,
+                },
+              ]}
             >
               {language === "HR" ? "VI STE OVDJE" : "YOU ARE HERE"}
             </Text>
           </View>
 
-          <View style={styles.markersBar}>
+          <View
+            style={[
+              styles.markersBar,
+              {
+                bottom: 30 * scale,
+                left: 25 * scale,
+                right: 25 * scale,
+                gap: 16 * scale,
+              },
+            ]}
+          >
             {osijekLocations.map((loc, index) => (
               <TouchableOpacity
                 key={index}
@@ -78,6 +120,10 @@ export default function MapTab({ language, colors }: MapTabProps) {
                   {
                     backgroundColor: colors.cardBackground,
                     borderColor: colors.accent,
+                    paddingVertical: 16 * scale,
+                    paddingHorizontal: 28 * scale,
+                    borderRadius: 30 * scale,
+                    borderWidth: 2 * scale,
                   },
                 ]}
                 onPress={() => setSelectedLocation(loc)}
@@ -85,7 +131,10 @@ export default function MapTab({ language, colors }: MapTabProps) {
                 <Text
                   style={[
                     styles.markerButtonText,
-                    { color: colors.textPrimary },
+                    {
+                      color: colors.textPrimary,
+                      fontSize: 22 * scale,
+                    },
                   ]}
                 >
                   {loc.naziv[langKey]}
@@ -119,12 +168,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    borderRadius: 20,
     overflow: "hidden",
     position: "relative",
-    marginTop: 110,
-    marginBottom: 40,
-    marginHorizontal: 40,
     elevation: 10,
     shadowColor: "#000",
     shadowOpacity: 0.3,
@@ -133,56 +178,37 @@ const styles = StyleSheet.create({
   mapWrapper: {
     width: "100%",
     height: "100%",
-    borderRadius: 20,
     overflow: "hidden",
   },
   kioskBadge: {
     position: "absolute",
-    top: 30,
-    right: 30,
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 22,
-    borderRadius: 30,
-    borderWidth: 2,
     elevation: 6,
     shadowColor: "#000",
     shadowOpacity: 0.25,
     shadowRadius: 10,
   },
-  kioskDot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    marginRight: 10,
-  },
+  kioskDot: {},
   kioskBadgeText: {
-    fontSize: 18,
     fontWeight: "bold",
+    letterSpacing: 1,
   },
   markersBar: {
     position: "absolute",
-    bottom: 25,
-    left: 20,
-    right: 20,
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    gap: 12,
   },
   markerButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 25,
-    borderWidth: 2,
     elevation: 5,
     shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
   },
   markerButtonText: {
-    fontSize: 18,
     fontWeight: "bold",
   },
 });
