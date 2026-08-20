@@ -4,10 +4,18 @@ import ServiceFilters from "../common/ServiceFilters";
 import EmergencyBox from "../widgets/EmergencyBox";
 import GridCard from "../common/GridCard";
 import TaxiDirectory, { TaxiService } from "../widgets/TaxiDirectory";
+import GppScheduleWidget from "../widgets/GppScheduleWidget";
 import { ContentItem } from "./ContentArea";
 import { ThemeColors } from "@/context/ThemeContext";
 import { getOsijekData } from "@/data/osijekData";
 import FadeInView from "../common/FadeInView";
+
+type GppLine = {
+  id: string;
+  naziv: string;
+  vrsta: string;
+  polasci?: string[];
+};
 
 const getServiceCategories = (isHR: boolean) => [
   { key: "sve", label: isHR ? "Sve usluge" : "All Services" },
@@ -54,6 +62,7 @@ export default function ServicesView({
   let dataToRender: ContentItem[] = [];
   let taxiData: TaxiService[] = [];
   let isTaxiView = false;
+  let isJavniPrijevozView = false;
 
   if (serviceCategory === "zdravstvo") {
     dataToRender = currentData.usluge.zdravstvo;
@@ -62,7 +71,8 @@ export default function ServicesView({
       isTaxiView = true;
       taxiData = currentData.usluge.taksi || [];
     } else if (transportSubCategory === "javni") {
-      dataToRender = currentData.usluge.prijevoz;
+      isJavniPrijevozView = true;
+      dataToRender = currentData.usluge.prijevoz.filter((p) => p.id === "u_p1");
     } else {
       dataToRender = currentData.usluge.prijevoz;
       isTaxiView = true;
@@ -93,6 +103,9 @@ export default function ServicesView({
       ...(currentData.usluge.gradskeUsluge || []),
     ];
   }
+
+  const gppItem = currentData.usluge.prijevoz.find((p) => p.id === "u_p1");
+  const gppLinije = (gppItem as { linije?: GppLine[] })?.linije || [];
 
   return (
     <View style={styles.container}>
@@ -143,6 +156,16 @@ export default function ServicesView({
                 onPress={onItemPress}
               />
             ))}
+          </View>
+        )}
+
+        {isJavniPrijevozView && gppLinije.length > 0 && (
+          <View style={{ marginTop: 20 }}>
+            <GppScheduleWidget
+              linije={gppLinije}
+              language={language}
+              colors={colors}
+            />
           </View>
         )}
 

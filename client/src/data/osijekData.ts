@@ -59,7 +59,6 @@ export const getOsijekData = (language: string) => {
     muzeji: [
       {
         id: "m_1",
-        // Ovdje stavi običan string koji se sam mijenja ovisno o jeziku
         naziv: isHR ? "Muzej Slavonije" : "Museum of Slavonia",
         vrijeme: isHR
           ? "Uto - Sub: 10:00 - 18:00"
@@ -251,6 +250,49 @@ export const getOsijekData = (language: string) => {
           info: "Tel: 031 228 300",
           slika: require("../../assets/images/gpp.jpg"),
           qrLink: "https://web.gpp-osijek.com",
+          // Ovdje moramo imati definirane linije da bi se widget prikazao:
+          linije: [
+            {
+              id: "T1",
+              naziv: "Višnjevac – Zeleno polje",
+              vrsta: "tramvaj",
+              polasci: [
+                "06:00",
+                "06:30",
+                "07:00",
+                "07:30",
+                "08:15",
+                "09:00",
+                "10:00",
+                "11:00",
+                "12:00",
+                "13:00",
+                "14:00",
+                "15:00",
+                "16:00",
+              ],
+            },
+            {
+              id: "T2",
+              naziv: "Trg A. Starčevića – Bikara",
+              vrsta: "tramvaj",
+              polasci: [
+                "06:10",
+                "06:40",
+                "07:15",
+                "07:45",
+                "08:30",
+                "09:15",
+                "10:15",
+                "11:15",
+                "12:15",
+                "13:15",
+                "14:15",
+                "15:15",
+                "16:15",
+              ],
+            },
+          ],
         },
         {
           id: "u_p2",
