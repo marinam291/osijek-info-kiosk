@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useMemo,
-  useRef,
-  useCallback,
-} from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -22,22 +16,6 @@ type WeatherWidgetProps = {
   variant?: "screensaver" | "sidebar";
   textColor?: string;
   language?: string;
-};
-
-const getNextDays = (count: number, isHR: boolean) => {
-  const daysHR = ["NED", "PON", "UTO", "SRI", "ČET", "PET", "SUB"];
-  const daysEN = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-  const days = isHR ? daysHR : daysEN;
-  const today = new Date().getDay();
-
-  return Array.from({ length: count }).map((_, i) => {
-    const dayIndex = (today + i) % 7;
-    return {
-      day: days[dayIndex],
-      temp: `${20 + Math.floor(Math.random() * 10)}°C`,
-      icon: "sun",
-    };
-  });
 };
 
 export default function WeatherWidget({
@@ -77,10 +55,7 @@ export default function WeatherWidget({
     return () => clearInterval(interval);
   }, []);
 
-  const weeklyForecast = useMemo(() => {
-    return getNextDays(7, isHR);
-  }, [isHR]);
-
+  const weeklyForecast = weather?.weekly || [];
   const isScreen = variant === "screensaver";
   const color = isScreen ? "#FFFFFF" : textColor;
 
