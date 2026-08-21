@@ -25,10 +25,15 @@ export default function MayorContactWidget({
   const [senderName, setSenderName] = useState("");
   const [senderEmail, setSenderEmail] = useState("");
   const [messageBody, setMessageBody] = useState("");
+  const [isAnonymous, setIsAnonymous] = useState(false);
 
   const handleSendEmail = async () => {
-    if (!senderName || !senderEmail || !messageBody) {
+    if (!isAnonymous && (!senderName || !senderEmail || !messageBody)) {
       alert(isHR ? "Molimo ispunite sva polja." : "Please fill in all fields.");
+      return;
+    }
+    if (isAnonymous && !messageBody) {
+      alert(isHR ? "Molimo unesite poruku." : "Please enter a message.");
       return;
     }
 
@@ -37,11 +42,15 @@ export default function MayorContactWidget({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          senderName,
-          senderEmail,
+          isAnonymous,
+          senderName: isAnonymous ? undefined : senderName,
+          senderEmail: isAnonymous ? undefined : senderEmail,
           messageBody,
+          lang: isHR ? "hr" : "en",
         }),
       });
+
+      const data = await response.json();
 
       if (response.ok) {
         alert(
@@ -50,9 +59,13 @@ export default function MayorContactWidget({
         setSenderName("");
         setSenderEmail("");
         setMessageBody("");
+        setIsAnonymous(false);
       } else {
         alert(
-          isHR ? "Došlo je do greške pri slanju." : "Failed to send message.",
+          data.error ||
+            (isHR
+              ? "Došlo je do greške pri slanju."
+              : "Failed to send message."),
         );
       }
     } catch (error) {
@@ -90,73 +103,129 @@ export default function MayorContactWidget({
       </Text>
 
       <View style={[styles.formContainer, { gap: 24 * scale }]}>
-        <View style={[styles.inputGroup, { gap: 8 * scale }]}>
+        <TouchableOpacity
+          style={[
+            styles.anonymousToggle,
+            {
+              backgroundColor: colors.cardBackground,
+              borderColor: colors.border,
+              height: 60 * scale,
+              borderRadius: 14 * scale,
+              paddingHorizontal: 20 * scale,
+              borderWidth: 1.5 * scale,
+            },
+          ]}
+          onPress={() => setIsAnonymous(!isAnonymous)}
+          activeOpacity={0.8}
+        >
+          <View
+            style={[
+              styles.checkboxIndicator,
+              {
+                width: 28 * scale,
+                height: 28 * scale,
+                borderRadius: 6 * scale,
+                borderColor: colors.accent,
+                backgroundColor: isAnonymous ? colors.accent : "transparent",
+                borderWidth: 2,
+              },
+            ]}
+          />
           <Text
             style={[
-              styles.label,
+              styles.anonymousText,
               {
                 color: colors.textPrimary,
-                fontSize: 20 * scale,
+                fontSize: 18 * scale,
+                marginLeft: 15 * scale,
               },
             ]}
           >
-            {isHR ? "Vaše ime i prezime" : "Full Name"}
+            {isHR ? "Pošalji poruku anonimno" : "Send message anonymously"}
           </Text>
-          <TextInput
-            style={[
-              styles.input,
-              {
-                backgroundColor: colors.cardBackground,
-                color: colors.textPrimary,
-                borderColor: colors.border,
-                height: 70 * scale,
-                borderRadius: 16 * scale,
-                paddingHorizontal: 22 * scale,
-                fontSize: 20 * scale,
-                borderWidth: 1.5 * scale,
-              },
-            ]}
-            placeholder={isHR ? "npr. Ivan Horvat" : "e.g. John Doe"}
-            placeholderTextColor={colors.textSecondary + "80"}
-            value={senderName}
-            onChangeText={setSenderName}
-          />
-        </View>
+        </TouchableOpacity>
 
-        <View style={[styles.inputGroup, { gap: 8 * scale }]}>
-          <Text
-            style={[
-              styles.label,
-              {
-                color: colors.textPrimary,
-                fontSize: 20 * scale,
-              },
-            ]}
-          >
-            {isHR ? "Vaša e-mail adresa" : "Email Address"}
-          </Text>
-          <TextInput
-            style={[
-              styles.input,
-              {
-                backgroundColor: colors.cardBackground,
-                color: colors.textPrimary,
-                borderColor: colors.border,
-                height: 70 * scale,
-                borderRadius: 16 * scale,
-                paddingHorizontal: 22 * scale,
-                fontSize: 20 * scale,
-                borderWidth: 1.5 * scale,
-              },
-            ]}
-            placeholder={isHR ? "npr. ivan@email.com" : "e.g. john@email.com"}
-            placeholderTextColor={colors.textSecondary + "80"}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={senderEmail}
-            onChangeText={setSenderEmail}
-          />
-        </View>
+        {!isAnonymous && (
+          <>
+            <View style={[styles.inputGroup, { gap: 8 * scale }]}>
+              <Text
+                style={[
+                  styles.label,
+                  {
+                    color: colors.textPrimary,
+                    fontSize: 20 * scale,
+                  },
+                ]}
+              >
+                {isHR
+                  ? "Vaše ime i prezime (max 40 znakova)"
+                  : "Full Name (max 40 chars)"}
+              </Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  {
+                    backgroundColor: colors.cardBackground,
+                    color: colors.textPrimary,
+                    borderColor: colors.border,
+                    height: 70 * scale,
+                    borderRadius: 16 * scale,
+                    paddingHorizontal: 22 * scale,
+                    fontSize: 20 * scale,
+                    borderWidth: 1.5 * scale,
+                  },
+                ]}
+                placeholder={isHR ? "npr. Ivan Horvat" : "e.g. John Doe"}
+                placeholderTextColor={colors.textSecondary + "80"}
+                maxLength={40}
+                value={senderName}
+                onChangeText={setSenderName}
+              />
+            </View>
+
+            <View style={[styles.inputGroup, { gap: 8 * scale }]}>
+              <Text
+                style={[
+                  styles.label,
+                  {
+                    color: colors.textPrimary,
+                    fontSize: 20 * scale,
+                  },
+                ]}
+              >
+                {isHR
+                  ? "Vaša Gmail adresa (max 40 znakova)"
+                  : "Gmail Address (max 40 chars)"}
+              </Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  {
+                    backgroundColor: colors.cardBackground,
+                    color: colors.textPrimary,
+                    borderColor: colors.border,
+                    height: 70 * scale,
+                    borderRadius: 16 * scale,
+                    paddingHorizontal: 22 * scale,
+                    fontSize: 20 * scale,
+                    borderWidth: 1.5 * scale,
+                  },
+                ]}
+                placeholder={
+                  isHR
+                    ? "npr. primjergmail@gmail.com"
+                    : "e.g. example@gmail.com"
+                }
+                placeholderTextColor={colors.textSecondary + "80"}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                maxLength={40}
+                value={senderEmail}
+                onChangeText={setSenderEmail}
+              />
+            </View>
+          </>
+        )}
 
         <View style={[styles.inputGroup, { gap: 8 * scale }]}>
           <Text
@@ -235,6 +304,17 @@ const styles = StyleSheet.create({
     fontWeight: "400",
   },
   formContainer: {},
+  anonymousToggle: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  checkboxIndicator: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  anonymousText: {
+    fontWeight: "500",
+  },
   inputGroup: {},
   label: {
     fontWeight: "bold",
