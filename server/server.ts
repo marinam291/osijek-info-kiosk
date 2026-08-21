@@ -7,10 +7,11 @@ import ItemGallery from "./models/ItemGallery.js";
 import GppLine from "./models/GppLine.js";
 import GppDeparture from "./models/GppDeparture.js";
 import MapLocation from "./models/MapLocation.js";
+import contactRoutes from "./routes/contactRoutes.js";
 
 dotenv.config();
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 const app = express();
 
 app.use(cors());
@@ -47,6 +48,8 @@ app.get("/api/locations", async (req, res) => {
     res.status(500).json({ error: "Greška pri dohvatu lokacija" });
   }
 });
+
+app.use("/api", contactRoutes);
 
 async function startServer() {
   try {

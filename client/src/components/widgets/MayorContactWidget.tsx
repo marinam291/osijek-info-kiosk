@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Linking,
   useWindowDimensions,
 } from "react-native";
 import { ThemeColors } from "../../context/ThemeContext";
@@ -27,25 +26,44 @@ export default function MayorContactWidget({
   const [senderEmail, setSenderEmail] = useState("");
   const [messageBody, setMessageBody] = useState("");
 
-  const handleSendEmail = () => {
+  const handleSendEmail = async () => {
     if (!senderName || !senderEmail || !messageBody) {
       alert(isHR ? "Molimo ispunite sva polja." : "Please fill in all fields.");
       return;
     }
 
-    const recipient = "gradonacelnik@osijek.hr";
-    const subject = encodeURIComponent(
-      isHR
-        ? `Poruka građana s kioska - ${senderName}`
-        : `Citizen message from kiosk - ${senderName}`,
-    );
-    const body = encodeURIComponent(
-      isHR
-        ? `Pošiljatelj: ${senderName} (${senderEmail})\n\nPoruka:\n${messageBody}`
-        : `Sender: ${senderName} (${senderEmail})\n\nMessage:\n${messageBody}`,
-    );
+    try {
+      const response = await fetch("http://localhost:5000/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          senderName,
+          senderEmail,
+          messageBody,
+        }),
+      });
 
-    Linking.openURL(`mailto:${recipient}?subject=${subject}&body=${body}`);
+      if (response.ok) {
+        alert(
+          isHR ? "Poruka je uspješno poslana!" : "Message sent successfully!",
+        );
+        setSenderName("");
+        setSenderEmail("");
+        setMessageBody("");
+      } else {
+        alert(
+          isHR ? "Došlo je do greške pri slanju." : "Failed to send message.",
+        );
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error("Greška:", error);
+      alert(
+        isHR
+          ? "Nije moguće uspostaviti vezu sa serverom."
+          : "Unable to connect to the server.",
+      );
+    }
   };
 
   return (
