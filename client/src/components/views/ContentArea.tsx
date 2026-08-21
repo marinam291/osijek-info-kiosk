@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   ScrollView,
   StyleSheet,
   ImageBackground,
+  ActivityIndicator,
   ImageSourcePropType,
 } from "react-native";
-import { getOsijekData } from "../../data/osijekData";
 import { useTheme } from "../../context/ThemeContext";
 import MapTab from "../views/MapTab";
 import ItemModal from "../common/ItemModal";
@@ -19,16 +19,54 @@ import ServiceFilters from "../common/ServiceFilters";
 import MayorContactWidget from "../widgets/MayorContactWidget";
 import EventsView from "../views/EventsView";
 
+export type GppDepartureType = {
+  id: number;
+  departureTime: string;
+};
+
+export type GppLineType = {
+  id: string;
+  naziv: string;
+  vrsta: string;
+  GppDepartures?: GppDepartureType[];
+};
+
 export type ContentItem = {
   id: string | number;
-  naziv?: string | { HR: string; EN: string };
+  categoryKey?: string;
+  subCategory?: string;
+  nazivHr?: string;
+  nazivEn?: string;
+  naziv?: string;
+  opisHr?: string;
+  opisEn?: string;
   opis?: string;
+  infoHr?: string;
+  infoEn?: string;
   info?: string;
-  slika?: ImageSourcePropType;
-  galerija?: ImageSourcePropType[];
-  qrLink?: string;
+  vrijemeHr?: string;
+  vrijemeEn?: string;
   vrijeme?: string;
   datum?: string;
+  slika?: ImageSourcePropType;
+  ItemGalleries?: { imagePath: string }[];
+  qrLink?: string;
+  GppLines?: GppLineType[];
+};
+
+export type ServicesDataStructure = {
+  usluge: {
+    zdravstvo: ContentItem[];
+    prijevoz: ContentItem[];
+    taksi: ContentItem[];
+    gradskeUsluge: ContentItem[];
+  };
+  smjestaj: {
+    hoteli: ContentItem[];
+    apartmani: ContentItem[];
+    hosteli: ContentItem[];
+  };
+  trgovine: ContentItem[];
 };
 
 type ContentProps = {
@@ -59,13 +97,28 @@ export default function ContentArea({
   onNavigate,
 }: ContentProps) {
   const { colors } = useTheme();
-  const currentData = getOsijekData(language);
+
+  const [allItems, setAllItems] = useState<ContentItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
   const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
   const [fullScreenImage, setFullScreenImage] =
     useState<ImageSourcePropType | null>(null);
 
   const [tourismCategory, setTourismCategory] = useState<string>("sve");
   const [prevActiveTab, setPrevActiveTab] = useState<string>(activeTab);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/items")
+      .then((res) => res.json() as Promise<ContentItem[]>)
+      .then((data) => {
+        setAllItems(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  }, []);
 
   if (activeTab !== prevActiveTab) {
     setPrevActiveTab(activeTab);
@@ -89,19 +142,58 @@ export default function ContentArea({
     );
   }
 
+  if (loading) {
+    return (
+      <View
+        style={[
+          styles.backgroundImage,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <ActivityIndicator size="large" color={colors.accent} />
+      </View>
+    );
+  }
+
   const title = TAB_TITLES[activeTab]?.[language as "HR" | "EN"] || "";
   const isHR = language === "HR";
 
   let standardData: ContentItem[] = [];
+
+  const formattedItems: ContentItem[] = allItems.map((item) => ({
+    ...item,
+    naziv: isHR ? item.nazivHr : item.nazivEn,
+    opis: isHR ? item.opisHr : item.opisEn,
+    vrijeme: isHR ? item.vrijemeHr : item.vrijemeEn,
+    info: isHR ? item.infoHr : item.infoEn,
+  }));
+
   if (activeTab === "turizam") {
-    const landmarks = currentData.turizam || [];
-    const museums = currentData.muzeji || [];
+    const landmarks = formattedItems.filter((i) => i.categoryKey === "turizam");
+    const museums = formattedItems.filter((i) => i.categoryKey === "muzeji");
     if (tourismCategory === "znamenitosti") standardData = landmarks;
     else if (tourismCategory === "muzeji") standardData = museums;
     else standardData = [...landmarks, ...museums];
   } else if (activeTab === "dogadjanja") {
-    standardData = (currentData.dogadjanja as ContentItem[]) || [];
+    standardData = formattedItems.filter((i) => i.categoryKey === "dogadjanja");
   }
+
+  const currentDataForServices: ServicesDataStructure = {
+    usluge: {
+      zdravstvo: formattedItems.filter((i) => i.subCategory === "zdravstvo"),
+      prijevoz: formattedItems.filter((i) => i.subCategory === "prijevoz"),
+      taksi: formattedItems.filter((i) => i.subCategory === "taksi"),
+      gradskeUsluge: formattedItems.filter(
+        (i) => i.subCategory === "gradskeUsluge",
+      ),
+    },
+    smjestaj: {
+      hoteli: formattedItems.filter((i) => i.subCategory === "hoteli"),
+      apartmani: formattedItems.filter((i) => i.subCategory === "apartmani"),
+      hosteli: formattedItems.filter((i) => i.subCategory === "hosteli"),
+    },
+    trgovine: formattedItems.filter((i) => i.categoryKey === "trgovine"),
+  };
 
   return (
     <ImageBackground
@@ -153,7 +245,7 @@ export default function ContentArea({
 
               {activeTab === "usluge" ? (
                 <ServicesView
-                  currentData={currentData}
+                  currentData={currentDataForServices}
                   language={language}
                   colors={colors}
                   onItemPress={setSelectedItem}
@@ -162,7 +254,7 @@ export default function ContentArea({
                 <View style={styles.gridContainer}>
                   {standardData.map((item) => (
                     <GridCard
-                      key={item.id}
+                      key={String(item.id)}
                       item={item}
                       colors={colors}
                       onPress={setSelectedItem}

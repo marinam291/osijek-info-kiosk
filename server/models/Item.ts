@@ -33,6 +33,26 @@ Item.init(
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    vrijemeHr: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    vrijemeEn: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    datum: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    infoHr: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    infoEn: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     slika: {
       type: DataTypes.STRING,
       allowNull: true,

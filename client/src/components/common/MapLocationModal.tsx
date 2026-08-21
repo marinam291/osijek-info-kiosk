@@ -1,8 +1,20 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import QRCode from "react-native-qrcode-svg";
-import { LocationItem } from "../../data/mapLocations";
 import { useTheme } from "../../context/ThemeContext";
+
+export type LocationItem = {
+  id: string;
+  nazivHr: string;
+  nazivEn: string;
+  opisHr: string;
+  opisEn: string;
+  vrijemeHodaHr: string;
+  vrijemeHodaEn: string;
+  latitude: number;
+  longitude: number;
+  googleMapsUrl: string;
+};
 
 type MapLocationModalProps = {
   selectedLocation: LocationItem | null;
@@ -17,7 +29,7 @@ export default function MapLocationModal({
   language,
   colors,
 }: MapLocationModalProps) {
-  const langKey = language === "HR" ? "HR" : "EN";
+  const isHR = language === "HR";
 
   return (
     <Modal
@@ -50,18 +62,20 @@ export default function MapLocationModal({
                 <Text
                   style={[styles.modalTitle, { color: colors.textPrimary }]}
                 >
-                  {selectedLocation.naziv[langKey]}
+                  {isHR ? selectedLocation.nazivHr : selectedLocation.nazivEn}
                 </Text>
                 <Text
                   style={[styles.modalDesc, { color: colors.textSecondary }]}
                 >
-                  {selectedLocation.opis[langKey]}
+                  {isHR ? selectedLocation.opisHr : selectedLocation.opisEn}
                 </Text>
                 <Text style={[styles.modalDistance, { color: colors.accent }]}>
-                  {language === "HR"
+                  {isHR
                     ? "Procijenjeno vrijeme hoda od Šetača: "
                     : "Est. walking time from Šetač: "}
-                  {selectedLocation.vrijemeHoda[langKey]}
+                  {isHR
+                    ? selectedLocation.vrijemeHodaHr
+                    : selectedLocation.vrijemeHodaEn}
                 </Text>
               </View>
 
@@ -75,12 +89,10 @@ export default function MapLocationModal({
                 ]}
               >
                 <Text style={[styles.qrTitle, { color: colors.textPrimary }]}>
-                  {language === "HR"
-                    ? "Preuzmite navigaciju"
-                    : "Get Directions"}
+                  {isHR ? "Preuzmite navigaciju" : "Get Directions"}
                 </Text>
                 <Text style={[styles.qrSub, { color: colors.textSecondary }]}>
-                  {language === "HR"
+                  {isHR
                     ? "Skenirajte kod mobitelom za točnu pješačku rutu od Šetača do cilja."
                     : "Scan with your phone to open walking directions starting from Šetač."}
                 </Text>

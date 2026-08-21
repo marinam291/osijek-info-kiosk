@@ -1,15 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ImageBackground,
+  ActivityIndicator,
   useWindowDimensions,
 } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
-import { osijekLocations, LocationItem } from "../../data/mapLocations";
 import MapLocationModal from "../common/MapLocationModal";
+
+export type LocationItem = {
+  id: string;
+  nazivHr: string;
+  nazivEn: string;
+  naziv?: { HR: string; EN: string };
+  opisHr: string;
+  opisEn: string;
+  vrijemeHodaHr: string;
+  vrijemeHodaEn: string;
+  latitude: number;
+  longitude: number;
+  googleMapsUrl: string;
+};
 
 type MapTabProps = {
   language: string;
@@ -17,6 +31,8 @@ type MapTabProps = {
 };
 
 export default function MapTab({ language, colors }: MapTabProps) {
+  const [locations, setLocations] = useState<LocationItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedLocation, setSelectedLocation] = useState<LocationItem | null>(
     null,
   );
@@ -25,6 +41,31 @@ export default function MapTab({ language, colors }: MapTabProps) {
   const scale = width / 1920;
   const langKey = language === "HR" ? "HR" : "EN";
   const mapEmbedUrl = `https://maps.google.com/maps?q=45.5585522,18.678293&hl=${langKey.toLowerCase()}&z=15&output=embed`;
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/locations")
+      .then((res) => res.json() as Promise<LocationItem[]>)
+      .then((data) => {
+        setLocations(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <View
+        style={[
+          styles.bgContainer,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <ActivityIndicator size="large" color={colors.accent} />
+      </View>
+    );
+  }
 
   return (
     <ImageBackground
@@ -112,35 +153,38 @@ export default function MapTab({ language, colors }: MapTabProps) {
               },
             ]}
           >
-            {osijekLocations.map((loc, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.markerButton,
-                  {
-                    backgroundColor: colors.cardBackground,
-                    borderColor: colors.accent,
-                    paddingVertical: 16 * scale,
-                    paddingHorizontal: 28 * scale,
-                    borderRadius: 30 * scale,
-                    borderWidth: 2 * scale,
-                  },
-                ]}
-                onPress={() => setSelectedLocation(loc)}
-              >
-                <Text
+            {locations.map((loc, index) => {
+              const locTitle = language === "HR" ? loc.nazivHr : loc.nazivEn;
+              return (
+                <TouchableOpacity
+                  key={index}
                   style={[
-                    styles.markerButtonText,
+                    styles.markerButton,
                     {
-                      color: colors.textPrimary,
-                      fontSize: 22 * scale,
+                      backgroundColor: colors.cardBackground,
+                      borderColor: colors.accent,
+                      paddingVertical: 16 * scale,
+                      paddingHorizontal: 28 * scale,
+                      borderRadius: 30 * scale,
+                      borderWidth: 2 * scale,
                     },
                   ]}
+                  onPress={() => setSelectedLocation(loc)}
                 >
-                  {loc.naziv[langKey]}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text
+                    style={[
+                      styles.markerButtonText,
+                      {
+                        color: colors.textPrimary,
+                        fontSize: 22 * scale,
+                      },
+                    ]}
+                  >
+                    {locTitle}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
 
           <MapLocationModal
