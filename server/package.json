@@ -5,7 +5,8 @@
   "main": "server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --experimental-strip-types server.ts"
+    "dev": "node --experimental-strip-types server.ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
