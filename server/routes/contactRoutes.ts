@@ -1,5 +1,6 @@
 import express from "express";
 import nodemailer from "nodemailer";
+import { getEmailTemplate } from "../utils/emailTemplate.js";
 
 const router = express.Router();
 const transporter = nodemailer.createTransport({
@@ -17,8 +18,8 @@ router.post("/send-email", async (req, res) => {
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: "marenjakmarina@gmail.com",
-      subject: `Poruka s kioska od: ${senderName}`,
-      text: `Pošiljatelj: ${senderEmail}\n\nPoruka:\n${messageBody}`,
+      subject: `[Info-Kiosk] Poruka građana - ${senderName}`,
+      html: getEmailTemplate(senderName, senderEmail, messageBody),
     });
 
     res.status(200).json({ message: "Mail uspješno poslan!" });
