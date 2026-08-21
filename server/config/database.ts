@@ -4,13 +4,18 @@ import mysql from "mysql2/promise";
 
 dotenv.config();
 
-const dbName = process.env.DB_NAME || "osijek_kiosk";
-const dbUser = process.env.DB_USER || "root";
-const dbPassword = process.env.DB_PASSWORD || "";
-const dbHost = process.env.DB_HOST || "localhost";
+const dbName = process.env.DB_NAME;
+const dbUser = process.env.DB_USER;
+const dbPassword = process.env.DB_PASSWORD;
+const dbHost = process.env.DB_HOST;
+
+if (!dbName || !dbUser || !dbPassword || !dbHost) {
+  throw new Error(
+    "Greška: Nedostaju svi potrebni parametri za bazu u .env datoteci (DB_NAME, DB_USER, DB_PASSWORD, DB_HOST)!",
+  );
+}
 
 async function initializeDatabase() {
-  // 1. Prvo se spajamo bez odabrane baze da ju automatski stvorimo ako ne postoji
   const connection = await mysql.createConnection({
     host: dbHost,
     user: dbUser,
@@ -21,7 +26,6 @@ async function initializeDatabase() {
   await connection.end();
 }
 
-// 2. Sada inicijaliziramo Sequelize spojen na našu bazu
 const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   host: dbHost,
   dialect: "mysql",

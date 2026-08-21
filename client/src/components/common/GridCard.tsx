@@ -1,6 +1,7 @@
 import React from "react";
 import { TouchableOpacity, Image, View, Text, StyleSheet } from "react-native";
 import { ContentItem } from "../views/ContentArea";
+import { getImage } from "../../utils/imageHelper";
 
 type ThemeColors = {
   cardBackground: string;
@@ -24,10 +25,9 @@ export default function GridCard({
 }: GridCardProps) {
   const isHR = language === "HR";
 
-  // Sigurno izvlačenje naziva (podržava i string i objekt)
   const displayName =
     typeof item.naziv === "object" && item.naziv !== null
-      ? item.naziv[isHR ? "HR" : "EN"]
+      ? (item.naziv as Record<string, string>)[isHR ? "HR" : "EN"]
       : item.naziv;
 
   return (
@@ -38,7 +38,9 @@ export default function GridCard({
       ]}
       onPress={() => onPress(item)}
     >
-      {item.slika && <Image source={item.slika} style={styles.gridImage} />}
+      {item.slika && (
+        <Image source={getImage(String(item.slika))} style={styles.gridImage} />
+      )}
       <View style={styles.gridTextContainer}>
         <Text
           style={[styles.gridTitle, { color: colors.textPrimary }]}

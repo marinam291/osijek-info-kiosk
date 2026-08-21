@@ -5,17 +5,9 @@ import EmergencyBox from "../widgets/EmergencyBox";
 import GridCard from "../common/GridCard";
 import TaxiDirectory, { TaxiService } from "../widgets/TaxiDirectory";
 import GppScheduleWidget from "../widgets/GppScheduleWidget";
-import { ContentItem } from "./ContentArea";
+import { ContentItem, GppLineType, ServicesDataStructure } from "./ContentArea";
 import { ThemeColors } from "@/context/ThemeContext";
-import { getOsijekData } from "@/data/osijekData";
 import FadeInView from "../common/FadeInView";
-
-type GppLine = {
-  id: string;
-  naziv: string;
-  vrsta: string;
-  polasci?: string[];
-};
 
 const getServiceCategories = (isHR: boolean) => [
   { key: "sve", label: isHR ? "Sve usluge" : "All Services" },
@@ -40,7 +32,7 @@ const getAccommodationCategories = (isHR: boolean) => [
 ];
 
 type ServicesViewProps = {
-  currentData: ReturnType<typeof getOsijekData>;
+  currentData: ServicesDataStructure;
   language: string;
   colors: ThemeColors;
   onItemPress: (item: ContentItem) => void;
@@ -64,48 +56,73 @@ export default function ServicesView({
   let isTaxiView = false;
   let isJavniPrijevozView = false;
 
+  const usluge = currentData?.usluge || {
+    zdravstvo: [],
+    prijevoz: [],
+    taksi: [],
+    gradskeUsluge: [],
+  };
+  const smjestaj = currentData?.smjestaj || {
+    hoteli: [],
+    apartmani: [],
+    hosteli: [],
+  };
+  const trgovine = currentData?.trgovine || [];
+
   if (serviceCategory === "zdravstvo") {
-    dataToRender = currentData.usluge.zdravstvo;
+    dataToRender = usluge.zdravstvo;
   } else if (serviceCategory === "prijevoz") {
     if (transportSubCategory === "taksi") {
       isTaxiView = true;
-      taxiData = currentData.usluge.taksi || [];
+      taxiData = (usluge.taksi || []).map((t) => ({
+        id: String(t.id),
+        naziv: isHR ? t.nazivHr || "" : t.nazivEn || "",
+        telefon: isHR ? t.infoHr || "" : t.infoEn || "",
+        opis: isHR ? t.opisHr || "" : t.opisEn || "",
+        qrLink: t.qrLink,
+      }));
     } else if (transportSubCategory === "javni") {
       isJavniPrijevozView = true;
-      dataToRender = currentData.usluge.prijevoz.filter((p) => p.id === "u_p1");
+      dataToRender = usluge.prijevoz.filter((p) => p.id === "u_p1");
     } else {
-      dataToRender = currentData.usluge.prijevoz;
+      dataToRender = usluge.prijevoz;
       isTaxiView = true;
-      taxiData = currentData.usluge.taksi || [];
+      taxiData = (usluge.taksi || []).map((t) => ({
+        id: String(t.id),
+        naziv: isHR ? t.nazivHr || "" : t.nazivEn || "",
+        telefon: isHR ? t.infoHr || "" : t.infoEn || "",
+        opis: isHR ? t.opisHr || "" : t.opisEn || "",
+        qrLink: t.qrLink,
+      }));
     }
   } else if (serviceCategory === "gradskeUsluge") {
-    dataToRender = currentData.usluge.gradskeUsluge;
+    dataToRender = usluge.gradskeUsluge;
   } else if (serviceCategory === "smjestaj") {
     if (accommodationSubCategory === "hoteli") {
-      dataToRender = currentData.smjestaj.hoteli;
+      dataToRender = smjestaj.hoteli;
     } else if (accommodationSubCategory === "apartmani") {
-      dataToRender = currentData.smjestaj.apartmani;
+      dataToRender = smjestaj.apartmani;
     } else if (accommodationSubCategory === "hosteli") {
-      dataToRender = currentData.smjestaj.hosteli;
+      dataToRender = smjestaj.hosteli;
     } else {
       dataToRender = [
-        ...(currentData.smjestaj.hoteli || []),
-        ...(currentData.smjestaj.apartmani || []),
-        ...(currentData.smjestaj.hosteli || []),
+        ...(smjestaj.hoteli || []),
+        ...(smjestaj.apartmani || []),
+        ...(smjestaj.hosteli || []),
       ];
     }
   } else if (serviceCategory === "trgovine") {
-    dataToRender = currentData.trgovine || [];
+    dataToRender = trgovine;
   } else {
     dataToRender = [
-      ...(currentData.usluge.zdravstvo || []),
-      ...(currentData.usluge.prijevoz || []),
-      ...(currentData.usluge.gradskeUsluge || []),
+      ...(usluge.zdravstvo || []),
+      ...(usluge.prijevoz || []),
+      ...(usluge.gradskeUsluge || []),
     ];
   }
 
-  const gppItem = currentData.usluge.prijevoz.find((p) => p.id === "u_p1");
-  const gppLinije = (gppItem as { linije?: GppLine[] })?.linije || [];
+  const gppItem = usluge.prijevoz.find((p) => p.id === "u_p1");
+  const gppLinije: GppLineType[] = gppItem?.GppLines || [];
 
   return (
     <View style={styles.container}>
@@ -150,8 +167,13 @@ export default function ServicesView({
           <View style={styles.gridContainer}>
             {dataToRender.map((item) => (
               <GridCard
-                key={item.id}
-                item={item}
+                key={String(item.id)}
+                item={{
+                  ...item,
+                  naziv: isHR ? item.nazivHr : item.nazivEn,
+                  opis: isHR ? item.opisHr : item.opisEn,
+                  info: isHR ? item.infoHr : item.infoEn,
+                }}
                 colors={colors}
                 onPress={onItemPress}
               />
