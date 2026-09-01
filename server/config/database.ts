@@ -16,14 +16,35 @@ if (!dbName || !dbUser || !dbPassword || !dbHost) {
 }
 
 async function initializeDatabase() {
-  const connection = await mysql.createConnection({
-    host: dbHost,
-    user: dbUser,
-    password: dbPassword,
-  });
+  let connected = false;
+  let retries = 5;
 
-  await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
-  await connection.end();
+  while (retries > 0 && !connected) {
+    try {
+      const connection = await mysql.createConnection({
+        host: dbHost,
+        user: dbUser,
+        password: dbPassword,
+      });
+
+      await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
+      await connection.end();
+      connected = true;
+      console.log("Uspješno spojeno na bazu i provjereno postojanje baze!");
+    } catch (err: any) {
+      retries--;
+      console.log(
+        `Baza još nije spremna, preostalo pokušaja: ${retries}. Čekam 2 sekunde...`,
+      );
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    }
+  }
+
+  if (!connected) {
+    throw new Error(
+      "Ne mogu se spojiti na MySQL bazu nakon nekoliko pokušaja.",
+    );
+  }
 }
 
 const sequelize = new Sequelize(dbName, dbUser, dbPassword, {

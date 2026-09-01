@@ -4,14 +4,12 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  Image,
   TouchableOpacity,
   Modal,
   ImageSourcePropType,
   ViewStyle,
 } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
-import ItemImageGallery from "./ItemImageGallery";
 import ItemQrSection from "./ItemQrSection";
 import TrainScheduleWidget from "../widgets/TrainScheduleWidget";
 import GppScheduleWidget from "../widgets/GppScheduleWidget";
@@ -36,8 +34,6 @@ type ItemModalProps = {
 export default function ItemModal({
   selectedItem,
   setSelectedItem,
-  fullScreenImage,
-  setFullScreenImage,
   language,
   colors,
 }: ItemModalProps) {
@@ -57,108 +53,32 @@ export default function ItemModal({
     (selectedItem as ContentItem & { linije?: GppLine[] })?.linije || [];
 
   return (
-    <>
-      <Modal
-        visible={selectedItem !== null}
-        animationType="fade"
-        transparent={true}
+    <Modal
+      visible={selectedItem !== null}
+      animationType="fade"
+      transparent={true}
+    >
+      <View
+        style={[
+          styles.modalOverlay,
+          { backgroundColor: colors.modalBackground },
+        ]}
       >
         <View
           style={[
-            styles.modalOverlay,
-            { backgroundColor: colors.modalBackground },
+            styles.modalContent,
+            {
+              backgroundColor: colors.modalContent,
+              borderColor: colors.border,
+            },
           ]}
         >
-          <View
-            style={[
-              styles.modalContent,
-              {
-                backgroundColor: colors.modalContent,
-                borderColor: colors.border,
-              },
-            ]}
-          >
-            <TouchableOpacity
-              style={[
-                styles.closeButton,
-                { backgroundColor: colors.cardBackground },
-              ]}
-              onPress={() => setSelectedItem(null)}
-            >
-              <Text
-                style={[styles.closeButtonText, { color: colors.textPrimary }]}
-              >
-                ✕
-              </Text>
-            </TouchableOpacity>
-
-            <ScrollView
-              contentContainerStyle={styles.modalScroll}
-              showsVerticalScrollIndicator={false}
-              style={
-                {
-                  scrollbarWidth: "none",
-                  msOverflowStyle: "none",
-                } as unknown as ViewStyle
-              }
-            >
-              <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
-                {displayNaziv}
-              </Text>
-
-              {selectedItem?.id === "u_p2" ? (
-                <View style={{ width: "100%", marginTop: 10 }}>
-                  <TrainScheduleWidget language={language} colors={colors} />
-                </View>
-              ) : selectedItem?.id === "u_p1" ? (
-                <View style={{ width: "100%", marginTop: 10 }}>
-                  <GppScheduleWidget
-                    linije={gppLinije}
-                    language={language}
-                    colors={colors}
-                  />
-                </View>
-              ) : (
-                <>
-                  <ItemImageGallery
-                    galerija={selectedItem?.galerija}
-                    slika={selectedItem?.slika}
-                    onImagePress={setFullScreenImage}
-                  />
-
-                  <Text
-                    style={[
-                      styles.modalDescription,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
-                    {displayOpis}
-                  </Text>
-
-                  <ItemQrSection
-                    qrLink={selectedItem?.qrLink}
-                    isHR={isHR}
-                    colors={colors}
-                  />
-                </>
-              )}
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
-
-      <Modal
-        visible={fullScreenImage !== null}
-        animationType="fade"
-        transparent={true}
-      >
-        <View style={styles.fullScreenOverlay}>
           <TouchableOpacity
             style={[
-              styles.fullScreenCloseButton,
+              styles.closeButton,
               { backgroundColor: colors.cardBackground },
             ]}
-            onPress={() => setFullScreenImage(null)}
+            onPress={() => setSelectedItem(null)}
           >
             <Text
               style={[styles.closeButtonText, { color: colors.textPrimary }]}
@@ -166,14 +86,55 @@ export default function ItemModal({
               ✕
             </Text>
           </TouchableOpacity>
-          <Image
-            source={fullScreenImage as ImageSourcePropType}
-            style={styles.fullScreenImage}
-            resizeMode="contain"
-          />
+
+          <ScrollView
+            contentContainerStyle={styles.modalScroll}
+            showsVerticalScrollIndicator={false}
+            style={
+              {
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+              } as unknown as ViewStyle
+            }
+          >
+            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
+              {displayNaziv}
+            </Text>
+
+            {selectedItem?.id === "u_p2" ? (
+              <View style={{ width: "100%", marginTop: 10 }}>
+                <TrainScheduleWidget language={language} colors={colors} />
+              </View>
+            ) : selectedItem?.id === "u_p1" ? (
+              <View style={{ width: "100%", marginTop: 10 }}>
+                <GppScheduleWidget
+                  linije={gppLinije}
+                  language={language}
+                  colors={colors}
+                />
+              </View>
+            ) : (
+              <>
+                <Text
+                  style={[
+                    styles.modalDescription,
+                    { color: colors.textSecondary },
+                  ]}
+                >
+                  {displayOpis}
+                </Text>
+
+                <ItemQrSection
+                  qrLink={selectedItem?.qrLink}
+                  isHR={isHR}
+                  colors={colors}
+                />
+              </>
+            )}
+          </ScrollView>
         </View>
-      </Modal>
-    </>
+      </View>
+    </Modal>
   );
 }
 
@@ -217,22 +178,4 @@ const styles = StyleSheet.create({
     textAlign: "center",
     maxWidth: 800,
   },
-  fullScreenOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.95)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  fullScreenCloseButton: {
-    position: "absolute",
-    top: 40,
-    right: 40,
-    zIndex: 20,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  fullScreenImage: { width: "90%", height: "90%" },
 });
