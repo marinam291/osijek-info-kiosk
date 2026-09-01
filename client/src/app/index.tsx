@@ -15,6 +15,7 @@ import ContentArea from "../components/views/ContentArea";
 import FadeInView from "../components/common/FadeInView";
 import Clock from "../components/common/Clock";
 import WeatherWidget from "../components/widgets/WeatherWidget";
+import { setupKioskMode } from "../utils/kioskMode";
 
 function KioskMain() {
   const { theme, setTheme, colors } = useTheme();
@@ -26,6 +27,10 @@ function KioskMain() {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { width } = useWindowDimensions();
   const scale = width / 1920;
+
+  useEffect(() => {
+    setupKioskMode();
+  }, []);
 
   const resetInactivityTimer = useCallback(() => {
     if (timer.current) {
