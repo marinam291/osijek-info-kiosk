@@ -86,7 +86,6 @@ const TAB_TITLES: Record<string, { HR: string; EN: string }> = {
 };
 
 const getTourismCategories = (isHR: boolean) => [
-  { key: "sve", label: isHR ? "Sve" : "All" },
   { key: "znamenitosti", label: isHR ? "Znamenitosti" : "Landmarks" },
   { key: "muzeji", label: isHR ? "Muzeji" : "Museums" },
 ];
@@ -105,7 +104,8 @@ export default function ContentArea({
   const [fullScreenImage, setFullScreenImage] =
     useState<ImageSourcePropType | null>(null);
 
-  const [tourismCategory, setTourismCategory] = useState<string>("sve");
+  const [tourismCategory, setTourismCategory] =
+    useState<string>("znamenitosti");
   const [prevActiveTab, setPrevActiveTab] = useState<string>(activeTab);
 
   useEffect(() => {
@@ -171,9 +171,8 @@ export default function ContentArea({
   if (activeTab === "turizam") {
     const landmarks = formattedItems.filter((i) => i.categoryKey === "turizam");
     const museums = formattedItems.filter((i) => i.categoryKey === "muzeji");
-    if (tourismCategory === "znamenitosti") standardData = landmarks;
-    else if (tourismCategory === "muzeji") standardData = museums;
-    else standardData = [...landmarks, ...museums];
+    if (tourismCategory === "muzeji") standardData = museums;
+    else standardData = landmarks;
   } else if (activeTab === "dogadjanja") {
     standardData = formattedItems.filter((i) => i.categoryKey === "dogadjanja");
   }
@@ -300,7 +299,9 @@ const styles = StyleSheet.create({
   gridContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
+    justifyContent: "flex-start",
     gap: 24,
     marginTop: 10,
+    paddingBottom: 40,
   },
 });

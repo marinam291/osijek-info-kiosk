@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, Image, View, Text, StyleSheet } from "react-native";
+import { TouchableOpacity, View, Text, StyleSheet, Image } from "react-native";
 import { ContentItem } from "../views/ContentArea";
 import { getImage } from "../../utils/imageHelper";
 
@@ -41,6 +41,7 @@ export default function GridCard({
       {item.slika && (
         <Image source={getImage(String(item.slika))} style={styles.gridImage} />
       )}
+
       <View style={styles.gridTextContainer}>
         <Text
           style={[styles.gridTitle, { color: colors.textPrimary }]}
