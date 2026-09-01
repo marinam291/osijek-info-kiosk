@@ -1,9 +1,28 @@
 import express from "express";
 import nodemailer from "nodemailer";
+import rateLimit from "express-rate-limit";
 import { getEmailTemplate } from "../utils/emailTemplate.js";
-import { createContactSchema } from "../schemas/contactSchema.js";
+import { createContactSchema } from "../utils/validation.js";
+import logger from "../config/logger.js";
 
 const router = express.Router();
+
+const contactLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 3,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    const lang = req.body.lang === "en" ? "en" : "hr";
+    const errorMessage =
+      lang === "en"
+        ? "Too many messages sent from this device. Please try again later."
+        : "Previše poslanih poruka s ovog uređaja. Molimo pokušajte ponovno kasnije.";
+
+    res.status(429).json({ error: errorMessage });
+  },
+});
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -12,8 +31,9 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-router.post("/send-email", async (req, res) => {
+router.post("/send-email", contactLimiter, async (req, res) => {
   const lang = req.body.lang === "en" ? "en" : "hr";
+
   const contactSchema = createContactSchema(lang);
   const result = contactSchema.safeParse(req.body);
 
@@ -43,9 +63,9 @@ router.post("/send-email", async (req, res) => {
       message:
         lang === "en" ? "Email sent successfully!" : "Mail uspješno poslan!",
     });
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("Greška pri slanju:", error);
+  } catch (error: any) {
+    logger.error(`Greška pri slanju emaila: ${error.message || error}`);
+
     res.status(500).json({
       error:
         lang === "en" ? "Failed to send email." : "Neuspjelo slanje maila.",

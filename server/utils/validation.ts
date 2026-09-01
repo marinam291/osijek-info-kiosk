@@ -1,6 +1,7 @@
 import { z } from "zod";
+import validator from "validator";
 
-const badWords = ["psovka1", "psovka2", "psovka3"];
+const badWords = ["psovka1", "psovka2", "glupostprimjer"];
 
 export const createContactSchema = (lang: "hr" | "en" = "hr") => {
   const messages = {
@@ -32,40 +33,56 @@ export const createContactSchema = (lang: "hr" | "en" = "hr") => {
     .object({
       isAnonymous: z.boolean(),
       lang: z.enum(["hr", "en"]).optional(),
-      senderName: z.string().max(40, t.nameMax).optional(),
+      senderName: z
+        .string()
+        .transform((val) => validator.escape(val.trim()))
+        .pipe(z.string().max(40, t.nameMax))
+        .optional(),
       senderEmail: z
         .string()
-        .email(t.emailInvalid)
-        .endsWith("@gmail.com", t.emailGmail)
-        .max(40, t.emailMax)
+        .transform((val) => validator.normalizeEmail(val.trim()) || val)
+        .pipe(
+          z
+            .string()
+            .email(t.emailInvalid)
+            .endsWith("@gmail.com", t.emailGmail)
+            .max(50, t.emailMax),
+        )
         .optional(),
       messageBody: z
         .string()
-        .min(1, t.messageEmpty)
-        .refine(
-          (val) => {
-            const lowerVal = val.toLowerCase();
-            return !badWords.some((word) => lowerVal.includes(word));
-          },
-          {
-            message: t.badWords,
-          },
+        .transform((val) => validator.escape(val.trim()))
+        .pipe(
+          z
+            .string()
+            .min(1, t.messageEmpty)
+            .refine(
+              (val) => {
+                const lowerVal = val.toLowerCase();
+                return !badWords.some((word) => lowerVal.includes(word));
+              },
+              {
+                message: t.badWords,
+              },
+            ),
         ),
     })
     .superRefine((data, ctx) => {
-      if (!data.senderName || data.senderName.trim() === "") {
-        ctx.addIssue({
-          code: "custom",
-          message: t.nameRequired,
-          path: ["senderName"],
-        });
-      }
-      if (!data.senderEmail || data.senderEmail.trim() === "") {
-        ctx.addIssue({
-          code: "custom",
-          message: t.emailRequired,
-          path: ["senderEmail"],
-        });
+      if (!data.isAnonymous) {
+        if (!data.senderName || data.senderName === "") {
+          ctx.addIssue({
+            code: "custom",
+            message: t.nameRequired,
+            path: ["senderName"],
+          });
+        }
+        if (!data.senderEmail || data.senderEmail === "") {
+          ctx.addIssue({
+            code: "custom",
+            message: t.emailRequired,
+            path: ["senderEmail"],
+          });
+        }
       }
     });
 };

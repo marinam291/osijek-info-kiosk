@@ -8,10 +8,11 @@ import GppLine from "./models/GppLine.js";
 import GppDeparture from "./models/GppDeparture.js";
 import MapLocation from "./models/MapLocation.js";
 import contactRoutes from "./routes/contactRoutes.js";
+import logger from "./config/logger.js";
 
 dotenv.config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 const app = express();
 
 app.use(cors());
@@ -33,8 +34,8 @@ app.get("/api/items", async (req, res) => {
       ],
     });
     res.json(items);
-  } catch (err) {
-    console.error("Greška pri dohvatu stavki:", err);
+  } catch (err: any) {
+    logger.error(`Greška pri dohvatu stavki: ${err.message || err}`);
     res.status(500).json({ error: "Greška pri dohvatu podataka" });
   }
 });
@@ -43,10 +44,16 @@ app.get("/api/locations", async (req, res) => {
   try {
     const locations = await MapLocation.findAll();
     res.json(locations);
-  } catch (err) {
-    console.error("Greška pri dohvatu lokacija:", err);
+  } catch (err: any) {
+    logger.error(`Greška pri dohvatu lokacija: ${err.message || err}`);
     res.status(500).json({ error: "Greška pri dohvatu lokacija" });
   }
+});
+
+app.get("/api/health", (req, res) => {
+  res
+    .status(200)
+    .json({ status: "online", timestamp: new Date().toISOString() });
 });
 
 app.use("/api", contactRoutes);
@@ -60,7 +67,8 @@ async function startServer() {
     app.listen(Number(PORT), () => {
       console.log(`Server sluša na portu ${PORT}`);
     });
-  } catch (err) {
+  } catch (err: any) {
+    logger.error(`Greška pri pokretanju servera: ${err.message || err}`);
     console.error("Greška pri pokretanju servera:", err);
   }
 }
