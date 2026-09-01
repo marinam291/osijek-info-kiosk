@@ -15,6 +15,7 @@ import ContentArea from "../components/views/ContentArea";
 import FadeInView from "../components/common/FadeInView";
 import Clock from "../components/common/Clock";
 import WeatherWidget from "../components/widgets/WeatherWidget";
+import ServerStatusWidget from "../components/widgets/ServerStatusWidget";
 import { setupKioskMode } from "../utils/kioskMode";
 
 function KioskMain() {
@@ -223,6 +224,8 @@ function KioskMain() {
           />
         </Animated.View>
       )}
+
+      <ServerStatusWidget language={language} />
     </View>
   );
 }
