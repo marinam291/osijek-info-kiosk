@@ -37,7 +37,7 @@ export const createContactSchema = (lang: "hr" | "en" = "hr") => {
         .string()
         .email(t.emailInvalid)
         .endsWith("@gmail.com", t.emailGmail)
-        .max(40, t.emailMax)
+        .max(50, t.emailMax)
         .optional(),
       messageBody: z
         .string()
