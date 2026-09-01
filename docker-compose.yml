@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  database:
+    image: mysql:8.0
+    container_name: kiosk_mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: osijek_kiosk
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+
+  server:
+    build: ./server
+    container_name: kiosk_server
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./server/.env
+    environment:
+      - DB_HOST=database
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    depends_on:
+      - database
+    restart: always
+
+  client:
+    build: ./client
+    container_name: kiosk_client
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    depends_on:
+      - server
+    restart: always
+
+volumes:
+  mysql_data:
