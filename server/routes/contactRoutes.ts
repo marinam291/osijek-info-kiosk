@@ -3,6 +3,7 @@ import nodemailer from "nodemailer";
 import rateLimit from "express-rate-limit";
 import { getEmailTemplate } from "../utils/emailTemplate.js";
 import { createContactSchema } from "../utils/validation.js";
+import logger from "../config/logger.js";
 
 const router = express.Router();
 
@@ -62,8 +63,9 @@ router.post("/send-email", contactLimiter, async (req, res) => {
       message:
         lang === "en" ? "Email sent successfully!" : "Mail uspješno poslan!",
     });
-  } catch (error) {
-    console.error("Greška pri slanju:", error);
+  } catch (error: any) {
+    logger.error(`Greška pri slanju emaila: ${error.message || error}`);
+
     res.status(500).json({
       error:
         lang === "en" ? "Failed to send email." : "Neuspjelo slanje maila.",
