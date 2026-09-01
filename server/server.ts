@@ -49,6 +49,12 @@ app.get("/api/locations", async (req, res) => {
   }
 });
 
+app.get("/api/health", (req, res) => {
+  res
+    .status(200)
+    .json({ status: "online", timestamp: new Date().toISOString() });
+});
+
 app.use("/api", contactRoutes);
 
 async function startServer() {
