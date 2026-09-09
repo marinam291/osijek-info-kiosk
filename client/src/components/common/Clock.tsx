@@ -80,13 +80,15 @@ const styles = StyleSheet.create({
   timeContainer: {
     borderTopWidth: 1,
     borderTopColor: "rgba(148, 163, 184, 0.2)",
-    width: "100%",
+    alignItems: "flex-start",
   },
   timeText: {
     fontWeight: "bold",
     letterSpacing: 1,
+    textAlign: "left",
   },
   dateText: {
     textTransform: "uppercase",
+    textAlign: "left",
   },
 });

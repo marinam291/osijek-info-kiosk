@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
   },
   side: {
     paddingVertical: 4,
-    justifyContent: "center",
+    justifyContent: "flex-start",
   },
   text: {
     fontSize: 22,
