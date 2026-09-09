@@ -1,4 +1,19 @@
-server:
+version: "3.8"
+
+services:
+  database:
+    image: mysql:8.0
+    container_name: kiosk_mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: osijek_kiosk
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+
+  server:
     build: ./server
     container_name: kiosk_server
     ports:
@@ -7,8 +22,8 @@ server:
       - ./server/.env
     environment:
       - DB_HOST=database
-      - CHOKIDAR_USEPOLLING=true  
-      - WATCHPACK_POLLING=true    
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
     volumes:
       - ./server:/app
       - /app/node_modules
@@ -21,12 +36,15 @@ server:
     container_name: kiosk_client
     ports:
       - "8081:8081"
-    environment:                  
-      - CHOKIDAR_USEPOLLING=true  
-      - WATCHPACK_POLLING=true     
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
     volumes:
       - ./client:/app
       - /app/node_modules
     depends_on:
       - server
     restart: always
+
+volumes:
+  mysql_data:
