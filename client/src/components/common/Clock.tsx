@@ -22,10 +22,12 @@ export default function Clock({
     return () => clearInterval(timer);
   }, []);
 
-  const formattedTime = time.toLocaleTimeString([], {
+  const timeLocale = language === "HR" ? "hr-HR" : "en-US";
+  const formattedTime = time.toLocaleTimeString(timeLocale, {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
+    hour12: language === "EN",
   });
 
   const formattedDate = time.toLocaleDateString(
