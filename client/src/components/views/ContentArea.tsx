@@ -109,7 +109,7 @@ export default function ContentArea({
   const [prevActiveTab, setPrevActiveTab] = useState<string>(activeTab);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/items")
+    fetch("http://192.168.1.113:5000/api/items")
       .then((res) => res.json() as Promise<ContentItem[]>)
       .then((data) => {
         setAllItems(data);
@@ -122,7 +122,9 @@ export default function ContentArea({
 
   if (activeTab !== prevActiveTab) {
     setPrevActiveTab(activeTab);
-    if (tourismCategory !== "sve") setTourismCategory("sve");
+    if (activeTab === "turizam") {
+      setTourismCategory("znamenitosti");
+    }
     setSelectedItem(null);
   }
 
