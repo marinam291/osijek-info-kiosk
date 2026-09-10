@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import cron from "node-cron";
 import sequelize, { initializeDatabase } from "./config/database.js";
 import Item from "./models/Item.js";
 import ItemGallery from "./models/ItemGallery.js";
@@ -36,6 +37,48 @@ interface ExternalEvent {
   infoHr: string;
   infoEn: string;
 }
+
+async function syncNewDataDaily() {
+  console.log("🔄 [CRON] Pokrećem dnevnu provjeru novih vijesti i događaja...");
+
+  try {
+    const newsResponse = await fetch(
+      "https://www.osijek.hr/wp-json/wp/v2/posts?per_page=5",
+    );
+    if (newsResponse.ok) {
+      const newsData = await newsResponse.json();
+      console.log(
+        `✅ [CRON] Uspješno provjereno vijesti: ${newsData.length} komada.`,
+      );
+    }
+
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1;
+    const targetUrl = `https://www.osijek031.com/svi-dogadaji/?godina=${currentYear}&mjesec=${currentMonth}&mjesec_odabran=1`;
+
+    const eventsResponse = await fetch(targetUrl);
+    if (eventsResponse.ok) {
+      const htmlText = await eventsResponse.text();
+      const $ = cheerio.load(htmlText);
+      let count = 0;
+      $("table tr td").each(() => {
+        count++;
+      });
+      console.log(
+        `[CRON] Događaji s portala Osijek031 uspješno skenirani (${count} polja).`,
+      );
+    }
+  } catch (error) {
+    console.error(
+      "[CRON] Greška prilikom automatske dnevne sinkronizacije:",
+      error,
+    );
+  }
+}
+
+cron.schedule("0 6 * * *", () => {
+  syncNewDataDaily();
+});
 
 app.get("/api/items", async (req, res) => {
   try {
