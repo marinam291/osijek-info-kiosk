@@ -4,32 +4,14 @@ import ServiceFilters from "../common/ServiceFilters";
 import EmergencyBox from "../widgets/EmergencyBox";
 import GridCard from "../common/GridCard";
 import TaxiDirectory, { TaxiService } from "../widgets/TaxiDirectory";
-import GppScheduleWidget from "../widgets/GppScheduleWidget";
-import { ContentItem, GppLineType, ServicesDataStructure } from "./ContentArea";
+import { ContentItem, ServicesDataStructure } from "./ContentArea";
 import { ThemeColors } from "@/context/ThemeContext";
 import FadeInView from "../common/FadeInView";
-
-const getServiceCategories = (isHR: boolean) => [
-  { key: "sve", label: isHR ? "Sve usluge" : "All Services" },
-  { key: "zdravstvo", label: isHR ? "Zdravstvo" : "Healthcare" },
-  { key: "prijevoz", label: isHR ? "Prijevoz" : "Transport" },
-  { key: "gradskeUsluge", label: isHR ? "Gradske usluge" : "City Services" },
-  { key: "smjestaj", label: isHR ? "Smještaj" : "Accommodation" },
-  { key: "trgovine", label: isHR ? "Trgovine i šoping" : "Shopping" },
-];
-
-const getTransportCategories = (isHR: boolean) => [
-  { key: "sve", label: isHR ? "Svi prijevozi" : "All Transport" },
-  { key: "javni", label: isHR ? "Javni prijevoz" : "Public Transport" },
-  { key: "taksi", label: isHR ? "Taksi" : "Taxi" },
-];
-
-const getAccommodationCategories = (isHR: boolean) => [
-  { key: "sve", label: isHR ? "Svi smještaji" : "All" },
-  { key: "hoteli", label: isHR ? "Hoteli" : "Hotels" },
-  { key: "apartmani", label: isHR ? "Apartmani" : "Apartments" },
-  { key: "hosteli", label: isHR ? "Hosteli" : "Hostels" },
-];
+import {
+  getAccommodationCategories,
+  getServiceCategories,
+  getTransportCategories,
+} from "../../config/serviceCategories";
 
 type ServicesViewProps = {
   currentData: ServicesDataStructure;
@@ -37,6 +19,16 @@ type ServicesViewProps = {
   colors: ThemeColors;
   onItemPress: (item: ContentItem) => void;
 };
+
+function mapTaxiServices(items: ContentItem[], isHR: boolean): TaxiService[] {
+  return items.map((item) => ({
+    id: String(item.id),
+    naziv: isHR ? item.nazivHr || "" : item.nazivEn || "",
+    telefon: isHR ? item.infoHr || "" : item.infoEn || "",
+    opis: isHR ? item.opisHr || "" : item.opisEn || "",
+    qrLink: item.qrLink,
+  }));
+}
 
 export default function ServicesView({
   currentData,
@@ -54,7 +46,6 @@ export default function ServicesView({
   let dataToRender: ContentItem[] = [];
   let taxiData: TaxiService[] = [];
   let isTaxiView = false;
-  let isJavniPrijevozView = false;
 
   const usluge = currentData?.usluge || {
     zdravstvo: [],
@@ -74,26 +65,13 @@ export default function ServicesView({
   } else if (serviceCategory === "prijevoz") {
     if (transportSubCategory === "taksi") {
       isTaxiView = true;
-      taxiData = (usluge.taksi || []).map((t) => ({
-        id: String(t.id),
-        naziv: isHR ? t.nazivHr || "" : t.nazivEn || "",
-        telefon: isHR ? t.infoHr || "" : t.infoEn || "",
-        opis: isHR ? t.opisHr || "" : t.opisEn || "",
-        qrLink: t.qrLink,
-      }));
+      taxiData = mapTaxiServices(usluge.taksi || [], isHR);
     } else if (transportSubCategory === "javni") {
-      isJavniPrijevozView = true;
       dataToRender = usluge.prijevoz.filter((p) => p.id === "u_p1");
     } else {
       dataToRender = usluge.prijevoz;
       isTaxiView = true;
-      taxiData = (usluge.taksi || []).map((t) => ({
-        id: String(t.id),
-        naziv: isHR ? t.nazivHr || "" : t.nazivEn || "",
-        telefon: isHR ? t.infoHr || "" : t.infoEn || "",
-        opis: isHR ? t.opisHr || "" : t.opisEn || "",
-        qrLink: t.qrLink,
-      }));
+      taxiData = mapTaxiServices(usluge.taksi || [], isHR);
     }
   } else if (serviceCategory === "gradskeUsluge") {
     dataToRender = usluge.gradskeUsluge;
@@ -120,9 +98,6 @@ export default function ServicesView({
       ...(usluge.gradskeUsluge || []),
     ];
   }
-
-  const gppItem = usluge.prijevoz.find((p) => p.id === "u_p1");
-  const gppLinije: GppLineType[] = gppItem?.GppLines || [];
 
   return (
     <View style={styles.container}>
@@ -178,16 +153,6 @@ export default function ServicesView({
                 onPress={onItemPress}
               />
             ))}
-          </View>
-        )}
-
-        {isJavniPrijevozView && gppLinije.length > 0 && (
-          <View style={{ marginTop: 20 }}>
-            <GppScheduleWidget
-              linije={gppLinije}
-              language={language}
-              colors={colors}
-            />
           </View>
         )}
 

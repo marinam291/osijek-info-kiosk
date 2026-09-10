@@ -12,6 +12,12 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     restart: always
+    healthcheck:
+      test:
+        ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   server:
     build: ./server
@@ -28,7 +34,8 @@ services:
       - ./server:/app
       - /app/node_modules
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     restart: always
 
   client:

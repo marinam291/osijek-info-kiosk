@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -18,6 +18,7 @@ import ServicesView from "../views/ServicesView";
 import ServiceFilters from "../common/ServiceFilters";
 import MayorContactWidget from "../widgets/MayorContactWidget";
 import EventsView from "../views/EventsView";
+import { apiUrl } from "@/services/api";
 
 export type GppDepartureType = {
   id: number;
@@ -101,15 +102,28 @@ export default function ContentArea({
   const [loading, setLoading] = useState<boolean>(true);
 
   const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
-  const [fullScreenImage, setFullScreenImage] =
-    useState<ImageSourcePropType | null>(null);
+  const contentScrollRef = useRef<ScrollView>(null);
+  const contentScrollOffset = useRef(0);
+
+  const handleItemSelection = (item: ContentItem | null) => {
+    setSelectedItem(item);
+
+    if (item === null) {
+      setTimeout(() => {
+        contentScrollRef.current?.scrollTo({
+          y: contentScrollOffset.current,
+          animated: false,
+        });
+      }, 220);
+    }
+  };
 
   const [tourismCategory, setTourismCategory] =
     useState<string>("znamenitosti");
   const [prevActiveTab, setPrevActiveTab] = useState<string>(activeTab);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/items")
+    fetch(apiUrl("/api/items"))
       .then((res) => res.json() as Promise<ContentItem[]>)
       .then((data) => {
         setAllItems(data);
@@ -214,7 +228,7 @@ export default function ContentArea({
               title={title}
               standardData={standardData}
               selectedItem={selectedItem}
-              setSelectedItem={setSelectedItem}
+              setSelectedItem={handleItemSelection}
               colors={colors}
               language={language}
             />
@@ -228,7 +242,14 @@ export default function ContentArea({
               <MayorContactWidget colors={colors} language={language} />
             </ScrollView>
           ) : (
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+              ref={contentScrollRef}
+              showsVerticalScrollIndicator={false}
+              onScroll={(event) => {
+                contentScrollOffset.current = event.nativeEvent.contentOffset.y;
+              }}
+              scrollEventThrottle={16}
+            >
               <Text
                 style={[styles.sectionTitle, { color: colors.textPrimary }]}
               >
@@ -249,7 +270,7 @@ export default function ContentArea({
                   currentData={currentDataForServices}
                   language={language}
                   colors={colors}
-                  onItemPress={setSelectedItem}
+                  onItemPress={handleItemSelection}
                 />
               ) : (
                 <View style={styles.gridContainer}>
@@ -258,7 +279,7 @@ export default function ContentArea({
                       key={String(item.id)}
                       item={item}
                       colors={colors}
-                      onPress={setSelectedItem}
+                      onPress={handleItemSelection}
                     />
                   ))}
                 </View>
@@ -269,9 +290,7 @@ export default function ContentArea({
 
         <ItemModal
           selectedItem={activeTab === "dogadjanja" ? null : selectedItem}
-          setSelectedItem={setSelectedItem}
-          fullScreenImage={fullScreenImage}
-          setFullScreenImage={setFullScreenImage}
+          setSelectedItem={handleItemSelection}
           language={language}
           colors={colors}
         />

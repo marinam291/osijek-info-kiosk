@@ -2,7 +2,7 @@ import express from "express";
 import nodemailer from "nodemailer";
 import rateLimit from "express-rate-limit";
 import { getEmailTemplate } from "../utils/emailTemplate.js";
-import { createContactSchema } from "../utils/validation.js";
+import { createContactSchema } from "../schemas/contactSchema.js";
 import logger from "../config/logger.js";
 
 const router = express.Router();
@@ -91,7 +91,9 @@ router.post("/send-email", contactLimiter, async (req, res) => {
       lang,
     });
 
-    const serverBaseUrl = "http://192.168.1.113:5000";
+    const serverBaseUrl =
+      process.env.PUBLIC_SERVER_URL ||
+      `http://localhost:${process.env.PORT || 5000}`;
 
     const confirmUrl = `${serverBaseUrl}/api/verify-email?token=${token}&action=confirm`;
     const cancelUrl = `${serverBaseUrl}/api/verify-email?token=${token}&action=cancel`;

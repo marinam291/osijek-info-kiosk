@@ -9,6 +9,7 @@ import {
 import CalendarWidget from "../widgets/CalendarWidget";
 import { ContentItem } from "./ContentArea";
 import { useTheme } from "../../context/ThemeContext";
+import { apiUrl } from "@/services/api";
 
 type EventsViewProps = {
   title: string;
@@ -51,7 +52,7 @@ export default function EventsView({
     async function fetchEventsForMonth() {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/items?mjesec=${currentMonth}&godina=${currentYear}`,
+          apiUrl(`/api/items?mjesec=${currentMonth}&godina=${currentYear}`),
         );
         if (response.ok && isMounted) {
           const data = await response.json();
@@ -93,9 +94,9 @@ export default function EventsView({
           itemsNeedingDetails.map(async (ev) => {
             try {
               const res = await fetch(
-                `http://localhost:5000/api/event-details?url=${encodeURIComponent(
-                  ev.link!,
-                )}`,
+                apiUrl(
+                  `/api/event-details?url=${encodeURIComponent(ev.link!)}`,
+                ),
               );
               if (res.ok && active) {
                 const data = await res.json();

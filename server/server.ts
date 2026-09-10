@@ -251,7 +251,8 @@ async function startServer() {
     const count = await Item.count();
     if (count === 0) {
       console.log("Baza je prazna. Automatski pokrećem seed skriptu...");
-      await import("./seed.js");
+      const { seedDatabase } = await import("./seed.js");
+      await seedDatabase();
     } else {
       console.log("ℹPodaci već postoje u bazi.");
     }

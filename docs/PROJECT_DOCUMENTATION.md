@@ -1,208 +1,146 @@
-# Project Documentation
+# Projektna dokumentacija
 
-## 1. Purpose
+## 1. Svrha
 
-Osijek Info Kiosk is a public-facing digital information system for the city of Osijek. It is intended to function as an interactive terminal that presents city information, services, events, tourism content, a map, weather, and an official contact form.
+Osijek Info Kiosk je interaktivni gradski informacijski sustav za javni kiosk. Korisniku omogućuje pregled turističkih znamenitosti, muzeja, događanja, gradskih usluga, smještaja, trgovina, karte, vremena i kontakta s gradonačelnikom.
 
-The system is built for kiosk usage, which means the application should remain visually simple, easy to navigate, and resilient to inactivity.
+Projekt podržava hrvatski i engleski jezik te je prilagođen velikom zaslonu i radu bez korisničke prijave.
 
-## 2. System architecture
+## 2. Arhitektura
 
-The solution consists of three principal parts:
-
-### 2.1 Client application
-
-The client is implemented with Expo and React Native. It runs as a kiosk-style application and uses:
-
-- a screensaver mode when idle
-- a language toggle for Croatian and English
-- dynamic content loading from the backend API
-- tab-based navigation for tourism, services, map, and mayor contact
-- weather, clock, and server uptime widgets
-- a custom kiosk inactivity timer and activity detection
-
-The main entry point is `client/src/app/index.tsx`. This file initializes the kiosk UI, handles inactivity timeout logic, and renders the active screen.
-
-### Relevant technologies used on the client side
-
-- Expo SDK and Expo Router
-- React Native + React 19
-- TypeScript
-- Native UI components and animations
-- React Native Reanimated and Gesture Handler
-- React Native SVG and QR code rendering
-- Expo Image, Font, AV, Device, System UI, and Web Browser plugins
-- local asset-based branding and background images
-
-### 2.2 Backend API
-
-The backend is implemented in Express and serves data to the client. It is responsible for:
-
-- serving city items and locations
-- returning system health information
-- validating and sending contact emails
-- exposing a simple API layer for kiosk content
-
-The server entry point is `server/server.ts`.
-
-### Relevant technologies used on the server side
-
-- Node.js
-- Express 5
-- TypeScript
-- Sequelize ORM
-- MySQL2 database driver
-- dotenv for environment variables
-- CORS middleware
-- Zod validation
-- Nodemailer for outgoing email
-- express-rate-limit for request throttling
-- Winston for logging
-
-### 2.3 Database layer
-
-MySQL is used as the persistent data store. Sequelize is used as the ORM layer and performs model-based database access.
-
-The database is created automatically during startup if it does not already exist. Data models include items, galleries, lines, departures, and map locations.
-
-## 3. Tools and infrastructure used
-
-The project is set up for local containerized development and deployment:
-
-- Docker
-- Docker Compose
-- MySQL 8 container
-- npm package manager
-- tsx for rapid backend development
-- ESLint for static code checking
-- TypeScript compiler for build validation
-
-This combination allows the kiosk app to run as a full stack environment with a single startup command from the project root.
-
-### Database seeding and initialization
-
-The backend includes a seed script in `server/seed.ts` that initializes the database with example city content, attractions, events, and map/location data. This is useful for local development and demo environments.
-
-Typical usage:
-
-```bash
-cd server
-npx tsx seed.ts
+```mermaid
+flowchart LR
+    Browser[Expo React Native Web client] -->|HTTP JSON| API[Express API]
+    API --> ORM[Sequelize]
+    ORM --> DB[(MySQL 8)]
+    API --> Mail[Gmail SMTP]
+    API --> External[Osijek.hr / Osijek031]
+    Browser --> Weather[Open-Meteo]
 ```
 
-The application also initializes the database automatically during startup through the `initializeDatabase()` function, and Sequelize then synchronizes model tables using `sync({ alter: true })`.
+### 2.1 Klijent
 
-## 3. Main functional areas
+Ulazna datoteka je `client/src/app/index.tsx`. Klijent upravlja screensaverom, jezikom, temom, aktivnom karticom, dohvatom podataka, modalima i statusom API veze.
 
-### 3.1 Home
+Glavne cjeline su `components/views`, `components/widgets`, `components/common`, `context`, `config`, `services` i `utils`. API adresa centralizirana je u `client/src/services/api.ts`; zadana vrijednost je `http://localhost:5000`, a može se promijeniti s `EXPO_PUBLIC_API_URL`.
 
-The home screen acts as the kiosk landing page. It displays:
+### 2.2 Server
 
-- the city logo and header
-- time and date
-- weather summary
-- navigation cards for main categories
-- an animated news ticker
+Ulazna datoteka je `server/server.ts`. Server pokreće Express, CORS i JSON parser, inicijalizira bazu, sinkronizira modele, poslužuje podatke, obrađuje vanjske izvore i kontakt-formu te pokreće dnevnu provjeru vijesti i događanja. Zod shema kontakt-forme nalazi se u `server/schemas/contactSchema.ts`, a email predlošci u `server/utils`.
 
-### 3.2 Tourism and landmarks
+### 2.3 Baza
 
-This section presents cultural and tourist information. It groups items into categories such as landmarks and museums and allows selection of specific entries in a card grid.
+MySQL radi kao Compose servis `database`, a Sequelize upravlja modelima i relacijama:
 
-### 3.3 Events
+- `Item` - glavne stavke sadržaja
+- `ItemGallery` - dodatne slike
+- `GppLine` - linije javnog prijevoza
+- `GppDeparture` - polasci
+- `MapLocation` - točke na karti
 
-The events screen loads event-related content from the backend and renders it using a dedicated event view component.
+## 3. Funkcionalne cjeline
 
-### 3.4 Services and directory
+### Početni ekran
 
-This section organizes information into service categories such as:
+Prikazuje logo, naziv grada, sat, prognozu, ticker vijesti i navigacijske kartice. Nakon 60 sekundi neaktivnosti vraća aplikaciju u screensaver.
 
-- healthcare
-- transport
-- taxi services
-- city services
-- accommodation
-- shopping
+### Turizam i muzeji
 
-### 3.5 City map
+Turistički sadržaj podijeljen je na znamenitosti i muzeje. Klik otvara naslov i veliki opis. QR se za ove kategorije ne prikazuje.
 
-The map view loads map location records from the API and presents them in a dedicated map tab.
+### Događanja
 
-### 3.6 Mayor contact form
+Događaji se učitavaju iz baze i vanjskog izvora Osijek031. Korisnik mijenja mjesec, a detalji se dohvaćaju preko servera.
 
-The contact form allows users to send requests or messages through the backend to an email provider. The backend validates the payload, applies rate limiting, and sends mail via SMTP.
+### Usluge i imenik
 
-## 4. Data model overview
+Kategorije su zdravstvo, javni prijevoz, taksi, gradske usluge, smještaj i trgovine. Za zdravstvo, gradske usluge, smještaj i trgovine modal prikazuje opis bez QR koda. GPP, željeznički kolodvor i eMobi imaju posebne widgete.
 
-The backend uses Sequelize models for structured data access. The most important ones are:
+### Karta
 
-- Item: general content records used across the app
-- ItemGallery: image references linked to items
-- GppLine: public transport line metadata
-- GppDeparture: transport departure times
-- MapLocation: city map points
+`MapTab` dohvaća lokacije iz `/api/locations`, prikazuje ih na karti i otvara opis, vrijeme hoda i Google Maps poveznicu.
 
-These models are connected through relationships and are loaded from the API using `include` statements.
+### Kontakt gradonačelnika
 
-## 5. API responsibilities
+Kontakt-forma podržava anonimne i neanonimne poruke. Neanonimna poruka prolazi provjeru blokade emaila, Zod validaciju, rate limiting i email potvrdu prije slanja.
 
-The backend provides the following main endpoints:
+## 4. Tok pokretanja
 
-- `GET /` - basic welcome endpoint
-- `GET /api/items` - returns all structured content items with supporting relations
-- `GET /api/locations` - returns city map locations
-- `GET /api/health` - health check endpoint
-- `POST /api/send-email` - validates and sends a contact email
+```text
+Docker Compose
+  -> MySQL healthcheck
+  -> server initializeDatabase()
+  -> Sequelize sync({ alter: true })
+  -> seed ako nema Item zapisa
+  -> Express listen na portu 5000
+  -> Expo web klijent na portu 8081
+```
 
-## 6. Client behavior
+Pokretanje:
 
-The client is designed as a kiosk experience. Key behavior includes:
+```powershell
+Copy-Item server\.env.example server\.env
+docker compose up --build
+```
 
-- auto-activation of screensaver after inactivity
-- return to the home screen after a timeout
-- activity detection based on mouse, touch, and keyboard events
-- home header and content overlay styling for large-screen display
-- layered modal views for item details and enlarged media
+| Servis | Funkcija | Port |
+| --- | --- | --- |
+| `database` | MySQL 8 | `3307` host / `3306` mreža |
+| `server` | Express API | `5000` |
+| `client` | Expo web klijent | `8081` |
 
-## 7. Security and validation
+## 5. Seed podaci
 
-The backend uses:
+`server/seed.ts` sadrži demo sadržaj, događanja i lokacije. Ručno seedanje briše postojeće tablice i ponovno ih puni, pa je namijenjeno samo razvoju i demonstraciji.
 
-- Zod schema validation for admin or citizen contact requests
-- rate limiting on the email route
-- logging with Winston
-- server-side checks before sending external email
+```bash
+docker compose stop server
+docker compose run --rm server node --import tsx -e "import('./seed.ts').then(({ seedDatabase }) => seedDatabase())"
+docker compose up -d server client
+```
 
-These safeguards help prevent bad payloads and excessive abuse of the contact endpoint.
+## 6. Vanjske integracije
 
-## 8. Local development workflow
+- Open-Meteo: vremenska prognoza
+- WordPress API Grada Osijeka: vijesti
+- Osijek031: događanja i opisi
+- Google Maps: karta i navigacija
+- Gmail SMTP: kontakt i verifikacija
 
-The development process is split into backend and frontend workflows:
+Ako vanjski izvor ne uspije, lokalni podaci iz baze ostaju dostupni gdje je to moguće.
 
-- Client: Expo app running via `npm start` or `npm run web`
-- Server: Express app running via `npm run dev`
-- Database: MySQL container created with Docker Compose
+## 7. Sigurnost
 
-## 9. Deployment model
+- `server/.env` je lokalna datoteka i ne smije se commitati.
+- `.env.example` sadrži samo primjerne vrijednosti.
+- Kontaktni payload provjerava Zod, a ruta ima rate limit.
+- Za produkciju koristiti HTTPS, zasebnog DB korisnika i zatvoren MySQL port.
+- Razvojne vrijednosti `root/root` nisu primjer za produkciju.
+- `PUBLIC_SERVER_URL` mora biti dostupna uređaju koji otvara email.
 
-The application is intended to be deployed with Docker Compose in a single environment. This keeps the database, API, and kiosk interface together while simplifying startup and shutdown.
+## 8. Provjera
 
-## 10. Operational considerations
+```bash
+npm run lint --prefix client
+npm run build --prefix server
+curl http://localhost:5000/api/health
+```
 
-- The kiosk should be launched in full-screen mode or a dedicated browser environment.
-- The client should run on a persistent display device or kiosk hardware.
-- The server should have stable access to the MySQL container and email credentials.
-- If the database is not ready yet, the server retries connection attempts before failing.
+Health odgovor mora sadržavati `status: online`.
 
-## 11. Future improvements
+## 9. Operativne napomene
 
-Potential enhancements include:
+- Kiosk pokrenuti u fullscreen browseru ili na namjenskom uređaju.
+- Zadani `localhost` radi kada su klijent i API na istom računalu.
+- Za klijent na drugom uređaju postaviti `EXPO_PUBLIC_API_URL` na LAN adresu API računala.
+- Za email potvrdu na drugom uređaju postaviti odgovarajući `PUBLIC_SERVER_URL`.
+- Prije javne objave promijeniti razvojne lozinke i ograničiti mrežni pristup.
 
-- admin panel for managing content without direct database edits
-- CMS integration for city content updates
-- stronger deployment automation and environment checks
-- support for additional languages and accessibility features
-- offline caching for kiosk resilience
+## 10. Moguća buduća poboljšanja
 
-## 12. Summary
-
-This project combines a visually rich kiosk front end with a structured backend that serves city information and contact functionality. It meets the needs of a public information terminal that presents up-to-date content while remaining easy to maintain and operate in a local deployment environment.
+- administratorski panel ili CMS
+- offline cache
+- automatske migracije baze
+- API i end-to-end testovi
+- pristupačnost i dodatni jezici
+- reverse proxy s HTTPS-om

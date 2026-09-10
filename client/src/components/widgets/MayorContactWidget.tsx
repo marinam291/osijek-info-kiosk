@@ -8,6 +8,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { ThemeColors } from "../../context/ThemeContext";
+import { apiUrl } from "@/services/api";
 
 type MayorContactWidgetProps = {
   colors: ThemeColors;
@@ -57,14 +58,11 @@ export default function MayorContactWidget({
 
     if (!isAnonymous && senderEmail) {
       try {
-        const checkRes = await fetch(
-          "http://192.168.1.113:5000/api/check-email-block",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: senderEmail }),
-          },
-        );
+        const checkRes = await fetch(apiUrl("/api/check-email-block"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: senderEmail }),
+        });
         const checkData = await checkRes.json();
 
         if (checkData.isBlocked) {
@@ -84,7 +82,7 @@ export default function MayorContactWidget({
     }
 
     try {
-      const response = await fetch("http://192.168.1.113:5000/api/send-email", {
+      const response = await fetch(apiUrl("/api/send-email"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -100,9 +98,17 @@ export default function MayorContactWidget({
 
       if (response.ok) {
         setNotificationMessage(
-          isHR
-            ? "Verifikacijski email je poslan na vašu adresu! Morate ga potvrditi u svom pretincu kako bi poruka bila poslana gradonačelniku."
-            : "Verification email sent to your address! You must confirm it in your inbox for the message to be sent.",
+          isAnonymous
+            ? isHR
+              ? "Mail je uspješno poslan gradonačelniku."
+              : "Your message was sent successfully to the Mayor."
+            : data.verificationNeeded
+              ? isHR
+                ? "Verifikacijski email je poslan na vašu adresu! Morate ga potvrditi u svom pretincu kako bi poruka bila poslana gradonačelniku."
+                : "Verification email sent to your address! You must confirm it in your inbox for the message to be sent."
+              : isHR
+                ? "Mail je uspješno poslan gradonačelniku."
+                : "Your message was sent successfully to the Mayor.",
         );
         setSenderName("");
         setSenderEmail("");

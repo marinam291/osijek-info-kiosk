@@ -52,7 +52,7 @@ export default function MapLocationModal({
             onPress={onClose}
           >
             <Text style={[styles.closeText, { color: colors.textPrimary }]}>
-              ✕
+              X
             </Text>
           </TouchableOpacity>
 

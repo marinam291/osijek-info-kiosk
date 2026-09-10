@@ -1,126 +1,155 @@
 # Osijek Info Kiosk
 
-Osijek Info Kiosk is a digital information kiosk for the city of Osijek. It presents tourism content, city services, events, map information, local weather, and a contact form for the mayor. The system is built as a React Native / Expo client app and an Express API connected to MySQL.
+Digitalni informacijski kiosk za Grad Osijek. Prikazuje turističke znamenitosti, muzeje, događanja, gradske usluge, smještaj, trgovine, kartu grada, vrijeme, vijesti i kontakt-formu za gradonačelnika.
 
-## Project overview
+Projekt se sastoji od Expo/React Native klijenta, Express/TypeScript API-ja i MySQL baze. Preporučeni način pokretanja je Docker Compose.
 
-The application has three main layers:
+## Sadržaj
 
-- Client: Expo + React Native app used as the kiosk interface
-- Server: Express API for retrieving structured content and sending contact emails
-- Database: MySQL used to store items, locations, and related data
+- [Mogućnosti](#mogućnosti)
+- [Tehnologije](#tehnologije)
+- [Struktura projekta](#struktura-projekta)
+- [Preduvjeti](#preduvjeti)
+- [Pokretanje s Dockerom](#pokretanje-s-dockerom)
+- [Lokalni razvoj](#lokalni-razvoj)
+- [Konfiguracija](#konfiguracija)
+- [Baza i seed podaci](#baza-i-seed-podaci)
+- [Provjera projekta](#provjera-projekta)
+- [API](#api)
+- [Sigurnost](#sigurnost)
+- [Rješavanje problema](#rješavanje-problema)
+- [Dokumentacija](#dokumentacija)
 
-The stack is designed to run through Docker Compose for easy local deployment.
+## Mogućnosti
 
-## Features
+- početni ekran s vizualnim identitetom grada
+- hrvatski i engleski jezik
+- screensaver nakon neaktivnosti i kiosk način rada
+- znamenitosti i muzeji s detaljnim opisima
+- događanja s dohvatom detalja s vanjskog izvora
+- imenik zdravstva, javnih usluga, prijevoza, taksija, smještaja i trgovina
+- karta s lokacijama i poveznicama za navigaciju
+- sat, vremenska prognoza i ticker gradskih vijesti
+- statusna poruka kada API nije dostupan
+- kontakt-forma s email verifikacijom
+- Dockerizirani klijent, API i MySQL baza
 
-- Home screen with city branding and quick navigation
-- Tourism and landmarks content
-- Events listing and item detail views
-- City services and directory information
-- City map view
-- Mayor contact form with email sending
-- Screensaver and inactivity handling for kiosk mode
-- Weather widget for Osijek
-- Server status indicator
-- Croatian and English language support
+Za muzeje, znamenitosti, zdravstvo, gradske usluge, smještaj i trgovine detalji se prikazuju kao opis bez QR koda. QR se koristi samo tamo gdje je poveznica predviđena za tu funkciju.
 
-## Technology stack
+## Tehnologije
 
-### Client / frontend
+### Klijent
 
-- Expo SDK
-- React Native
-- React 19
-- React Native Web
-- Expo Router
-- TypeScript
-- Expo UI and icon libraries
-- React Native Reanimated
-- React Native Gesture Handler
-- React Native SVG
-- react-native-qrcode-svg
-- expo-av
-- expo-image
-- expo-font
-- expo-device
-- expo-system-ui
-- expo-web-browser
-- expo-splash-screen
-- expo-constants
-- expo-linking
-
-### Server / backend
-
-- Node.js
-- Express 5
-- TypeScript
-- Sequelize ORM
-- MySQL 8 via mysql2
-- dotenv
-- CORS
-- Zod validation
-- Nodemailer
-- express-rate-limit
-- Winston logger
-- validator
-
-### Infrastructure and tooling
-
-- Docker
-- Docker Compose
-- MySQL 8 Docker container
-- npm
-- tsx for local development
+- Expo SDK, Expo Router i React Native Web
+- React 19 i TypeScript
+- Reanimated, Gesture Handler i SVG
+- Expo Image, AV, Font, Device, Linking, Splash Screen i System UI
+- `react-native-qrcode-svg` za QR prikaze gdje su potrebni
 - ESLint
-- @typescript-eslint/eslint-plugin and parser
 
-### Project-specific features used
+### Server
 
-- Screensaver and inactivity timer for kiosk mode
-- Weather API integration with Open-Meteo
-- Server health status widget
-- Contact form email sending through Gmail SMTP
-- multilingual interface (Croatian / English)
-- dynamic city content loading from MySQL-backed API
+- Node.js 20+, Express 5 i TypeScript
+- Sequelize, MySQL 8 i `mysql2`
+- `dotenv`, `cors`, Zod i `validator`
+- Nodemailer, `express-rate-limit` i Winston
+- `tsx` za razvoj
 
-## Repository structure
+### Vanjski izvori
+
+- Open-Meteo za vremensku prognozu
+- WordPress API Grada Osijeka za ticker vijesti
+- Osijek031 za vanjska događanja
+- Google Maps za kartu i navigaciju
+- Gmail SMTP za kontakt-formu
+
+## Struktura projekta
 
 ```text
 osijek-info-kiosk/
-├── client/                  # Expo client application
+├── client/
 │   ├── src/
+│   │   ├── app/                 # Expo Router ulaz
+│   │   ├── components/          # viewovi, modali i widgeti
+│   │   ├── config/              # konfiguracija UI kategorija
+│   │   ├── context/             # tema aplikacije
+│   │   ├── services/            # API i vanjski servisi
+│   │   └── utils/               # pomoćne funkcije
+│   ├── assets/
+│   ├── Dockerfile
 │   ├── app.json
-│   ├── Dockerfile
 │   └── package.json
-├── server/                  # Express + Sequelize backend
-│   ├── config/
-│   ├── models/
-│   ├── routes/
-│   ├── schemas/
-│   ├── utils/
+├── server/
+│   ├── config/                  # baza i logger
+│   ├── models/                  # Sequelize modeli
+│   ├── routes/                  # Express rute
+│   ├── schemas/                 # Zod sheme zahtjeva
+│   ├── utils/                   # email predlošci i pomoćne funkcije
+│   ├── seed.ts                  # demo podaci
+│   ├── server.ts                # API ulaz
 │   ├── Dockerfile
-│   ├── server.ts
+│   ├── .env.example
 │   └── package.json
-├── docker-compose.yml       # Multi-service local orchestration
-├── README.md                # Project overview and setup guide
-├── docs/                    # Additional documentation
-│   ├── PROJECT_DOCUMENTATION.md
-│   └── API.md
-└── .gitignore
+├── docs/
+│   ├── API.md
+│   └── PROJECT_DOCUMENTATION.md
+├── docker-compose.yml
+└── README.md
 ```
 
-## Prerequisites
+## Preduvjeti
 
-Before running the project, make sure you have:
+- Docker Desktop s Docker Composeom
+- Node.js 20+ i npm
+- slobodni portovi `3307`, `5000` i `8081`
 
-- Docker Desktop or Docker Engine
-- Docker Compose
-- Node.js 20+ and npm
+## Pokretanje s Dockerom
 
-## Environment configuration
+Nakon kloniranja iz korijena projekta napravi lokalnu konfiguraciju:
 
-Create a server environment file at `server/.env` with values similar to the following:
+```powershell
+Copy-Item server\.env.example server\.env
+```
+
+Za kontakt-formu upiši stvarni Gmail račun i Gmail App Password u `server/.env`. Zatim pokreni sustav:
+
+```bash
+docker compose up --build
+```
+
+Otvori klijent na [http://localhost:8081](http://localhost:8081). API je na `http://localhost:5000`, a MySQL je izložen na host portu `3307`.
+
+Za zaustavljanje:
+
+```bash
+docker compose down
+```
+
+`docker compose down -v` briše i MySQL volumen, odnosno sve lokalne podatke baze.
+
+## Lokalni razvoj
+
+Klijent:
+
+```bash
+cd client
+npm install
+npm run web
+```
+
+Za Expo development server koristi `npm start`.
+
+Server zahtijeva dostupan MySQL. Za pokretanje izvan Dockera postavi `DB_HOST=localhost` u `server/.env`:
+
+```bash
+cd server
+npm install
+npm run dev
+```
+
+## Konfiguracija
+
+Kopiraj [server/.env.example](server/.env.example) u `server/.env`:
 
 ```env
 PORT=5000
@@ -129,112 +158,103 @@ DB_NAME=osijek_kiosk
 DB_USER=root
 DB_PASSWORD=root
 EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_app_password
+EMAIL_PASS=your_gmail_app_password
+PUBLIC_SERVER_URL=http://localhost:5000
 ```
 
-Notes:
+- U Dockeru je `DB_HOST=database` ime Compose servisa.
+- Izvan Dockera koristi `DB_HOST=localhost`.
+- `EMAIL_USER` i `EMAIL_PASS` potrebni su za kontakt-formu.
+- `PUBLIC_SERVER_URL` se koristi u linkovima email potvrde. Za lokalni rad ostaje `http://localhost:5000`; pri javnom deployu postavi javni HTTPS URL.
+- `server/.env` ne smije se commitati.
 
-- The Docker Compose setup passes `DB_HOST=database` to the server service.
-- `DB_HOST` should be `localhost` when running the server outside Docker.
-- `EMAIL_USER` and `EMAIL_PASS` are required for the mayor contact form.
+Klijent zadano koristi `http://localhost:5000`. Ako se klijent otvara na drugom računalu, postavi `EXPO_PUBLIC_API_URL`, primjerice:
 
-## Running the project with Docker
+```env
+EXPO_PUBLIC_API_URL=http://192.168.1.50:5000
+```
 
-From the project root:
+Nakon promjene ponovno pokreni Expo ili Docker client.
+
+## Baza i seed podaci
+
+Server pri pokretanju provjerava bazu, čeka MySQL, sinkronizira Sequelize modele i pokreće seed ako nema stavki u tablici `items`.
+
+Ručno seedanje potpuno briše postojeće tablice i ponovno unosi demo podatke. Koristi ga samo u razvoju:
 
 ```bash
-docker compose up --build
+docker compose stop server
+docker compose run --rm server node --import tsx -e "import('./seed.ts').then(({ seedDatabase }) => seedDatabase())"
+docker compose up -d server client
 ```
 
-This starts:
-
-- MySQL on port `3307`
-- Server on port `5000`
-- Client on port `8081`
-
-Open the client in a browser at:
-
-```text
-http://localhost:8081
-```
-
-## Running the client locally
+## Provjera projekta
 
 ```bash
-cd client
-npm install
-npm start
+npm run lint --prefix client
+npm run build --prefix server
+curl http://localhost:5000/api/health
 ```
 
-For web mode:
+Health odgovor treba sadržavati `"status":"online"`.
+
+## API
+
+Glavne rute:
+
+- `GET /` - osnovna poruka servera
+- `GET /api/health` - status servera
+- `GET /api/items` - sadržaj i događanja
+- `GET /api/event-details?url=...` - detalji vanjskog događaja
+- `GET /api/locations` - lokacije za kartu
+- `POST /api/check-email-block` - provjera blokiranog emaila
+- `POST /api/send-email` - slanje verifikacijskog emaila
+- `GET /api/verify-email?token=...&action=confirm|cancel` - potvrda ili odustajanje
+
+Detalji i primjeri nalaze se u [docs/API.md](docs/API.md).
+
+## Sigurnost
+
+- Ne commitaj `server/.env`, Gmail App Password ni druge tajne.
+- Za javni deployment koristi HTTPS u `PUBLIC_SERVER_URL`.
+- Kontaktna ruta koristi Zod validaciju i rate limiting.
+- Razvojne MySQL vrijednosti `root/root` nisu primjer za produkciju.
+- U produkciji ograniči javno izlaganje MySQL porta i koristi zasebnog DB korisnika.
+- Verifikacijski linkovi moraju biti dostupni uređaju koji otvara email.
+
+## Rješavanje problema
+
+### Nedostaje `server/.env`
+
+```powershell
+Copy-Item server\.env.example server\.env
+```
+
+### Server javlja izgubljenu vezu
 
 ```bash
-cd client
-npm run web
+docker compose ps
+curl http://localhost:5000/api/health
+docker compose logs --tail=100 server
 ```
 
-## Running the server locally
+### Baza nije dostupna
 
-```bash
-cd server
-npm install
-npm run dev
-```
+Provjeri da je `kiosk_mysql_db` `healthy` i da je `DB_HOST=database` unutar Dockera.
 
-The server will start on port `5000` and initialize the MySQL database automatically if the configuration is valid.
+### Klijent ne vidi API
 
-## Optional database seeding
+Ako su klijent i API na različitim računalima, postavi `EXPO_PUBLIC_API_URL` na LAN adresu API računala i ponovno pokreni klijent.
 
-This project includes a seed script at `server/seed.ts` to populate the database with initial city content, tourism items, event records, and map locations for local development or demo use.
+### Email ne radi
 
-```bash
-cd server
-npx tsx seed.ts
-```
+Provjeri Gmail App Password, `EMAIL_USER`, `EMAIL_PASS` i `PUBLIC_SERVER_URL`. Obična Gmail lozinka nije zamjena za App Password.
 
-This script clears the database and inserts sample data, so it should only be used in a development or test environment.
+## Dokumentacija
 
-## API and data flow
+- [API dokumentacija](docs/API.md)
+- [Projektna dokumentacija](docs/PROJECT_DOCUMENTATION.md)
 
-The client fetches content from the API to populate the kiosk screens:
+## Licenca
 
-- Items and categories are loaded from `/api/items`
-- Map locations are loaded from `/api/locations`
-- Health status is available at `/api/health`
-- Contact emails are sent to `/api/send-email`
-
-## Developer notes
-
-- The kiosk app uses inactivity tracking to enter screensaver mode after a period of no interaction.
-- The app supports both Croatian and English text through the `language` state.
-- The backend validates incoming contact form data with Zod and limits repeated submissions with Express rate limiting.
-- Database synchronization is handled with Sequelize `sync({ alter: true })` during server startup.
-
-## Troubleshooting
-
-### Docker compose fails to start
-
-- Check whether ports `3307`, `5000`, and `8081` are free.
-- Ensure Docker is running.
-- Confirm `server/.env` exists and contains the required MySQL and email settings.
-
-### Database connection issues
-
-- Ensure MySQL container is healthy and started before the server attempts to connect.
-- Check `DB_HOST`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME` values.
-
-### Email sending fails
-
-- Verify Gmail app password setup for `EMAIL_PASS`.
-- Confirm `EMAIL_USER` is valid and the account allows SMTP access.
-
-## Documentation
-
-Additional project documentation is available in the `docs` folder:
-
-- [docs/PROJECT_DOCUMENTATION.md](docs/PROJECT_DOCUMENTATION.md)
-- [docs/API.md](docs/API.md)
-
-## License
-
-This project is currently set up as an internal city kiosk application and does not include a formal public license declaration.
+Projekt nema javno definiranu licencu i namijenjen je internom/edukacijskom korištenju kao gradski informacijski kiosk.
