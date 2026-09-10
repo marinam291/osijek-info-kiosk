@@ -97,11 +97,6 @@ export default function NewsTicker({ language, colors }: NewsTickerProps) {
     return () => clearInterval(timer);
   }, [news, fadeAnim]);
 
-  if (loading) return null;
-  if (news.length === 0) return null;
-
-  const currentNews = news[currentIndex];
-
   return (
     <View style={styles.wrapper}>
       <View
@@ -141,55 +136,79 @@ export default function NewsTicker({ language, colors }: NewsTickerProps) {
           </Text>
         </View>
 
-        <Animated.View style={[styles.newsWrapper, { opacity: fadeAnim }]}>
-          {currentNews.imageUrl && (
-            <Image
-              source={{ uri: currentNews.imageUrl }}
-              style={[
-                styles.image,
-                {
-                  width: 260 * scale,
-                },
-              ]}
-              resizeMode="cover"
-            />
-          )}
-          <View
-            style={[
-              styles.textContainer,
-              {
-                paddingHorizontal: 35 * scale,
-                paddingTop: 30 * scale,
-              },
-            ]}
-          >
+        {loading ? (
+          <View style={styles.loadingContainer}>
             <Text
               style={[
-                styles.date,
-                {
-                  color: colors.accent,
-                  fontSize: 20 * scale,
-                  marginBottom: 8 * scale,
-                },
+                styles.loadingText,
+                { color: colors.textSecondary, fontSize: 20 * scale },
               ]}
             >
-              {currentNews.date}
-            </Text>
-            <Text
-              style={[
-                styles.title,
-                {
-                  color: colors.textPrimary,
-                  fontSize: 32 * scale,
-                  lineHeight: 40 * scale,
-                },
-              ]}
-              numberOfLines={2}
-            >
-              {currentNews.title}
+              {isHR ? "Učitavam vijesti..." : "Loading news..."}
             </Text>
           </View>
-        </Animated.View>
+        ) : news.length === 0 ? (
+          <View style={styles.loadingContainer}>
+            <Text
+              style={[
+                styles.loadingText,
+                { color: colors.textSecondary, fontSize: 20 * scale },
+              ]}
+            >
+              {isHR ? "Nema dostupnih vijesti." : "No news available."}
+            </Text>
+          </View>
+        ) : (
+          <Animated.View style={[styles.newsWrapper, { opacity: fadeAnim }]}>
+            {news[currentIndex].imageUrl && (
+              <Image
+                source={{ uri: news[currentIndex].imageUrl! }}
+                style={[
+                  styles.image,
+                  {
+                    width: 260 * scale,
+                  },
+                ]}
+                resizeMode="cover"
+              />
+            )}
+            <View
+              style={[
+                styles.textContainer,
+                {
+                  paddingHorizontal: 35 * scale,
+                  paddingTop: 30 * scale,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.date,
+                  {
+                    color: colors.accent,
+                    fontSize: 20 * scale,
+                    marginBottom: 8 * scale,
+                  },
+                ]}
+              >
+                {news[currentIndex].date}
+              </Text>
+              <Text
+                style={[
+                  styles.title,
+                  {
+                    color: colors.textPrimary,
+                    fontSize: 32 * scale,
+                    lineHeight: 40 * scale,
+                  },
+                ]}
+                numberOfLines={2}
+              >
+                {news[currentIndex].title}
+              </Text>
+            </View>
+          </Animated.View>
+        )}
       </View>
 
       {!isHR && (
@@ -217,6 +236,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     position: "relative",
     width: "100%",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    fontStyle: "italic",
   },
   notice: {
     textAlign: "center",
