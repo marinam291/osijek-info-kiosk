@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -27,24 +27,70 @@ export default function MayorContactWidget({
   const [messageBody, setMessageBody] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
 
+  const [notificationMessage, setNotificationMessage] = useState<string | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (!notificationMessage) return;
+
+    const timer = setTimeout(() => {
+      setNotificationMessage(null);
+    }, 8000);
+
+    return () => clearTimeout(timer);
+  }, [notificationMessage]);
+
   const handleSendEmail = async () => {
     if (!isAnonymous && (!senderName || !senderEmail || !messageBody)) {
-      alert(isHR ? "Molimo ispunite sva polja." : "Please fill in all fields.");
+      setNotificationMessage(
+        isHR ? "Molimo ispunite sva polja." : "Please fill in all fields.",
+      );
       return;
     }
     if (isAnonymous && !messageBody) {
-      alert(isHR ? "Molimo unesite poruku." : "Please enter a message.");
+      setNotificationMessage(
+        isHR ? "Molimo unesite poruku." : "Please enter a message.",
+      );
       return;
     }
 
+    if (!isAnonymous && senderEmail) {
+      try {
+        const checkRes = await fetch(
+          "http://192.168.1.113:5000/api/check-email-block",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: senderEmail }),
+          },
+        );
+        const checkData = await checkRes.json();
+
+        if (checkData.isBlocked) {
+          setNotificationMessage(
+            isHR
+              ? `Ovaj email je privremeno blokiran za korištenje na kiosku još ${checkData.daysLeft} dana zbog ranijeg odustajanja.`
+              : `This email is temporarily blocked from kiosk use for another ${checkData.daysLeft} days.`,
+          );
+          return;
+        }
+      } catch {
+        setNotificationMessage(
+          isHR ? "Greška prilikom provjere emaila." : "Error checking email.",
+        );
+        return;
+      }
+    }
+
     try {
-      const response = await fetch("http://localhost:5000/api/send-email", {
+      const response = await fetch("http://192.168.1.113:5000/api/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           isAnonymous,
-          senderName: isAnonymous ? undefined : senderName,
-          senderEmail: isAnonymous ? undefined : senderEmail,
+          senderName: isAnonymous ? "" : senderName,
+          senderEmail: isAnonymous ? "" : senderEmail,
           messageBody,
           lang: isHR ? "hr" : "en",
         }),
@@ -53,25 +99,27 @@ export default function MayorContactWidget({
       const data = await response.json();
 
       if (response.ok) {
-        alert(
-          isHR ? "Poruka je uspješno poslana!" : "Message sent successfully!",
+        setNotificationMessage(
+          isHR
+            ? "Verifikacijski email je poslan na vašu adresu! Morate ga potvrditi u svom pretincu kako bi poruka bila poslana gradonačelniku."
+            : "Verification email sent to your address! You must confirm it in your inbox for the message to be sent.",
         );
         setSenderName("");
         setSenderEmail("");
         setMessageBody("");
         setIsAnonymous(false);
       } else {
-        alert(
+        setNotificationMessage(
           data.error ||
             (isHR
               ? "Došlo je do greške pri slanju."
               : "Failed to send message."),
         );
       }
-    } catch (error) {
+    } catch (error: unknown) {
       // eslint-disable-next-line no-console
       console.error("Greška:", error);
-      alert(
+      setNotificationMessage(
         isHR
           ? "Nije moguće uspostaviti vezu sa serverom."
           : "Unable to connect to the server.",
@@ -290,6 +338,72 @@ export default function MayorContactWidget({
           </Text>
         </TouchableOpacity>
       </View>
+
+      {notificationMessage && (
+        <View style={styles.modalOverlay}>
+          <View
+            style={[
+              styles.modalBox,
+              {
+                backgroundColor: colors.cardBackground,
+                borderColor: colors.border,
+                borderRadius: 20 * scale,
+                padding: 30 * scale,
+                borderWidth: 2,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.modalTitle,
+                {
+                  color: colors.textPrimary,
+                  fontSize: 22 * scale,
+                  marginBottom: 12 * scale,
+                },
+              ]}
+            >
+              Info Kiosk
+            </Text>
+            <Text
+              style={[
+                styles.modalDesc,
+                {
+                  color: colors.textSecondary,
+                  fontSize: 18 * scale,
+                  marginBottom: 25 * scale,
+                  lineHeight: 26 * scale,
+                },
+              ]}
+            >
+              {notificationMessage}
+            </Text>
+
+            <TouchableOpacity
+              style={[
+                styles.modalBtnOk,
+                {
+                  backgroundColor: colors.accent,
+                  borderRadius: 12 * scale,
+                  paddingVertical: 12 * scale,
+                  paddingHorizontal: 30 * scale,
+                },
+              ]}
+              onPress={() => setNotificationMessage(null)}
+            >
+              <Text
+                style={{
+                  color: "#FFF",
+                  fontWeight: "bold",
+                  fontSize: 18 * scale,
+                }}
+              >
+                OK
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -331,5 +445,30 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "bold",
     letterSpacing: 1,
+  },
+  modalOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+  },
+  modalBox: {
+    width: "80%",
+    maxWidth: 550,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontWeight: "bold",
+  },
+  modalDesc: {
+    textAlign: "center",
+  },
+  modalBtnOk: {
+    alignItems: "center",
   },
 });
