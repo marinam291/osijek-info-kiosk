@@ -109,7 +109,7 @@ export default function ContentArea({
   const [prevActiveTab, setPrevActiveTab] = useState<string>(activeTab);
 
   useEffect(() => {
-    fetch("http://192.168.1.113:5000/api/items")
+    fetch("http://localhost:5000/api/items")
       .then((res) => res.json() as Promise<ContentItem[]>)
       .then((data) => {
         setAllItems(data);

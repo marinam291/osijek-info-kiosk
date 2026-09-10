@@ -39,7 +39,7 @@ interface ExternalEvent {
 }
 
 async function syncNewDataDaily() {
-  console.log("🔄 [CRON] Pokrećem dnevnu provjeru novih vijesti i događaja...");
+  console.log("[CRON] Pokrećem dnevnu provjeru novih vijesti i događaja...");
 
   try {
     const newsResponse = await fetch(
@@ -48,7 +48,7 @@ async function syncNewDataDaily() {
     if (newsResponse.ok) {
       const newsData = await newsResponse.json();
       console.log(
-        `✅ [CRON] Uspješno provjereno vijesti: ${newsData.length} komada.`,
+        `[CRON] Uspješno provjereno vijesti: ${newsData.length} komada.`,
       );
     }
 
@@ -247,6 +247,14 @@ async function startServer() {
     await initializeDatabase();
     await sequelize.sync({ alter: true });
     console.log("Baza i tablice su uspješno sinkronizirane!");
+
+    const count = await Item.count();
+    if (count === 0) {
+      console.log("Baza je prazna. Automatski pokrećem seed skriptu...");
+      await import("./seed.js");
+    } else {
+      console.log("ℹPodaci već postoje u bazi.");
+    }
 
     app.listen(Number(PORT), () => {
       console.log(`Server sluša na portu ${PORT}`);
