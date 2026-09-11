@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -102,21 +102,6 @@ export default function ContentArea({
   const [loading, setLoading] = useState<boolean>(true);
 
   const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
-  const contentScrollRef = useRef<ScrollView>(null);
-  const contentScrollOffset = useRef(0);
-
-  const handleItemSelection = (item: ContentItem | null) => {
-    setSelectedItem(item);
-
-    if (item === null) {
-      setTimeout(() => {
-        contentScrollRef.current?.scrollTo({
-          y: contentScrollOffset.current,
-          animated: false,
-        });
-      }, 220);
-    }
-  };
 
   const [tourismCategory, setTourismCategory] =
     useState<string>("znamenitosti");
@@ -228,7 +213,7 @@ export default function ContentArea({
               title={title}
               standardData={standardData}
               selectedItem={selectedItem}
-              setSelectedItem={handleItemSelection}
+              setSelectedItem={setSelectedItem}
               colors={colors}
               language={language}
             />
@@ -242,55 +227,50 @@ export default function ContentArea({
               <MayorContactWidget colors={colors} language={language} />
             </ScrollView>
           ) : (
-            <ScrollView
-              ref={contentScrollRef}
-              showsVerticalScrollIndicator={false}
-              onScroll={(event) => {
-                contentScrollOffset.current = event.nativeEvent.contentOffset.y;
-              }}
-              scrollEventThrottle={16}
-            >
+            <View style={styles.contentView}>
               <Text
                 style={[styles.sectionTitle, { color: colors.textPrimary }]}
               >
                 {title}
               </Text>
 
-              {activeTab === "turizam" && (
-                <ServiceFilters
-                  items={getTourismCategories(isHR)}
-                  activeKey={tourismCategory}
-                  onSelect={setTourismCategory}
-                  colors={colors}
-                />
-              )}
-
               {activeTab === "usluge" ? (
                 <ServicesView
                   currentData={currentDataForServices}
                   language={language}
                   colors={colors}
-                  onItemPress={handleItemSelection}
+                  onItemPress={setSelectedItem}
                 />
               ) : (
-                <View style={styles.gridContainer}>
-                  {standardData.map((item) => (
-                    <GridCard
-                      key={String(item.id)}
-                      item={item}
+                <ScrollView showsVerticalScrollIndicator={false}>
+                  {activeTab === "turizam" && (
+                    <ServiceFilters
+                      items={getTourismCategories(isHR)}
+                      activeKey={tourismCategory}
+                      onSelect={setTourismCategory}
                       colors={colors}
-                      onPress={handleItemSelection}
                     />
-                  ))}
-                </View>
+                  )}
+
+                  <View style={styles.gridContainer}>
+                    {standardData.map((item) => (
+                      <GridCard
+                        key={String(item.id)}
+                        item={item}
+                        colors={colors}
+                        onPress={setSelectedItem}
+                      />
+                    ))}
+                  </View>
+                </ScrollView>
               )}
-            </ScrollView>
+            </View>
           )}
         </FadeInView>
 
         <ItemModal
           selectedItem={activeTab === "dogadjanja" ? null : selectedItem}
-          setSelectedItem={handleItemSelection}
+          setSelectedItem={setSelectedItem}
           language={language}
           colors={colors}
         />
@@ -310,6 +290,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     paddingBottom: 40,
     paddingTop: 110,
+  },
+  contentView: {
+    flex: 1,
   },
   sectionTitle: {
     fontSize: 42,

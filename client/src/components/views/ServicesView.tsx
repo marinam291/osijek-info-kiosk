@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import ServiceFilters from "../common/ServiceFilters";
 import EmergencyBox from "../widgets/EmergencyBox";
 import GridCard from "../common/GridCard";
@@ -135,56 +135,64 @@ export default function ServicesView({
         <EmergencyBox language={language} colors={colors} />
       )}
 
-      <FadeInView
-        triggerKey={`${serviceCategory}-${transportSubCategory}-${accommodationSubCategory}`}
+      <ScrollView
+        style={styles.resultsScroll}
+        showsVerticalScrollIndicator={false}
       >
-        {dataToRender.length > 0 && (
-          <View style={styles.gridContainer}>
-            {dataToRender.map((item) => (
-              <GridCard
-                key={String(item.id)}
-                item={{
-                  ...item,
-                  naziv: isHR ? item.nazivHr : item.nazivEn,
-                  opis: isHR ? item.opisHr : item.opisEn,
-                  info: isHR ? item.infoHr : item.infoEn,
-                }}
-                colors={colors}
-                onPress={onItemPress}
-              />
-            ))}
-          </View>
-        )}
+        <FadeInView
+          triggerKey={`${serviceCategory}-${transportSubCategory}-${accommodationSubCategory}`}
+        >
+          {dataToRender.length > 0 && (
+            <View style={styles.gridContainer}>
+              {dataToRender.map((item) => (
+                <GridCard
+                  key={String(item.id)}
+                  item={{
+                    ...item,
+                    naziv: isHR ? item.nazivHr : item.nazivEn,
+                    opis: isHR ? item.opisHr : item.opisEn,
+                    info: isHR ? item.infoHr : item.infoEn,
+                  }}
+                  colors={colors}
+                  onPress={onItemPress}
+                />
+              ))}
+            </View>
+          )}
 
-        {isTaxiView && (
-          <View style={{ marginTop: dataToRender.length > 0 ? 40 : 0 }}>
-            {dataToRender.length > 0 && (
-              <Text style={[styles.subTitle, { color: colors.textSecondary }]}>
-                {isHR ? "Taksi službe" : "Taxi Services"}
-              </Text>
-            )}
-            <TaxiDirectory
-              items={taxiData}
-              colors={colors}
-              onItemPress={(item) =>
-                onItemPress({
-                  id: item.id,
-                  naziv: item.naziv,
-                  opis: item.opis,
-                  info: item.telefon,
-                  qrLink: item.qrLink,
-                } as ContentItem)
-              }
-            />
-          </View>
-        )}
-      </FadeInView>
+          {isTaxiView && (
+            <View style={{ marginTop: dataToRender.length > 0 ? 40 : 0 }}>
+              {dataToRender.length > 0 && (
+                <Text
+                  style={[styles.subTitle, { color: colors.textSecondary }]}
+                >
+                  {isHR ? "Taksi službe" : "Taxi Services"}
+                </Text>
+              )}
+              <TaxiDirectory
+                items={taxiData}
+                colors={colors}
+                onItemPress={(item) =>
+                  onItemPress({
+                    id: item.id,
+                    naziv: item.naziv,
+                    opis: item.opis,
+                    info: item.telefon,
+                    qrLink: item.qrLink,
+                  } as ContentItem)
+                }
+              />
+            </View>
+          )}
+        </FadeInView>
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingBottom: 20 },
+  resultsScroll: { flex: 1 },
   gridContainer: {
     flexDirection: "row",
     flexWrap: "wrap",

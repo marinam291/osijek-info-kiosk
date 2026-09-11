@@ -34,6 +34,10 @@ Projekt se sastoji od Expo/React Native klijenta, Express/TypeScript API-ja i My
 - kontakt-forma s email verifikacijom
 - Dockerizirani klijent, API i MySQL baza
 
+Korisničko sučelje prvenstveno je optimizirano za kiosk zaslon rezolucije
+`1920 x 1080`. Layout koristi responzivno skaliranje kako bi se prilagodio i
+drugim veličinama zaslona.
+
 Za muzeje, znamenitosti, zdravstvo, gradske usluge, smještaj i trgovine detalji se prikazuju kao opis bez QR koda. QR se koristi samo tamo gdje je poveznica predviđena za tu funkciju.
 
 ## Tehnologije

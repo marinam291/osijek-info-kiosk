@@ -4,7 +4,7 @@
 
 Osijek Info Kiosk je interaktivni gradski informacijski sustav za javni kiosk. Korisniku omogućuje pregled turističkih znamenitosti, muzeja, događanja, gradskih usluga, smještaja, trgovina, karte, vremena i kontakta s gradonačelnikom.
 
-Projekt podržava hrvatski i engleski jezik te je prilagođen velikom zaslonu i radu bez korisničke prijave.
+Projekt podržava hrvatski i engleski jezik te je prilagođen velikom zaslonu i radu bez korisničke prijave. Primarna ciljna rezolucija kiosk sučelja je `1920 x 1080`, uz responzivno skaliranje za druge veličine zaslona.
 
 ## 2. Arhitektura
 
