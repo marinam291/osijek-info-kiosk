@@ -113,7 +113,7 @@ Ako vanjski izvor ne uspije, lokalni podaci iz baze ostaju dostupni gdje je to m
 
 - `server/.env` je lokalna datoteka i ne smije se commitati.
 - `.env.example` sadrži samo primjerne vrijednosti.
-- Kontaktni payload provjerava Zod, a ruta ima rate limit.
+- Kontaktni payload provjerava Zod, a ruta ograničava uspješna slanja na 3 poruke s istog uređaja u 15 minuta. Neuspjeli pokušaji ne troše limit.
 - Za produkciju koristiti HTTPS, zasebnog DB korisnika i zatvoren MySQL port.
 - Razvojne vrijednosti `root/root` nisu primjer za produkciju.
 - `PUBLIC_SERVER_URL` mora biti dostupna uređaju koji otvara email.

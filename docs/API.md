@@ -150,7 +150,7 @@ Pravila:
 - ime je ograničeno na 40, email na 50 znakova
 - poruka ne smije biti prazna
 - nedozvoljeni izrazi se odbijaju
-- dopuštena su najviše 3 zahtjeva u 15 minuta
+- dopuštena su najviše 3 uspješno poslane poruke s istog uređaja u 15 minuta; neispravni zahtjevi, blokade, odustajanje, verifikacijski email i SMTP greške ne troše limit
 
 Statusi: `200` uspjeh, `400` neispravan zahtjev, `403` blokiran email, `429` rate limit, `500` greška SMTP-a/servera.
 

@@ -1,6 +1,5 @@
 import express from "express";
 import nodemailer from "nodemailer";
-import rateLimit from "express-rate-limit";
 import { getEmailTemplate } from "../utils/emailTemplate.js";
 import { createContactSchema } from "../schemas/contactSchema.js";
 import logger from "../config/logger.js";
@@ -9,6 +8,9 @@ const router = express.Router();
 
 const blockedEmails = new Map();
 const pendingMessages = new Map();
+const successfulSendTimes = new Map<string, number[]>();
+const sendLimitWindowMs = 15 * 60 * 1000;
+const sendLimit = 3;
 
 router.post("/check-email-block", (req, res) => {
   const { email } = req.body;
@@ -32,21 +34,32 @@ router.post("/check-email-block", (req, res) => {
   return res.json({ isBlocked: false });
 });
 
-const contactLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 3,
-  standardHeaders: true,
-  legacyHeaders: false,
-  handler: (req, res) => {
-    const lang = req.body.lang === "en" ? "en" : "hr";
-    const errorMessage =
-      lang === "en"
-        ? "Too many messages sent from this device. Please try again later."
-        : "Previše poslanih poruka s ovog uređaja. Molimo pokušajte ponovno kasnije.";
+function getClientKey(req: express.Request): string {
+  return req.ip || req.socket.remoteAddress || "unknown-device";
+}
 
-    res.status(429).json({ error: errorMessage });
-  },
-});
+function getRecentSuccessfulSends(clientKey: string): number[] {
+  const cutoff = Date.now() - sendLimitWindowMs;
+  const recentSends = (successfulSendTimes.get(clientKey) || []).filter(
+    (sentAt) => sentAt > cutoff,
+  );
+  successfulSendTimes.set(clientKey, recentSends);
+  return recentSends;
+}
+
+function hasReachedSendLimit(clientKey: string): boolean {
+  return getRecentSuccessfulSends(clientKey).length >= sendLimit;
+}
+
+function recordSuccessfulSend(clientKey: string): void {
+  getRecentSuccessfulSends(clientKey).push(Date.now());
+}
+
+function sendLimitError(lang: string) {
+  return lang === "en"
+    ? "Too many messages sent from this device. Please try again later."
+    : "Previše uspješno poslanih poruka s ovog uređaja. Molimo pokušajte ponovno kasnije.";
+}
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -56,8 +69,9 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-router.post("/send-email", contactLimiter, async (req, res) => {
+router.post("/send-email", async (req, res) => {
   const lang = req.body.lang === "en" ? "en" : "hr";
+  const clientKey = getClientKey(req);
 
   const contactSchema = createContactSchema(lang);
   const result = contactSchema.safeParse(req.body);
@@ -89,6 +103,7 @@ router.post("/send-email", contactLimiter, async (req, res) => {
       senderEmail: cleanEmail,
       messageBody,
       lang,
+      clientKey,
     });
 
     const serverBaseUrl =
@@ -158,6 +173,10 @@ router.post("/send-email", contactLimiter, async (req, res) => {
   const finalName = lang === "en" ? "Anonymous citizen" : "Anonimni građanin";
   const finalEmail = "info-kiosk@osijek.hr";
 
+  if (hasReachedSendLimit(clientKey)) {
+    return res.status(429).json({ error: sendLimitError(lang) });
+  }
+
   try {
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
@@ -170,6 +189,7 @@ router.post("/send-email", contactLimiter, async (req, res) => {
       message:
         lang === "en" ? "Email sent successfully!" : "Mail uspješno poslan!",
     });
+    recordSuccessfulSend(clientKey);
   } catch {
     res.status(500).json({ error: "Neuspjelo slanje maila." });
   }
@@ -240,6 +260,12 @@ router.post("/verify-email", async (req, res) => {
   }
 
   if (action === "confirm") {
+    const clientKey = messageData.clientKey || getClientKey(req);
+
+    if (hasReachedSendLimit(clientKey)) {
+      return res.status(429).send(sendLimitError(messageData.lang));
+    }
+
     try {
       await transporter.sendMail({
         from: process.env.EMAIL_USER,
@@ -253,6 +279,7 @@ router.post("/verify-email", async (req, res) => {
       });
 
       pendingMessages.delete(token);
+      recordSuccessfulSend(clientKey);
       return res.send(`
         <div style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
           <h2 style="color: #28a745;">Uspješno ste potvrdili i poslali poruku gradonačelniku!</h2>

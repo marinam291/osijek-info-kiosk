@@ -222,7 +222,7 @@ Detalji i primjeri nalaze se u [docs/API.md](docs/API.md).
 
 - Ne commitaj `server/.env`, Gmail App Password ni druge tajne.
 - Za javni deployment koristi HTTPS u `PUBLIC_SERVER_URL`.
-- Kontaktna ruta koristi Zod validaciju i rate limiting.
+- Kontaktna ruta koristi Zod validaciju i ograničava na najviše 3 uspješno poslane poruke s istog uređaja u 15 minuta; neuspjeli pokušaji ne troše limit.
 - Razvojne MySQL vrijednosti `root/root` nisu primjer za produkciju.
 - U produkciji ograniči javno izlaganje MySQL porta i koristi zasebnog DB korisnika.
 - Verifikacijski linkovi moraju biti dostupni uređaju koji otvara email.
