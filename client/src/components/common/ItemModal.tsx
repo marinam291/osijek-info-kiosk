@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
+  Platform,
   ViewStyle,
 } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
@@ -66,6 +67,99 @@ export default function ItemModal({
 
   const shouldShowQrCode = selectedItem !== null && !hidesQrCode;
 
+  const modalBody = (
+    <View
+      style={[
+        styles.modalContent,
+        {
+          backgroundColor: colors.modalContent,
+          borderColor: colors.border,
+        },
+      ]}
+    >
+      <TouchableOpacity
+        style={[styles.closeButton, { backgroundColor: colors.cardBackground }]}
+        onPress={handleClose}
+      >
+        <Text style={[styles.closeButtonText, { color: colors.textPrimary }]}>
+          X
+        </Text>
+      </TouchableOpacity>
+
+      <ScrollView
+        contentContainerStyle={styles.modalScroll}
+        showsVerticalScrollIndicator={false}
+        style={
+          {
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          } as unknown as ViewStyle
+        }
+      >
+        {selectedItem && (
+          <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
+            {displayNaziv}
+          </Text>
+        )}
+
+        {selectedItem?.id === "u_p2" ? (
+          <View style={{ width: "100%", marginTop: 10 }}>
+            <TrainScheduleWidget language={language} colors={colors} />
+          </View>
+        ) : selectedItem?.id === "u_p1" ? (
+          <View style={{ width: "100%", marginTop: 10 }}>
+            <GppWebViewWidget colors={colors} />
+          </View>
+        ) : selectedItem?.id === "u_p4" ? (
+          <View style={{ width: "100%", marginTop: 10 }}>
+            <EmobiWebViewWidget colors={colors} />
+          </View>
+        ) : (
+          <>
+            <Text
+              style={[
+                styles.modalDescription,
+                {
+                  color: colors.textSecondary,
+                  fontSize: hidesQrCode ? 32 : 22,
+                  lineHeight: hidesQrCode ? 48 : 34,
+                  maxWidth: hidesQrCode ? 1200 : 800,
+                },
+              ]}
+            >
+              {displayOpis ||
+                (isHR
+                  ? "Opis za ovu stavku trenutno nije dostupan."
+                  : "A description for this item is currently unavailable.")}
+            </Text>
+
+            {shouldShowQrCode && (
+              <ItemQrSection
+                qrLink={selectedItem?.qrLink}
+                isHR={isHR}
+                colors={colors}
+              />
+            )}
+          </>
+        )}
+      </ScrollView>
+    </View>
+  );
+
+  if (Platform.OS === "web") {
+    return selectedItem !== null && !isClosing ? (
+      <View
+        style={[
+          styles.modalOverlay,
+          styles.webModalOverlay,
+          { backgroundColor: colors.modalBackground },
+        ]}
+      >
+        {modalBody}
+      </View>
+    ) : null;
+  }
+
   return (
     <Modal
       visible={selectedItem !== null && !isClosing}
@@ -78,87 +172,7 @@ export default function ItemModal({
           { backgroundColor: colors.modalBackground },
         ]}
       >
-        <View
-          style={[
-            styles.modalContent,
-            {
-              backgroundColor: colors.modalContent,
-              borderColor: colors.border,
-            },
-          ]}
-        >
-          <TouchableOpacity
-            style={[
-              styles.closeButton,
-              { backgroundColor: colors.cardBackground },
-            ]}
-            onPress={handleClose}
-          >
-            <Text
-              style={[styles.closeButtonText, { color: colors.textPrimary }]}
-            >
-              X
-            </Text>
-          </TouchableOpacity>
-
-          <ScrollView
-            contentContainerStyle={styles.modalScroll}
-            showsVerticalScrollIndicator={false}
-            style={
-              {
-                scrollbarWidth: "none",
-                msOverflowStyle: "none",
-              } as unknown as ViewStyle
-            }
-          >
-            {selectedItem && (
-              <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
-                {displayNaziv}
-              </Text>
-            )}
-
-            {selectedItem?.id === "u_p2" ? (
-              <View style={{ width: "100%", marginTop: 10 }}>
-                <TrainScheduleWidget language={language} colors={colors} />
-              </View>
-            ) : selectedItem?.id === "u_p1" ? (
-              <View style={{ width: "100%", marginTop: 10 }}>
-                <GppWebViewWidget colors={colors} />
-              </View>
-            ) : selectedItem?.id === "u_p4" ? (
-              <View style={{ width: "100%", marginTop: 10 }}>
-                <EmobiWebViewWidget colors={colors} />
-              </View>
-            ) : (
-              <>
-                <Text
-                  style={[
-                    styles.modalDescription,
-                    {
-                      color: colors.textSecondary,
-                      fontSize: hidesQrCode ? 32 : 22,
-                      lineHeight: hidesQrCode ? 48 : 34,
-                      maxWidth: hidesQrCode ? 1200 : 800,
-                    },
-                  ]}
-                >
-                  {displayOpis ||
-                    (isHR
-                      ? "Opis za ovu stavku trenutno nije dostupan."
-                      : "A description for this item is currently unavailable.")}
-                </Text>
-
-                {shouldShowQrCode && (
-                  <ItemQrSection
-                    qrLink={selectedItem?.qrLink}
-                    isHR={isHR}
-                    colors={colors}
-                  />
-                )}
-              </>
-            )}
-          </ScrollView>
-        </View>
+        {modalBody}
       </View>
     </Modal>
   );
@@ -170,6 +184,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 50,
+  },
+  webModalOverlay: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: 100,
   },
   modalContent: {
     width: "90%",

@@ -156,7 +156,7 @@ Statusi: `200` uspjeh, `400` neispravan zahtjev, `403` blokiran email, `429` rat
 
 ## GET /api/verify-email
 
-Obrađuje poveznicu iz verifikacijskog emaila.
+Prikazuje stranicu za potvrdu poveznice iz verifikacijskog emaila. Samo otvaranje poveznice ne šalje poruku, što sprječava automatske provjere poveznica u email servisima.
 
 Parametri:
 
@@ -167,7 +167,13 @@ Parametri:
 GET /api/verify-email?token=TOKEN&action=confirm
 ```
 
-`confirm` šalje poruku gradonačelniku, a `cancel` briše pending poruku i privremeno blokira email.
+Za stvarnu potvrdu stranica šalje:
+
+```text
+POST /api/verify-email?token=TOKEN&action=confirm
+```
+
+`confirm` tada šalje poruku gradonačelniku i briše pending poruku nakon uspjeha. `cancel` koristi isti GET/POST obrazac, a POST briše pending poruku i privremeno blokira email.
 
 ## Konfiguracija
 
@@ -179,7 +185,7 @@ DB_USER=root
 DB_PASSWORD=root
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_gmail_app_password
-PUBLIC_SERVER_URL=http://localhost:5000
+PUBLIC_SERVER_URL=http://192.168.1.113:5000
 ```
 
-`PUBLIC_SERVER_URL` mora biti dostupna uređaju koji otvara verifikacijski email. CORS je uključen za komunikaciju Expo web klijenta s API-jem.
+`PUBLIC_SERVER_URL` mora biti dostupna uređaju koji otvara verifikacijski email. Za ovaj kiosk koristi se `http://192.168.1.113:5000`; pri promjeni računala ili mreže treba upisati novu LAN adresu. CORS je uključen za komunikaciju Expo web klijenta s API-jem.

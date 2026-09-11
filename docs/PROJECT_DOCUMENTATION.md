@@ -22,7 +22,7 @@ flowchart LR
 
 Ulazna datoteka je `client/src/app/index.tsx`. Klijent upravlja screensaverom, jezikom, temom, aktivnom karticom, dohvatom podataka, modalima i statusom API veze.
 
-Glavne cjeline su `components/views`, `components/widgets`, `components/common`, `context`, `config`, `services` i `utils`. API adresa centralizirana je u `client/src/services/api.ts`; zadana vrijednost je `http://localhost:5000`, a može se promijeniti s `EXPO_PUBLIC_API_URL`.
+Glavne cjeline su `components/views`, `components/widgets`, `components/common`, `context`, `config`, `services` i `utils`. API adresa centralizirana je u `client/src/services/api.ts`; zadana vrijednost je `http://192.168.1.113:5000`, a može se promijeniti s `EXPO_PUBLIC_API_URL`.
 
 ### 2.2 Server
 
@@ -131,9 +131,9 @@ Health odgovor mora sadržavati `status: online`.
 ## 9. Operativne napomene
 
 - Kiosk pokrenuti u fullscreen browseru ili na namjenskom uređaju.
-- Zadani `localhost` radi kada su klijent i API na istom računalu.
+- Zadana LAN adresa je `http://192.168.1.113:5000`; pri promjeni računala ili mreže ažurirati `EXPO_PUBLIC_API_URL` i `PUBLIC_SERVER_URL`.
 - Za klijent na drugom uređaju postaviti `EXPO_PUBLIC_API_URL` na LAN adresu API računala.
-- Za email potvrdu na drugom uređaju postaviti odgovarajući `PUBLIC_SERVER_URL`.
+- Za email potvrdu `PUBLIC_SERVER_URL` mora biti dostupna uređaju koji otvara email.
 - Prije javne objave promijeniti razvojne lozinke i ograničiti mrežni pristup.
 
 ## 10. Moguća buduća poboljšanja

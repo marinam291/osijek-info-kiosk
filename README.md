@@ -121,7 +121,7 @@ Za kontakt-formu upiši stvarni Gmail račun i Gmail App Password u `server/.env
 docker compose up --build
 ```
 
-Otvori klijent na [http://localhost:8081](http://localhost:8081). API je na `http://localhost:5000`, a MySQL je izložen na host portu `3307`.
+Otvori klijent na [http://localhost:8081](http://localhost:8081). API je na `http://localhost:5000` s računala na kojem radi Docker, a MySQL je izložen na host portu `3307`.
 
 Za zaustavljanje:
 
@@ -163,16 +163,16 @@ DB_USER=root
 DB_PASSWORD=root
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_gmail_app_password
-PUBLIC_SERVER_URL=http://localhost:5000
+PUBLIC_SERVER_URL=http://192.168.1.113:5000
 ```
 
 - U Dockeru je `DB_HOST=database` ime Compose servisa.
 - Izvan Dockera koristi `DB_HOST=localhost`.
 - `EMAIL_USER` i `EMAIL_PASS` potrebni su za kontakt-formu.
-- `PUBLIC_SERVER_URL` se koristi u linkovima email potvrde. Za lokalni rad ostaje `http://localhost:5000`; pri javnom deployu postavi javni HTTPS URL.
+- `PUBLIC_SERVER_URL` se koristi u linkovima email potvrde. Mora biti dostupna uređaju na kojem se otvara email; za ovaj kiosk je `http://192.168.1.113:5000`, a pri javnom deployu koristi javni HTTPS URL.
 - `server/.env` ne smije se commitati.
 
-Klijent zadano koristi `http://localhost:5000`. Ako se klijent otvara na drugom računalu, postavi `EXPO_PUBLIC_API_URL`, primjerice:
+Klijent zadano koristi `http://192.168.1.113:5000`. Ako se API pokrene na drugom računalu, postavi `EXPO_PUBLIC_API_URL` na LAN adresu tog računala, primjerice:
 
 ```env
 EXPO_PUBLIC_API_URL=http://192.168.1.50:5000
@@ -213,7 +213,8 @@ Glavne rute:
 - `GET /api/locations` - lokacije za kartu
 - `POST /api/check-email-block` - provjera blokiranog emaila
 - `POST /api/send-email` - slanje verifikacijskog emaila
-- `GET /api/verify-email?token=...&action=confirm|cancel` - potvrda ili odustajanje
+- `GET /api/verify-email?token=...&action=confirm|cancel` - prikaz potvrde ili odustajanja
+- `POST /api/verify-email?token=...&action=confirm|cancel` - stvarna potvrda slanja ili odustajanje
 
 Detalji i primjeri nalaze se u [docs/API.md](docs/API.md).
 

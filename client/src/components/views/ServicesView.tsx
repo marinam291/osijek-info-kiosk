@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import ServiceFilters from "../common/ServiceFilters";
 import EmergencyBox from "../widgets/EmergencyBox";
@@ -42,6 +42,13 @@ export default function ServicesView({
     useState<string>("sve");
   const [transportSubCategory, setTransportSubCategory] =
     useState<string>("sve");
+  const resultsScrollRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      resultsScrollRef.current?.scrollTo({ y: 0, animated: false });
+    });
+  }, [serviceCategory, accommodationSubCategory, transportSubCategory]);
 
   let dataToRender: ContentItem[] = [];
   let taxiData: TaxiService[] = [];
@@ -136,6 +143,7 @@ export default function ServicesView({
       )}
 
       <ScrollView
+        ref={resultsScrollRef}
         style={styles.resultsScroll}
         showsVerticalScrollIndicator={false}
       >

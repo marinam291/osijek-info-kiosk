@@ -175,7 +175,42 @@ router.post("/send-email", contactLimiter, async (req, res) => {
   }
 });
 
-router.get("/verify-email", async (req, res) => {
+router.get("/verify-email", (req, res) => {
+  const { token, action } = req.query;
+
+  if (!token || typeof token !== "string" || !pendingMessages.has(token)) {
+    return res.send(
+      "<h3 style='text-align:center; margin-top:50px; font-family:Arial;'>Nevažeći ili već iskorišteni link za verifikaciju.</h3>",
+    );
+  }
+
+  if (action === "cancel") {
+    return res.send(`
+      <div style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+        <h2 style="color: #dc3545;">Želite li poništiti slanje?</h2>
+        <form method="post" action="/api/verify-email?token=${encodeURIComponent(token)}&action=cancel">
+          <button type="submit" style="background:#dc3545;color:white;padding:14px 24px;border:0;border-radius:6px;font-size:16px;">Da, poništi i blokiraj adresu</button>
+        </form>
+      </div>
+    `);
+  }
+
+  if (action === "confirm") {
+    return res.send(`
+      <div style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+        <h2>Potvrdite slanje poruke</h2>
+        <p>Kliknite gumb ispod kako bi se poruka poslala u Ured gradonačelnika.</p>
+        <form method="post" action="/api/verify-email?token=${encodeURIComponent(token)}&action=confirm">
+          <button type="submit" style="background:#28a745;color:white;padding:14px 24px;border:0;border-radius:6px;font-size:16px;">Da, pošalji poruku</button>
+        </form>
+      </div>
+    `);
+  }
+
+  res.send("<h3>Nepoznata akcija.</h3>");
+});
+
+router.post("/verify-email", async (req, res) => {
   const { token, action } = req.query;
 
   if (!token || typeof token !== "string" || !pendingMessages.has(token)) {
@@ -185,16 +220,21 @@ router.get("/verify-email", async (req, res) => {
   }
 
   const messageData = pendingMessages.get(token);
-  pendingMessages.delete(token);
+  if (!messageData) {
+    return res.send(
+      "<h3 style='text-align:center; margin-top:50px; font-family:Arial;'>Nevažeći ili već iskorišteni link za verifikaciju.</h3>",
+    );
+  }
 
   if (action === "cancel") {
     const oneWeekInMs = 7 * 24 * 60 * 60 * 1000;
     blockedEmails.set(messageData.senderEmail, Date.now() + oneWeekInMs);
+    pendingMessages.delete(token);
 
     return res.send(`
       <div style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
         <h2 style="color: #dc3545;">Slanje je uspješno poništeno.</h2>
-        <p>Vaša adresa je blokirana za korištenje na InfoKiosku sljedećih 7 dana kako bi se spriječila daljnja zlouporaba.</p>
+        <p>Vaša adresa je blokirana za korištenje na InfoKiosku sljedećih 7 dana.</p>
       </div>
     `);
   }
@@ -212,6 +252,7 @@ router.get("/verify-email", async (req, res) => {
         ),
       });
 
+      pendingMessages.delete(token);
       return res.send(`
         <div style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
           <h2 style="color: #28a745;">Uspješno ste potvrdili i poslali poruku gradonačelniku!</h2>
@@ -220,7 +261,7 @@ router.get("/verify-email", async (req, res) => {
       `);
     } catch {
       return res.send(
-        "<h3 style='text-align:center; margin-top:50px; font-family:Arial;'>Došlo je do greške prilikom slanja poruke u Ured gradonačelnika.</h3>",
+        "<h3 style='text-align:center; margin-top:50px; font-family:Arial;'>Došlo je do greške prilikom slanja poruke u Ured gradonačelnika. Pokušajte ponovno.</h3>",
       );
     }
   }
