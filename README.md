@@ -11,6 +11,7 @@ Projekt se sastoji od Expo/React Native klijenta, Express/TypeScript API-ja i My
 - [Struktura projekta](#struktura-projekta)
 - [Preduvjeti](#preduvjeti)
 - [Pokretanje s Dockerom](#pokretanje-s-dockerom)
+- [Objava na Renderu](#objava-na-renderu)
 - [Lokalni razvoj](#lokalni-razvoj)
 - [Konfiguracija](#konfiguracija)
 - [Baza i seed podaci](#baza-i-seed-podaci)
@@ -130,6 +131,66 @@ docker compose down
 ```
 
 `docker compose down -v` briše i MySQL volumen, odnosno sve lokalne podatke baze.
+
+## Objava na Renderu
+
+Projekt se na Renderu objavljuje kao dva servisa:
+
+1. `server` kao **Web Service**
+2. `client` kao **Static Site**
+
+Render ne nudi MySQL bazu u ovom projektu, pa prije servera trebaš imati dostupnu vanjsku MySQL bazu i podatke za spajanje. Baza mora biti dostupna s interneta, a u njoj treba postojati baza `osijek_kiosk`.
+
+### 1. Server Web Service
+
+Na Renderu odaberi **New > Web Service**, poveži GitHub repozitorij i postavi:
+
+```text
+Root Directory: server
+Build Command: npm install && npm run build
+Start Command: npm start
+Health Check Path: /api/health
+```
+
+U Environment Variables dodaj:
+
+```env
+PORT=10000
+DB_HOST=adresa-mysql-servera
+DB_NAME=osijek_kiosk
+DB_USER=korisnik_baze
+DB_PASSWORD=lozinka_baze
+EMAIL_USER=tvoj_gmail@gmail.com
+EMAIL_PASS=gmail_app_password
+PUBLIC_SERVER_URL=https://tvoj-server.onrender.com
+```
+
+Render sam postavlja `PORT`; vrijednost `10000` služi samo kao primjer. Nakon deploya kopiraj stvarni URL servera, npr. `https://osijek-kiosk-api.onrender.com`, u `PUBLIC_SERVER_URL` i ponovno deployaj server.
+
+### 2. Client Static Site
+
+Na Renderu odaberi **New > Static Site**, ponovno poveži isti repozitorij i postavi:
+
+```text
+Root Directory: client
+Build Command: npm install && npm run build:web
+Publish Directory: dist
+```
+
+Dodaj build environment variable s URL-om servera:
+
+```env
+EXPO_PUBLIC_API_URL=https://tvoj-server.onrender.com
+```
+
+Nakon deploya otvori Render URL statičke stranice. Ako promijeniš server URL, moraš ponovno izgraditi client jer se `EXPO_PUBLIC_API_URL` ugrađuje tijekom builda.
+
+### Važne napomene
+
+- `PUBLIC_SERVER_URL` mora biti javni HTTPS URL servera jer ga korisnik otvara iz emaila.
+- Gmail koristi App Password, ne običnu lozinku Gmail računa.
+- Besplatni Render server može se uspavati nakon neaktivnosti, pa prvi zahtjev može biti sporiji.
+- Za produkciju ne stavljaj stvarne lozinke u repozitorij; unesi ih samo u Render Environment Variables.
 
 ## Lokalni razvoj
 
