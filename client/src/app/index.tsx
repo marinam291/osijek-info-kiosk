@@ -189,19 +189,22 @@ function KioskMain() {
                 </View>
 
                 <View style={styles.homeTimeContainer}>
-                  <Clock language={language} colors={colors} scale={scale} />
-                  <View
-                    style={{
-                      marginTop: 8 * scale,
-                      transform: [{ scale: scale }],
-                      transformOrigin: "top right",
-                    }}
-                  >
-                    <WeatherWidget
-                      variant="sidebar"
-                      language={language}
-                      textColor={colors.textPrimary}
-                    />
+                  {/* NOVI WRAPPER: Poravnava elemente ulijevo jedne ispod drugih */}
+                  <View style={{ alignItems: "flex-start" }}>
+                    <Clock language={language} colors={colors} scale={scale} />
+                    <View
+                      style={{
+                        marginTop: 8 * scale,
+                        transform: [{ scale: scale }],
+                        transformOrigin: "top left",
+                      }}
+                    >
+                      <WeatherWidget
+                        variant="sidebar"
+                        language={language}
+                        textColor={colors.textPrimary}
+                      />
+                    </View>
                   </View>
                 </View>
               </View>

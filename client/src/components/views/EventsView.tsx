@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
 import CalendarWidget from "../widgets/CalendarWidget";
 import { ContentItem } from "./ContentArea";
 import { useTheme } from "../../context/ThemeContext";
+import { apiUrl } from "@/services/api";
 
 type EventsViewProps = {
   title: string;
@@ -19,9 +20,16 @@ type EventsViewProps = {
   language: string;
 };
 
+type ExtendedContentItem = ContentItem & {
+  nazivHr?: string;
+  nazivEn?: string;
+  link?: string;
+  detaljniOpis?: string;
+};
+
 export default function EventsView({
   title,
-  standardData,
+  standardData: initialData,
   selectedItem,
   setSelectedItem,
   colors,
@@ -31,10 +39,96 @@ export default function EventsView({
   const { width } = useWindowDimensions();
   const scale = width / 1920;
 
-  const displayNaziv =
-    typeof selectedItem?.naziv === "object" && selectedItem.naziv !== null
-      ? selectedItem.naziv[isHR ? "HR" : "EN"]
-      : selectedItem?.naziv;
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [eventsData, setEventsData] = useState<ExtendedContentItem[]>(
+    initialData || [],
+  );
+  const [loadingDetails, setLoadingDetails] = useState<boolean>(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchEventsForMonth() {
+      try {
+        const response = await fetch(
+          apiUrl(`/api/items?mjesec=${currentMonth}&godina=${currentYear}`),
+        );
+        if (response.ok && isMounted) {
+          const data = await response.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setEventsData(data);
+          }
+        }
+      } catch {
+        // Tiho hvatanje greške
+      }
+    }
+
+    fetchEventsForMonth();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentMonth, currentYear]);
+
+  useEffect(() => {
+    if (!selectedItem) return;
+
+    let active = true;
+
+    async function loadAllDayDescriptions() {
+      const sameDayItems = eventsData.filter(
+        (item) => item.datum === selectedItem?.datum,
+      ) as ExtendedContentItem[];
+
+      const itemsNeedingDetails = sameDayItems.filter(
+        (ev) => ev.link && !ev.detaljniOpis,
+      );
+
+      if (itemsNeedingDetails.length === 0) return;
+
+      setLoadingDetails(true);
+      try {
+        await Promise.all(
+          itemsNeedingDetails.map(async (ev) => {
+            try {
+              const res = await fetch(
+                apiUrl(
+                  `/api/event-details?url=${encodeURIComponent(ev.link!)}`,
+                ),
+              );
+              if (res.ok && active) {
+                const data = await res.json();
+                if (data.opis) {
+                  setEventsData((prev) =>
+                    prev.map((item) =>
+                      item.id === ev.id
+                        ? { ...item, detaljniOpis: data.opis }
+                        : item,
+                    ),
+                  );
+                }
+              }
+            } catch {
+              // Pojedinačna greška
+            }
+          }),
+        );
+      } finally {
+        if (active) {
+          setLoadingDetails(false);
+        }
+      }
+    }
+
+    loadAllDayDescriptions();
+
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedItem?.datum]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -62,20 +156,35 @@ export default function EventsView({
           showsVerticalScrollIndicator={false}
         >
           <CalendarWidget
-            events={standardData
+            events={eventsData
               .filter(
-                (item): item is ContentItem & { datum: string } => !!item.datum,
+                (item): item is ExtendedContentItem & { datum: string } =>
+                  !!item.datum,
               )
-              .map((item) => ({
-                ...item,
-                naziv:
-                  typeof item.naziv === "object" && item.naziv !== null
-                    ? item.naziv[isHR ? "HR" : "EN"]
-                    : item.naziv,
-              }))}
+              .map((item) => {
+                let resolvedNaziv = "";
+                if (typeof item.naziv === "object" && item.naziv !== null) {
+                  resolvedNaziv = item.naziv[isHR ? "HR" : "EN"] || "";
+                } else if (typeof item.naziv === "string") {
+                  resolvedNaziv = item.naziv;
+                } else {
+                  resolvedNaziv = isHR
+                    ? item.nazivHr || ""
+                    : item.nazivEn || item.nazivHr || "";
+                }
+
+                return {
+                  ...item,
+                  naziv: resolvedNaziv,
+                };
+              })}
             colors={colors}
             language={language}
             onEventPress={setSelectedItem}
+            onMonthChange={(mjesec, godina) => {
+              setCurrentMonth(mjesec);
+              setCurrentYear(godina);
+            }}
           />
         </ScrollView>
 
@@ -107,64 +216,130 @@ export default function EventsView({
           >
             {isHR ? "Detalji događaja" : "Event Details"}
           </Text>
+
           {selectedItem ? (
-            <View style={[styles.detailsContent, { marginTop: 10 * scale }]}>
-              <Text
-                style={[
-                  styles.detailsItemTitle,
-                  {
-                    color: colors.textPrimary,
-                    fontSize: 28 * scale,
-                    marginBottom: 12 * scale,
-                  },
-                ]}
-              >
-                {displayNaziv}
-              </Text>
-              {selectedItem.datum && (
-                <Text
-                  style={[
-                    styles.detailsItemSub,
-                    {
+            (() => {
+              const rawSameDayEvents = eventsData.filter(
+                (item) => item.datum === selectedItem.datum,
+              );
+
+              const uniqueMap = new Map<string, ExtendedContentItem>();
+
+              rawSameDayEvents.forEach((item) => {
+                let naziv = "";
+                if (typeof item.naziv === "object" && item.naziv !== null) {
+                  naziv = item.naziv[isHR ? "HR" : "EN"] || "";
+                } else if (typeof item.naziv === "string") {
+                  naziv = item.naziv;
+                } else {
+                  naziv = isHR
+                    ? item.nazivHr || ""
+                    : item.nazivEn || item.nazivHr || "";
+                }
+
+                if (naziv && !uniqueMap.has(naziv)) {
+                  uniqueMap.set(naziv, { ...item, naziv });
+                } else if (naziv && uniqueMap.has(naziv)) {
+                  const existing = uniqueMap.get(naziv)!;
+                  if (item.detaljniOpis && !existing.detaljniOpis) {
+                    existing.detaljniOpis = item.detaljniOpis;
+                  }
+                }
+              });
+
+              const sameDayEvents = Array.from(uniqueMap.values());
+
+              return (
+                <View style={{ gap: 20 * scale }}>
+                  <Text
+                    style={{
                       color: colors.accent,
                       fontSize: 20 * scale,
-                      marginBottom: 16 * scale,
-                    },
-                  ]}
-                >
-                  {isHR ? "Datum: " : "Date: "} {selectedItem.datum}
-                </Text>
-              )}
-              {selectedItem.opis && (
-                <Text
-                  style={[
-                    styles.detailsItemDescription,
-                    {
-                      color: colors.textSecondary,
-                      fontSize: 20 * scale,
-                      lineHeight: 30 * scale,
-                      marginBottom: 14 * scale,
-                    },
-                  ]}
-                >
-                  {selectedItem.opis}
-                </Text>
-              )}
-              {selectedItem.info && (
-                <Text
-                  style={[
-                    styles.detailsItemInfo,
-                    {
-                      color: colors.textSecondary,
-                      fontSize: 18 * scale,
-                      lineHeight: 26 * scale,
-                    },
-                  ]}
-                >
-                  {selectedItem.info}
-                </Text>
-              )}
-            </View>
+                      fontWeight: "700",
+                      marginBottom: 8 * scale,
+                    }}
+                  >
+                    {isHR ? "Datum: " : "Date: "} {selectedItem.datum}
+                  </Text>
+
+                  {sameDayEvents.map((event, index) => {
+                    const eventNaziv = event.naziv as string;
+                    const finalOpis =
+                      event.detaljniOpis || event.opis || event.opisHr;
+
+                    return (
+                      <View
+                        key={event.id || index}
+                        style={{
+                          backgroundColor: colors.cardBackground,
+                          borderColor: colors.border,
+                          borderWidth: 1.5 * scale,
+                          borderRadius: 16 * scale,
+                          padding: 20 * scale,
+                          gap: 12 * scale,
+                          shadowColor: "#000",
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.2,
+                          shadowRadius: 4,
+                          elevation: 3,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            color: colors.textPrimary,
+                            fontSize: 22 * scale,
+                            fontWeight: "bold",
+                            letterSpacing: 0.5,
+                          }}
+                        >
+                          {eventNaziv}
+                        </Text>
+
+                        {finalOpis && finalOpis !== eventNaziv ? (
+                          <Text
+                            style={{
+                              color: colors.textSecondary,
+                              fontSize: 16 * scale,
+                              fontWeight: "normal",
+                              lineHeight: 24 * scale,
+                            }}
+                          >
+                            {finalOpis}
+                          </Text>
+                        ) : null}
+
+                        {loadingDetails && !event.detaljniOpis ? (
+                          <Text
+                            style={{
+                              color: colors.accent,
+                              fontSize: 14 * scale,
+                              fontStyle: "italic",
+                            }}
+                          >
+                            {isHR
+                              ? "Učitavam duži opis sa stranice..."
+                              : "Loading longer description..."}
+                          </Text>
+                        ) : null}
+
+                        {event.info ? (
+                          <Text
+                            style={{
+                              color: colors.accent,
+                              fontSize: 14 * scale,
+                              fontStyle: "italic",
+                              marginTop: 4 * scale,
+                            }}
+                          >
+                            {event.info}
+                          </Text>
+                        ) : null}
+                      </View>
+                    );
+                  })}
+                </View>
+              );
+            })()
           ) : (
             <Text
               style={[
@@ -207,17 +382,6 @@ const styles = StyleSheet.create({
   },
   detailsTitle: {
     fontWeight: "bold",
-  },
-  detailsContent: {},
-  detailsItemTitle: {
-    fontWeight: "bold",
-  },
-  detailsItemSub: {
-    fontWeight: "600",
-  },
-  detailsItemDescription: {},
-  detailsItemInfo: {
-    fontStyle: "italic",
   },
   detailsPlaceholder: {
     fontStyle: "italic",

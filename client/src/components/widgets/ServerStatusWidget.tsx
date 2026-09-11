@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { apiUrl } from "@/services/api";
 
 type ServerStatusWidgetProps = {
   language: string;
@@ -17,7 +18,7 @@ export default function ServerStatusWidget({
   useEffect(() => {
     const checkHealth = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/health");
+        const response = await fetch(apiUrl("/api/health"));
         if (response.ok) {
           setIsOnline(true);
         } else {

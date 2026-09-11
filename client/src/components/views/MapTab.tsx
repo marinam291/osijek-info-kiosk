@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 import MapLocationModal from "../common/MapLocationModal";
+import { apiUrl } from "@/services/api";
 
 export type LocationItem = {
   id: string;
@@ -43,7 +44,7 @@ export default function MapTab({ language, colors }: MapTabProps) {
   const mapEmbedUrl = `https://maps.google.com/maps?q=45.5585522,18.678293&hl=${langKey.toLowerCase()}&z=15&output=embed`;
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/locations")
+    fetch(apiUrl("/api/locations"))
       .then((res) => res.json() as Promise<LocationItem[]>)
       .then((data) => {
         setLocations(data);

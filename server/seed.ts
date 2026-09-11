@@ -1,14 +1,14 @@
 import sequelize, { initializeDatabase } from "./config/database.js";
 import Item from "./models/Item.js";
 import ItemGallery from "./models/ItemGallery.js";
-import GppLine from "./models/GppLine.js";
-import GppDeparture from "./models/GppDeparture.js";
 import MapLocation from "./models/MapLocation.js";
 
-async function seedDatabase() {
+export async function seedDatabase() {
   try {
     await initializeDatabase();
+    await sequelize.query("SET FOREIGN_KEY_CHECKS = 0");
     await sequelize.sync({ force: true });
+    await sequelize.query("SET FOREIGN_KEY_CHECKS = 1");
     console.log(
       "Baza je očišćena. Krećem s unosom svih podataka sa slikama...",
     );
@@ -85,10 +85,12 @@ async function seedDatabase() {
         nazivEn: "Museum of Slavonia",
         vrijemeHr: "Uto - Sub: 10:00 - 18:00",
         vrijemeEn: "Tue - Sat: 10:00 AM - 06:00 PM",
-        opisHr: "Najveći muzej općeg tipa u Hrvatskoj...",
-        opisEn: "The largest general-type museum in Croatia...",
-        infoHr: "Skeniraj QR za kupnju ulaznice",
-        infoEn: "Scan QR to buy tickets",
+        opisHr:
+          "Najveći muzej općeg tipa u Hrvatskoj, s bogatim zbirkama koje predstavljaju kulturnu, povijesnu i prirodnu baštinu Slavonije.",
+        opisEn:
+          "The largest general museum in Croatia, with rich collections presenting the cultural, historical, and natural heritage of Slavonia.",
+        infoHr: "Zbirke i izložbe Muzeja Slavonije",
+        infoEn: "Collections and exhibitions at the Museum of Slavonia",
         slika: "mso.jpg",
         qrLink: "https://mso.hr",
       },
@@ -99,10 +101,12 @@ async function seedDatabase() {
         nazivEn: "Archaeological Museum Osijek",
         vrijemeHr: "Uto - Sub: 10:00 - 18:00",
         vrijemeEn: "Tue - Sat: 10:00 AM - 06:00 PM",
-        opisHr: "Prikazuje povijest regije...",
-        opisEn: "Showcases the region's history...",
-        infoHr: "Skeniraj QR za kupnju ulaznice",
-        infoEn: "Scan QR to buy tickets",
+        opisHr:
+          "Čuva i predstavlja arheološke nalaze koji svjedoče o životu ljudi na području Osijeka i Slavonije kroz tisuće godina.",
+        opisEn:
+          "Preserves and presents archaeological finds that tell the story of life in Osijek and Slavonia over thousands of years.",
+        infoHr: "Arheološka baština Osijeka i Slavonije",
+        infoEn: "Archaeological heritage of Osijek and Slavonia",
         slika: "arheoloski.png",
         qrLink: "https://amo.hr",
       },
@@ -113,10 +117,12 @@ async function seedDatabase() {
         nazivEn: "Museum of Fine Arts",
         vrijemeHr: "Uto - Pet: 10:00 - 20:00",
         vrijemeEn: "Tue - Fri: 10:00 AM - 08:00 PM",
-        opisHr: "Bogata zbirka slika...",
-        opisEn: "Rich collection of paintings...",
-        infoHr: "Skeniraj QR za kupnju ulaznice",
-        infoEn: "Scan QR to buy tickets",
+        opisHr:
+          "Muzej čuva vrijednu zbirku slika i skulptura hrvatskih i europskih umjetnika od 18. stoljeća do suvremenog doba.",
+        opisEn:
+          "The museum houses a valuable collection of paintings and sculptures by Croatian and European artists from the 18th century to the present.",
+        infoHr: "Zbirka hrvatske i europske umjetnosti",
+        infoEn: "Collection of Croatian and European art",
         slika: "mlu.jpg",
         qrLink: "https://mlu.hr",
       },
@@ -297,12 +303,14 @@ async function seedDatabase() {
         subCategory: "prijevoz",
         nazivHr: "Javni prijevoz (GPP)",
         nazivEn: "Public Transport (GPP)",
-        opisHr: "Mreža tramvaja i autobusa diljem grada.",
-        opisEn: "Tram and bus network across the city.",
+        opisHr:
+          "Mreža tramvaja i autobusa diljem grada. Skenirajte QR kod za vozni red i polaske.",
+        opisEn:
+          "Tram and bus network across the city. Scan the QR code for timetables and departures.",
         infoHr: "Tel: 031 228 300",
         infoEn: "Tel: 031 228 300",
         slika: "gpp.jpg",
-        qrLink: "https://web.gpp-osijek.com",
+        qrLink: "https://web.gpp-osijek.com/polasci-2/",
       },
       {
         id: "u_p2",
@@ -330,50 +338,6 @@ async function seedDatabase() {
       },
     ]);
 
-    await GppLine.create({
-      id: "T1",
-      serviceId: "u_p1",
-      naziv: "Višnjevac – Zeleno polje",
-      vrsta: "tramvaj",
-    });
-    await GppDeparture.bulkCreate([
-      { lineId: "T1", departureTime: "06:00" },
-      { lineId: "T1", departureTime: "06:30" },
-      { lineId: "T1", departureTime: "07:00" },
-      { lineId: "T1", departureTime: "07:30" },
-      { lineId: "T1", departureTime: "08:15" },
-      { lineId: "T1", departureTime: "09:00" },
-      { lineId: "T1", departureTime: "10:00" },
-      { lineId: "T1", departureTime: "11:00" },
-      { lineId: "T1", departureTime: "12:00" },
-      { lineId: "T1", departureTime: "13:00" },
-      { lineId: "T1", departureTime: "14:00" },
-      { lineId: "T1", departureTime: "15:00" },
-      { lineId: "T1", departureTime: "16:00" },
-    ]);
-
-    await GppLine.create({
-      id: "T2",
-      serviceId: "u_p1",
-      naziv: "Trg A. Starčevića – Bikara",
-      vrsta: "tramvaj",
-    });
-    await GppDeparture.bulkCreate([
-      { lineId: "T2", departureTime: "06:10" },
-      { lineId: "T2", departureTime: "06:40" },
-      { lineId: "T2", departureTime: "07:15" },
-      { lineId: "T2", departureTime: "07:45" },
-      { lineId: "T2", departureTime: "08:30" },
-      { lineId: "T2", departureTime: "09:15" },
-      { lineId: "T2", departureTime: "10:15" },
-      { lineId: "T2", departureTime: "11:15" },
-      { lineId: "T2", departureTime: "12:15" },
-      { lineId: "T2", departureTime: "13:15" },
-      { lineId: "T2", departureTime: "14:15" },
-      { lineId: "T2", departureTime: "15:15" },
-      { lineId: "T2", departureTime: "16:15" },
-    ]);
-
     await Item.bulkCreate([
       {
         id: "t_1",
@@ -398,6 +362,11 @@ async function seedDatabase() {
         infoEn: "App",
         opisHr: "Globalna usluga prijevoza dostupna putem mobilne aplikacije.",
         opisEn: "Global ride-hailing service available via mobile app.",
+        qrLink: JSON.stringify({
+          android:
+            "https://play.google.com/store/apps/details?id=com.ubercab&hl=en-US",
+          ios: "https://apps.apple.com/us/app/uber-request-a-ride/id368677368",
+        }),
       },
       {
         id: "t_3",
@@ -410,6 +379,11 @@ async function seedDatabase() {
         opisHr:
           "Popularna platforma za naručivanje vožnji putem pametnog telefona.",
         opisEn: "Popular platform for ordering rides via smartphone.",
+        qrLink: JSON.stringify({
+          android:
+            "https://play.google.com/store/apps/details?id=ee.mtakso.client&hl=en-US&pli=1",
+          ios: "https://apps.apple.com/us/app/bolt-request-a-ride/id675033630",
+        }),
       },
       {
         id: "t_4",
@@ -543,8 +517,10 @@ async function seedDatabase() {
         categoryKey: "trgovine",
         nazivHr: "Portanova Shopping Center",
         nazivEn: "Portanova Shopping Center",
-        opisHr: "Najveći i najmoderniji trgovački centar...",
-        opisEn: "The largest and most modern...",
+        opisHr:
+          "Veliki trgovački centar s brojnim trgovinama mode, obuće, opreme za dom, elektronike, ugostiteljskim sadržajima i kinom.",
+        opisEn:
+          "A large shopping center with stores for fashion, footwear, home goods, electronics, dining options, and a cinema.",
         infoHr: "Otvoreno 09:00 - 21:00",
         infoEn: "Open 09:00 AM - 09:00 PM",
         slika: "portanova.jpg",
@@ -555,8 +531,10 @@ async function seedDatabase() {
         categoryKey: "trgovine",
         nazivHr: "Mall Osijek",
         nazivEn: "Mall Osijek",
-        opisHr: "Popularno odredište za šoping...",
-        opisEn: "A popular shopping destination...",
+        opisHr:
+          "Suvremeni trgovački centar u središtu Osijeka s raznovrsnom ponudom trgovina, usluga, restorana i sadržaja za slobodno vrijeme.",
+        opisEn:
+          "A modern shopping center in central Osijek with a wide selection of shops, services, restaurants, and leisure activities.",
         infoHr: "Otvoreno 09:00 - 21:00",
         infoEn: "Open 09:00 AM - 09:00 PM",
         slika: "mall.jpg",
@@ -567,8 +545,10 @@ async function seedDatabase() {
         categoryKey: "trgovine",
         nazivHr: "Glavna osječka tržnica (Pijaca)",
         nazivEn: "Osijek Main Farmers Market",
-        opisHr: "Tradicionalno mjesto...",
-        opisEn: "A traditional place...",
+        opisHr:
+          "Tradicionalna osječka tržnica na kojoj se svakodnevno nude svježe voće, povrće, domaći proizvodi, cvijeće i lokalne namirnice.",
+        opisEn:
+          "Osijek's traditional market, offering fresh fruit, vegetables, homemade products, flowers, and local groceries every day.",
         infoHr: "Radno vrijeme: 07:00 - 13:00",
         infoEn: "Working hours: 07:00 AM - 01:00 PM",
         slika: "trznica.jpg",
@@ -638,11 +618,8 @@ async function seedDatabase() {
     console.log(
       "SVI podaci iz osijekData i mapLocations sa slikama su uspješno uneseni u bazu!",
     );
-    process.exit(0);
   } catch (error) {
     console.error("Greška pri seedanju:", error);
-    process.exit(1);
+    throw error;
   }
 }
-
-seedDatabase();

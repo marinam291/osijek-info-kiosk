@@ -18,6 +18,7 @@ import ServicesView from "../views/ServicesView";
 import ServiceFilters from "../common/ServiceFilters";
 import MayorContactWidget from "../widgets/MayorContactWidget";
 import EventsView from "../views/EventsView";
+import { apiUrl } from "@/services/api";
 
 export type GppDepartureType = {
   id: number;
@@ -101,15 +102,13 @@ export default function ContentArea({
   const [loading, setLoading] = useState<boolean>(true);
 
   const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
-  const [fullScreenImage, setFullScreenImage] =
-    useState<ImageSourcePropType | null>(null);
 
   const [tourismCategory, setTourismCategory] =
     useState<string>("znamenitosti");
   const [prevActiveTab, setPrevActiveTab] = useState<string>(activeTab);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/items")
+    fetch(apiUrl("/api/items"))
       .then((res) => res.json() as Promise<ContentItem[]>)
       .then((data) => {
         setAllItems(data);
@@ -122,7 +121,9 @@ export default function ContentArea({
 
   if (activeTab !== prevActiveTab) {
     setPrevActiveTab(activeTab);
-    if (tourismCategory !== "sve") setTourismCategory("sve");
+    if (activeTab === "turizam") {
+      setTourismCategory("znamenitosti");
+    }
     setSelectedItem(null);
   }
 
@@ -226,21 +227,12 @@ export default function ContentArea({
               <MayorContactWidget colors={colors} language={language} />
             </ScrollView>
           ) : (
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={styles.contentView}>
               <Text
                 style={[styles.sectionTitle, { color: colors.textPrimary }]}
               >
                 {title}
               </Text>
-
-              {activeTab === "turizam" && (
-                <ServiceFilters
-                  items={getTourismCategories(isHR)}
-                  activeKey={tourismCategory}
-                  onSelect={setTourismCategory}
-                  colors={colors}
-                />
-              )}
 
               {activeTab === "usluge" ? (
                 <ServicesView
@@ -250,26 +242,35 @@ export default function ContentArea({
                   onItemPress={setSelectedItem}
                 />
               ) : (
-                <View style={styles.gridContainer}>
-                  {standardData.map((item) => (
-                    <GridCard
-                      key={String(item.id)}
-                      item={item}
+                <ScrollView showsVerticalScrollIndicator={false}>
+                  {activeTab === "turizam" && (
+                    <ServiceFilters
+                      items={getTourismCategories(isHR)}
+                      activeKey={tourismCategory}
+                      onSelect={setTourismCategory}
                       colors={colors}
-                      onPress={setSelectedItem}
                     />
-                  ))}
-                </View>
+                  )}
+
+                  <View style={styles.gridContainer}>
+                    {standardData.map((item) => (
+                      <GridCard
+                        key={String(item.id)}
+                        item={item}
+                        colors={colors}
+                        onPress={setSelectedItem}
+                      />
+                    ))}
+                  </View>
+                </ScrollView>
               )}
-            </ScrollView>
+            </View>
           )}
         </FadeInView>
 
         <ItemModal
           selectedItem={activeTab === "dogadjanja" ? null : selectedItem}
           setSelectedItem={setSelectedItem}
-          fullScreenImage={fullScreenImage}
-          setFullScreenImage={setFullScreenImage}
           language={language}
           colors={colors}
         />
@@ -289,6 +290,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     paddingBottom: 40,
     paddingTop: 110,
+  },
+  contentView: {
+    flex: 1,
   },
   sectionTitle: {
     fontSize: 42,

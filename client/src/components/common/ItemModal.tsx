@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -6,27 +6,18 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
-  ImageSourcePropType,
   ViewStyle,
 } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 import ItemQrSection from "./ItemQrSection";
 import TrainScheduleWidget from "../widgets/TrainScheduleWidget";
-import GppScheduleWidget from "../widgets/GppScheduleWidget";
+import GppWebViewWidget from "../widgets/GppWebViewWidget";
+import EmobiWebViewWidget from "../widgets/EmobiWebViewWidget";
 import { ContentItem } from "../views/ContentArea";
-
-type GppLine = {
-  id: string;
-  naziv: string;
-  vrsta: string;
-  polasci?: string[];
-};
 
 type ItemModalProps = {
   selectedItem: ContentItem | null;
   setSelectedItem: (item: ContentItem | null) => void;
-  fullScreenImage: ImageSourcePropType | null;
-  setFullScreenImage: (img: ImageSourcePropType | null) => void;
   language: string;
   colors: ReturnType<typeof useTheme>["colors"];
 };
@@ -37,7 +28,24 @@ export default function ItemModal({
   language,
   colors,
 }: ItemModalProps) {
+  const [isClosing, setIsClosing] = useState(false);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isHR = language === "HR";
+
+  useEffect(() => {
+    return () => {
+      if (closeTimer.current) clearTimeout(closeTimer.current);
+    };
+  }, []);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    closeTimer.current = setTimeout(() => {
+      setSelectedItem(null);
+      setIsClosing(false);
+      closeTimer.current = null;
+    }, 200);
+  };
 
   const displayNaziv =
     typeof selectedItem?.naziv === "object" && selectedItem.naziv !== null
@@ -49,12 +57,18 @@ export default function ItemModal({
       ? selectedItem.opis[isHR ? "HR" : "EN"]
       : selectedItem?.opis;
 
-  const gppLinije =
-    (selectedItem as ContentItem & { linije?: GppLine[] })?.linije || [];
+  const hidesQrCode =
+    selectedItem?.categoryKey === "turizam" ||
+    selectedItem?.categoryKey === "muzeji" ||
+    selectedItem?.categoryKey === "smjestaj" ||
+    selectedItem?.categoryKey === "trgovine" ||
+    ["zdravstvo", "gradskeUsluge"].includes(selectedItem?.subCategory ?? "");
+
+  const shouldShowQrCode = selectedItem !== null && !hidesQrCode;
 
   return (
     <Modal
-      visible={selectedItem !== null}
+      visible={selectedItem !== null && !isClosing}
       animationType="fade"
       transparent={true}
     >
@@ -78,12 +92,12 @@ export default function ItemModal({
               styles.closeButton,
               { backgroundColor: colors.cardBackground },
             ]}
-            onPress={() => setSelectedItem(null)}
+            onPress={handleClose}
           >
             <Text
               style={[styles.closeButtonText, { color: colors.textPrimary }]}
             >
-              ✕
+              X
             </Text>
           </TouchableOpacity>
 
@@ -97,9 +111,11 @@ export default function ItemModal({
               } as unknown as ViewStyle
             }
           >
-            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
-              {displayNaziv}
-            </Text>
+            {selectedItem && (
+              <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
+                {displayNaziv}
+              </Text>
+            )}
 
             {selectedItem?.id === "u_p2" ? (
               <View style={{ width: "100%", marginTop: 10 }}>
@@ -107,28 +123,38 @@ export default function ItemModal({
               </View>
             ) : selectedItem?.id === "u_p1" ? (
               <View style={{ width: "100%", marginTop: 10 }}>
-                <GppScheduleWidget
-                  linije={gppLinije}
-                  language={language}
-                  colors={colors}
-                />
+                <GppWebViewWidget colors={colors} />
+              </View>
+            ) : selectedItem?.id === "u_p4" ? (
+              <View style={{ width: "100%", marginTop: 10 }}>
+                <EmobiWebViewWidget colors={colors} />
               </View>
             ) : (
               <>
                 <Text
                   style={[
                     styles.modalDescription,
-                    { color: colors.textSecondary },
+                    {
+                      color: colors.textSecondary,
+                      fontSize: hidesQrCode ? 32 : 22,
+                      lineHeight: hidesQrCode ? 48 : 34,
+                      maxWidth: hidesQrCode ? 1200 : 800,
+                    },
                   ]}
                 >
-                  {displayOpis}
+                  {displayOpis ||
+                    (isHR
+                      ? "Opis za ovu stavku trenutno nije dostupan."
+                      : "A description for this item is currently unavailable.")}
                 </Text>
 
-                <ItemQrSection
-                  qrLink={selectedItem?.qrLink}
-                  isHR={isHR}
-                  colors={colors}
-                />
+                {shouldShowQrCode && (
+                  <ItemQrSection
+                    qrLink={selectedItem?.qrLink}
+                    isHR={isHR}
+                    colors={colors}
+                  />
+                )}
               </>
             )}
           </ScrollView>

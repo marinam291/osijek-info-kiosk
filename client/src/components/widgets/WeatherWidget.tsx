@@ -104,7 +104,7 @@ export default function WeatherWidget({
                   <Text
                     style={[styles.closeText, { color: colors.textPrimary }]}
                   >
-                    ✕
+                    X
                   </Text>
                 </TouchableOpacity>
 
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
   },
   side: {
     paddingVertical: 4,
-    justifyContent: "center",
+    justifyContent: "flex-start",
   },
   text: {
     fontSize: 22,

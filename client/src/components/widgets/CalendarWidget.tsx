@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { ThemeColors } from "../../context/ThemeContext";
 
 type EventItem = {
   id: string | number;
   naziv?: string;
+  nazivHr?: string;
+  nazivEn?: string;
   datum: string;
   opis?: string;
 };
@@ -14,6 +16,7 @@ type CalendarViewProps = {
   colors: ThemeColors;
   language: string;
   onEventPress: (event: EventItem) => void;
+  onMonthChange?: (mjesec: number, godina: number) => void;
 };
 
 export default function CalendarView({
@@ -21,12 +24,19 @@ export default function CalendarView({
   colors,
   language,
   onEventPress,
+  onMonthChange,
 }: CalendarViewProps) {
   const isHR = language === "HR";
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const year = currentDate.getFullYear();
-  const month = currentDate.getMonth(); // 0-11
+  const month = currentDate.getMonth();
+
+  useEffect(() => {
+    if (onMonthChange) {
+      onMonthChange(month + 1, year);
+    }
+  }, [month, year, onMonthChange]);
 
   const monthNamesHR = [
     "Siječanj",
@@ -168,7 +178,7 @@ export default function CalendarView({
                   style={[styles.eventLabel, { color: colors.accent }]}
                   numberOfLines={2}
                 >
-                  {matchedEvent.naziv}
+                  {matchedEvent.naziv || matchedEvent.nazivHr}
                 </Text>
               )}
             </TouchableOpacity>
@@ -193,7 +203,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   monthTitle: {
-    fontSize: 28, // Povećan naslov
+    fontSize: 28,
     fontWeight: "bold",
   },
   navButton: {

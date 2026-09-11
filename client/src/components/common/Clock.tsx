@@ -22,10 +22,12 @@ export default function Clock({
     return () => clearInterval(timer);
   }, []);
 
-  const formattedTime = time.toLocaleTimeString([], {
+  const timeLocale = language === "HR" ? "hr-HR" : "en-US";
+  const formattedTime = time.toLocaleTimeString(timeLocale, {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
+    hour12: language === "EN",
   });
 
   const formattedDate = time.toLocaleDateString(
@@ -78,13 +80,15 @@ const styles = StyleSheet.create({
   timeContainer: {
     borderTopWidth: 1,
     borderTopColor: "rgba(148, 163, 184, 0.2)",
-    width: "100%",
+    alignItems: "flex-start",
   },
   timeText: {
     fontWeight: "bold",
     letterSpacing: 1,
+    textAlign: "left",
   },
   dateText: {
     textTransform: "uppercase",
+    textAlign: "left",
   },
 });

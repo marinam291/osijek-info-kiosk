@@ -30,43 +30,49 @@ export default function TaxiDirectory({
 }: TaxiProps) {
   return (
     <View style={styles.container}>
-      {items.map((item) => (
-        <TouchableOpacity
-          key={item.id}
-          activeOpacity={item.qrLink ? 0.7 : 1}
-          onPress={() => {
-            if (item.qrLink) {
-              onItemPress(item);
-            }
-          }}
-          style={[
-            styles.card,
-            {
-              backgroundColor: colors.cardBackground,
-              borderColor: colors.border,
-            },
-          ]}
-        >
-          <View style={styles.infoContainer}>
-            <Text style={[styles.title, { color: colors.textPrimary }]}>
-              {item.naziv}
-            </Text>
-            <Text style={[styles.description, { color: colors.textSecondary }]}>
-              {item.opis}
-            </Text>
-          </View>
-          <View style={styles.actionContainer}>
-            <Text style={[styles.phone, { color: colors.accent }]}>
-              {item.telefon}
-            </Text>
-            {item.qrLink && (
-              <Text style={[styles.qrText, { color: colors.accent }]}>
-                QR Kod
+      {items.map((item) => {
+        const isClickable = !!item.qrLink;
+
+        return (
+          <TouchableOpacity
+            key={item.id}
+            activeOpacity={isClickable ? 0.7 : 1}
+            onPress={() => {
+              if (isClickable) {
+                onItemPress(item);
+              }
+            }}
+            style={[
+              styles.card,
+              {
+                backgroundColor: colors.cardBackground,
+                borderColor: colors.border,
+              },
+            ]}
+          >
+            <View style={styles.infoContainer}>
+              <Text style={[styles.title, { color: colors.textPrimary }]}>
+                {item.naziv}
               </Text>
-            )}
-          </View>
-        </TouchableOpacity>
-      ))}
+              <Text
+                style={[styles.description, { color: colors.textSecondary }]}
+              >
+                {item.opis}
+              </Text>
+            </View>
+            <View style={styles.actionContainer}>
+              <Text style={[styles.phone, { color: colors.accent }]}>
+                {item.telefon}
+              </Text>
+              {isClickable && (
+                <Text style={[styles.qrText, { color: colors.accent }]}>
+                  Stisni za QR kod aplikacije
+                </Text>
+              )}
+            </View>
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 }
@@ -106,7 +112,8 @@ const styles = StyleSheet.create({
   },
   qrText: {
     fontSize: 14,
-    marginTop: 4,
+    marginTop: 6,
+    fontWeight: "600",
     textDecorationLine: "underline",
   },
 });
