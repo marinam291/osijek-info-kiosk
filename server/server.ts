@@ -244,6 +244,10 @@ app.use("/api", contactRoutes);
 
 async function startServer() {
   try {
+    app.listen(Number(PORT), "0.0.0.0", () => {
+      console.log(`Server sluša na portu ${PORT}`);
+    });
+
     await initializeDatabase();
     await sequelize.sync({ alter: true });
     console.log("Baza i tablice su uspješno sinkronizirane!");
@@ -254,12 +258,8 @@ async function startServer() {
       const { seedDatabase } = await import("./seed.js");
       await seedDatabase();
     } else {
-      console.log("ℹPodaci već postoje u bazi.");
+      console.log("Podaci već postoje u bazi.");
     }
-
-    app.listen(Number(PORT), "0.0.0.0", () => {
-      console.log(`Server sluša na portu ${PORT}`);
-    });
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : String(err);
     logger.error(`Greška pri pokretanju servera: ${errorMessage}`);
