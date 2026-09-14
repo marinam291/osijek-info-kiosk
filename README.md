@@ -57,7 +57,7 @@ Za muzeje, znamenitosti, zdravstvo, gradske usluge, smještaj i trgovine detalji
 - Node.js 20+, Express 5 i TypeScript
 - Sequelize, MySQL 8 i `mysql2`
 - `dotenv`, `cors`, Zod i `validator`
-- Nodemailer, `express-rate-limit` i Winston
+- Nodemailer, vlastiti limiter uspješnih slanja i Winston
 - `tsx` za razvoj
 
 ### Vanjski izvori
@@ -162,10 +162,10 @@ DB_USER=korisnik_baze
 DB_PASSWORD=lozinka_baze
 EMAIL_USER=tvoj_gmail@gmail.com
 EMAIL_PASS=gmail_app_password
-PUBLIC_SERVER_URL=https://tvoj-server.onrender.com
+PUBLIC_SERVER_URL=https://osijek-info-kiosk.onrender.com
 ```
 
-Render sam postavlja `PORT`; vrijednost `10000` služi samo kao primjer. Nakon deploya kopiraj stvarni URL servera, npr. `https://osijek-kiosk-api.onrender.com`, u `PUBLIC_SERVER_URL` i ponovno deployaj server.
+Render sam postavlja `PORT`; nemoj se oslanjati na lokalni port `5000` u produkciji. Nakon deploya u `PUBLIC_SERVER_URL` upiši stvarni URL Render Web Servicea koji obrađuje `/api` rute, npr. `https://osijek-kiosk-api.onrender.com`.
 
 ### 2. Client Static Site
 
@@ -180,7 +180,7 @@ Publish Directory: dist
 Dodaj build environment variable s URL-om servera:
 
 ```env
-EXPO_PUBLIC_API_URL=https://tvoj-server.onrender.com
+EXPO_PUBLIC_API_URL=https://osijek-info-kiosk.onrender.com
 ```
 
 Nakon deploya otvori Render URL statičke stranice. Ako promijeniš server URL, moraš ponovno izgraditi client jer se `EXPO_PUBLIC_API_URL` ugrađuje tijekom builda.
@@ -224,19 +224,19 @@ DB_USER=root
 DB_PASSWORD=root
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_gmail_app_password
-PUBLIC_SERVER_URL=http://192.168.1.113:5000
+PUBLIC_SERVER_URL=http://localhost:5000
 ```
 
 - U Dockeru je `DB_HOST=database` ime Compose servisa.
 - Izvan Dockera koristi `DB_HOST=localhost`.
 - `EMAIL_USER` i `EMAIL_PASS` potrebni su za kontakt-formu.
-- `PUBLIC_SERVER_URL` se koristi u linkovima email potvrde. Mora biti dostupna uređaju na kojem se otvara email; za ovaj kiosk je `http://192.168.1.113:5000`, a pri javnom deployu koristi javni HTTPS URL.
+- `PUBLIC_SERVER_URL` se koristi u linkovima email potvrde. Lokalno je `http://localhost:5000`; na Renderu mora biti javni HTTPS URL Web Servicea.
 - `server/.env` ne smije se commitati.
 
-Klijent zadano koristi `http://192.168.1.113:5000`. Ako se API pokrene na drugom računalu, postavi `EXPO_PUBLIC_API_URL` na LAN adresu tog računala, primjerice:
+Klijent zadano koristi `https://osijek-info-kiosk.onrender.com`. Za lokalni Docker razvoj postavi `EXPO_PUBLIC_API_URL` na `http://localhost:5000`, a za drugi LAN uređaj na LAN adresu API računala:
 
 ```env
-EXPO_PUBLIC_API_URL=http://192.168.1.50:5000
+EXPO_PUBLIC_API_URL=http://localhost:5000
 ```
 
 Nakon promjene ponovno pokreni Expo ili Docker client.

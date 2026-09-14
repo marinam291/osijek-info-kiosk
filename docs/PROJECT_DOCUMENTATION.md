@@ -22,7 +22,7 @@ flowchart LR
 
 Ulazna datoteka je `client/src/app/index.tsx`. Klijent upravlja screensaverom, jezikom, temom, aktivnom karticom, dohvatom podataka, modalima i statusom API veze.
 
-Glavne cjeline su `components/views`, `components/widgets`, `components/common`, `context`, `config`, `services` i `utils`. API adresa centralizirana je u `client/src/services/api.ts`; zadana vrijednost je `http://192.168.1.113:5000`, a može se promijeniti s `EXPO_PUBLIC_API_URL`.
+Glavne cjeline su `components/views`, `components/widgets`, `components/common`, `context`, `config`, `services` i `utils`. API adresa centralizirana je u `client/src/services/api.ts`; zadana vrijednost je `https://osijek-info-kiosk.onrender.com`, a može se promijeniti s `EXPO_PUBLIC_API_URL`.
 
 ### 2.2 Server
 
@@ -72,8 +72,8 @@ Docker Compose
   -> server initializeDatabase()
   -> Sequelize sync({ alter: true })
   -> seed ako nema Item zapisa
-  -> Express listen na portu 5000
-  -> Expo web klijent na portu 8081
+  -> Express listen na Render PORT-u ili portu 5000 lokalno
+  -> Expo web klijent na Render Static Siteu ili portu 8081 lokalno
 ```
 
 Pokretanje:
@@ -86,8 +86,8 @@ docker compose up --build
 | Servis | Funkcija | Port |
 | --- | --- | --- |
 | `database` | MySQL 8 | `3307` host / `3306` mreža |
-| `server` | Express API | `5000` |
-| `client` | Expo web klijent | `8081` |
+| `server` | Express API | Render `PORT` / `5000` lokalno |
+| `client` | Expo web klijent | Render Static Site / `8081` lokalno |
 
 ## 5. Seed podaci
 
@@ -131,9 +131,9 @@ Health odgovor mora sadržavati `status: online`.
 ## 9. Operativne napomene
 
 - Kiosk pokrenuti u fullscreen browseru ili na namjenskom uređaju.
-- Zadana LAN adresa je `http://192.168.1.113:5000`; pri promjeni računala ili mreže ažurirati `EXPO_PUBLIC_API_URL` i `PUBLIC_SERVER_URL`.
-- Za klijent na drugom uređaju postaviti `EXPO_PUBLIC_API_URL` na LAN adresu API računala.
-- Za email potvrdu `PUBLIC_SERVER_URL` mora biti dostupna uređaju koji otvara email.
+- Zadani produkcijski API URL je `https://osijek-info-kiosk.onrender.com`; za lokalni Docker koristi se `http://localhost:5000`.
+- Pri promjeni API hosta ažurirati `EXPO_PUBLIC_API_URL` i ponovno izgraditi client.
+- Za email potvrdu `PUBLIC_SERVER_URL` mora biti javni HTTPS URL Render Web Servicea koji obrađuje `/api/verify-email`.
 - Prije javne objave promijeniti razvojne lozinke i ograničiti mrežni pristup.
 
 ## 10. Moguća buduća poboljšanja

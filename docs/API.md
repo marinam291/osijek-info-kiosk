@@ -2,7 +2,7 @@
 
 ## Osnovno
 
-Lokalna Docker adresa API-ja je `http://localhost:5000`. Kontaktne rute registrirane su pod prefiksom `/api`.
+Lokalna Docker adresa API-ja je `http://localhost:5000`. U produkciji se koristi javni HTTPS URL Render Web Servicea. Kontaktne rute registrirane su pod prefiksom `/api`.
 
 ## GET /
 
@@ -185,7 +185,7 @@ DB_USER=root
 DB_PASSWORD=root
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_gmail_app_password
-PUBLIC_SERVER_URL=http://192.168.1.113:5000
+PUBLIC_SERVER_URL=http://localhost:5000
 ```
 
-`PUBLIC_SERVER_URL` mora biti dostupna uređaju koji otvara verifikacijski email. Za ovaj kiosk koristi se `http://192.168.1.113:5000`; pri promjeni računala ili mreže treba upisati novu LAN adresu. CORS je uključen za komunikaciju Expo web klijenta s API-jem.
+`PUBLIC_SERVER_URL` mora biti dostupna uređaju koji otvara verifikacijski email. Lokalno koristi se `http://localhost:5000`; na Renderu treba postaviti javni HTTPS URL Web Servicea. CORS je uključen za komunikaciju Expo web klijenta s API-jem.
