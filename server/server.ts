@@ -257,7 +257,7 @@ async function startServer() {
       console.log("ℹPodaci već postoje u bazi.");
     }
 
-    app.listen(Number(PORT), () => {
+    app.listen(Number(PORT), "0.0.0.0", () => {
       console.log(`Server sluša na portu ${PORT}`);
     });
   } catch (err: unknown) {
