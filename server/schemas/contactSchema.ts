@@ -9,7 +9,7 @@ export const createContactSchema = (lang: "hr" | "en" = "hr") => {
     hr: {
       nameMax: "Ime ne smije imati više od 40 znakova.",
       emailInvalid: "Neispravan format email adrese.",
-      emailMax: "Email ne smije imati više od 40 znakova.",
+      emailMax: "Email ne smije imati više od 50 znakova.",
       messageEmpty: "Poruka ne smije biti prazna.",
       badWords: "Poruka sadrži nedozvoljene izraze.",
       nameRequired: "Ime je obavezno ako poruka nije anonimna.",
@@ -18,7 +18,7 @@ export const createContactSchema = (lang: "hr" | "en" = "hr") => {
     en: {
       nameMax: "Name must not exceed 40 characters.",
       emailInvalid: "Invalid email format.",
-      emailMax: "Email must not exceed 40 characters.",
+      emailMax: "Email must not exceed 50 characters.",
       messageEmpty: "Message cannot be empty.",
       badWords: "Message contains restricted words.",
       nameRequired: "Name is required if the message is not anonymous.",

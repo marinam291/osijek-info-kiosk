@@ -109,7 +109,7 @@ Provjerava privremenu blokadu emaila.
 Zahtjev:
 
 ```json
-{ "email": "korisnik@gmail.com" }
+{ "email": "korisnik@example.com" }
 ```
 
 Odgovori:
@@ -137,7 +137,7 @@ Zahtjev:
   "lang": "hr",
   "isAnonymous": false,
   "senderName": "Ana Anić",
-  "senderEmail": "ana@gmail.com",
+  "senderEmail": "ana@student.hr",
   "messageBody": "Poštovani, želim postaviti pitanje."
 }
 ```

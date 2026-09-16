@@ -248,8 +248,8 @@ export default function MayorContactWidget({
                 ]}
               >
                 {isHR
-                  ? "Vaša email adresa (max 40 znakova)"
-                  : "Email Address (max 40 chars)"}
+                  ? "Vaša email adresa (max 50 znakova)"
+                  : "Email Address (max 50 chars)"}
               </Text>
               <TextInput
                 style={[
@@ -271,7 +271,7 @@ export default function MayorContactWidget({
                 placeholderTextColor={colors.textSecondary + "80"}
                 keyboardType="email-address"
                 autoCapitalize="none"
-                maxLength={40}
+                maxLength={50}
                 value={senderEmail}
                 onChangeText={setSenderEmail}
               />
