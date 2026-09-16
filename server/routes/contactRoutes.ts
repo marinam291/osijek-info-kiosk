@@ -61,8 +61,12 @@ function sendLimitError(lang: string) {
     : "Previše uspješno poslanih poruka s ovog uređaja. Molimo pokušajte ponovno kasnije.";
 }
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
+const smtpOptions = {
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  requireTLS: true,
+  family: 4,
   connectionTimeout: 10000,
   greetingTimeout: 10000,
   socketTimeout: 20000,
@@ -70,7 +74,9 @@ const transporter = nodemailer.createTransport({
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
-});
+} as Parameters<typeof nodemailer.createTransport>[0];
+
+const transporter = nodemailer.createTransport(smtpOptions);
 
 router.post("/send-email", async (req, res) => {
   const lang = req.body.lang === "en" ? "en" : "hr";
