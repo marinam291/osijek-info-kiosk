@@ -27,7 +27,7 @@ function KioskMain() {
   const [activeTab, setActiveTab] = useState<string>("pocetna");
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { width } = useWindowDimensions();
-  const scale = width / 1920;
+  const scale = width > 0 ? width / 1920 : 1;
 
   useEffect(() => {
     setupKioskMode();
