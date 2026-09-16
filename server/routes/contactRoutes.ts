@@ -72,13 +72,12 @@ function sendLimitError(lang: string) {
 
 const smtpOptions = {
   host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  requireTLS: true,
-  family: 4, // <-- OVO RJEŠAVA ENETUNREACH IPV6 GREŠKU NA RENDERU
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 20000,
+  port: 465, 
+  secure: true, 
+  family: 4,
+  connectionTimeout: 30000, 
+  greetingTimeout: 30000,
+  socketTimeout: 30000,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
