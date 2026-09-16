@@ -31,16 +31,16 @@ export default function Screensaver({
   const { colors } = useTheme();
 
   const [slideAnim] = useState(
-    () => new Animated.Value(theme === "light" ? 0 : 65 * scale),
+    () => new Animated.Value(theme === "light" ? 0 : 65),
   );
 
   useEffect(() => {
     Animated.timing(slideAnim, {
-      toValue: theme === "light" ? 0 : 65 * scale,
+      toValue: theme === "light" ? 0 : 65,
       duration: 300,
       useNativeDriver: true,
     }).start();
-  }, [theme, slideAnim, scale]);
+  }, [theme, slideAnim]);
 
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
