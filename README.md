@@ -218,13 +218,15 @@ Kopiraj [server/.env.example](server/.env.example) u `server/.env`:
 
 ```env
 PORT=5000
-DB_HOST=database
-DB_NAME=osijek_kiosk
-DB_USER=root
-DB_PASSWORD=root
-RESEND_API_KEY=your_resend_api_key
+DB_HOST=mysql-1ce3500c-marenjakmarina-6192.d.aivencloud.com
+DB_USER=avnadmin
+DB_PASSWORD=AVNS_VqCUhAaeCX2T0caKML7
+DB_NAME=defaultdb
+DB_PORT=15331
+RESEND_API_KEY=re_K3CzMc5V_FMmRN9y6TqGoTniYDx8rWjHQ
 RESEND_FROM_EMAIL=onboarding@resend.dev
-PUBLIC_SERVER_URL=http://localhost:5000
+PUBLIC_SERVER_URL=https://osijek-info-kiosk.onrender.com
+MAIL_TO=marenjakmarina@gmail.com
 ```
 
 - U Dockeru je `DB_HOST=database` ime Compose servisa.
