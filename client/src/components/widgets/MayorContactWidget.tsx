@@ -248,8 +248,8 @@ export default function MayorContactWidget({
                 ]}
               >
                 {isHR
-                  ? "Vaša Gmail adresa (max 40 znakova)"
-                  : "Gmail Address (max 40 chars)"}
+                  ? "Vaša email adresa (max 40 znakova)"
+                  : "Email Address (max 40 chars)"}
               </Text>
               <TextInput
                 style={[
@@ -266,9 +266,7 @@ export default function MayorContactWidget({
                   },
                 ]}
                 placeholder={
-                  isHR
-                    ? "npr. primjergmail@gmail.com"
-                    : "e.g. example@gmail.com"
+                  isHR ? "npr. ime@domena.hr" : "e.g. name@example.com"
                 }
                 placeholderTextColor={colors.textSecondary + "80"}
                 keyboardType="email-address"

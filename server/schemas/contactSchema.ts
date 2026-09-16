@@ -2,13 +2,13 @@ import { z } from "zod";
 import validator from "validator";
 
 const badWords = ["psovka1", "psovka2", "glupostprimjer"];
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export const createContactSchema = (lang: "hr" | "en" = "hr") => {
   const messages = {
     hr: {
       nameMax: "Ime ne smije imati više od 40 znakova.",
       emailInvalid: "Neispravan format email adrese.",
-      emailGmail: "Email mora biti Gmail adresa.",
       emailMax: "Email ne smije imati više od 40 znakova.",
       messageEmpty: "Poruka ne smije biti prazna.",
       badWords: "Poruka sadrži nedozvoljene izraze.",
@@ -18,7 +18,6 @@ export const createContactSchema = (lang: "hr" | "en" = "hr") => {
     en: {
       nameMax: "Name must not exceed 40 characters.",
       emailInvalid: "Invalid email format.",
-      emailGmail: "Email must be a Gmail address.",
       emailMax: "Email must not exceed 40 characters.",
       messageEmpty: "Message cannot be empty.",
       badWords: "Message contains restricted words.",
@@ -49,11 +48,7 @@ export const createContactSchema = (lang: "hr" | "en" = "hr") => {
           .string()
           .transform((val) => validator.normalizeEmail(val.trim()) || val)
           .pipe(
-            z
-              .string()
-              .email(t.emailInvalid)
-              .endsWith("@gmail.com", t.emailGmail)
-              .max(50, t.emailMax),
+            z.string().regex(emailPattern, t.emailInvalid).max(50, t.emailMax),
           )
           .optional(),
       ),

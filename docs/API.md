@@ -146,7 +146,7 @@ Pravila:
 
 - `lang` je `hr` ili `en`
 - `isAnonymous` je obavezan boolean
-- za neanonimnu poruku potrebni su ime i Gmail adresa
+- za neanonimnu poruku potrebni su ime i valjana email adresa
 - ime je ograničeno na 40, email na 50 znakova
 - poruka ne smije biti prazna
 - nedozvoljeni izrazi se odbijaju
