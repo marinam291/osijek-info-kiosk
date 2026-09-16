@@ -9,6 +9,7 @@ const router = express.Router();
 const resend = new Resend(process.env.RESEND_API_KEY);
 const senderEmailAddress =
   process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+const recipientEmail = process.env.MAIL_TO || "marenjakmarina@gmail.com";
 
 const blockedEmails = new Map<string, number>();
 const pendingMessages = new Map<
@@ -88,7 +89,6 @@ router.post("/send-email", async (req, res) => {
 
   const { isAnonymous, senderName, senderEmail, messageBody } = result.data;
 
-  // 1. DIO: Ako NIJE anonimno, šaljemo verifikacijski mail korisniku
   if (!isAnonymous && senderEmail) {
     const cleanEmail = senderEmail.trim().toLowerCase();
     const unblockTime = blockedEmails.get(cleanEmail);
@@ -175,7 +175,6 @@ router.post("/send-email", async (req, res) => {
     }
   }
 
-  // 2. DIO: Ako JE anonimno, šaljemo direktno poruku tebi na mail
   const finalName = lang === "en" ? "Anonymous citizen" : "Anonimni građanin";
   const finalEmail = "info-kiosk@osijek.hr";
 
@@ -186,7 +185,7 @@ router.post("/send-email", async (req, res) => {
   try {
     await resend.emails.send({
       from: senderEmailAddress,
-      to: "marenjakmarina@gmail.com",
+      to: recipientEmail,
       subject: `[Info-Kiosk] ${lang === "en" ? "Anonymous message" : "Anonimna poruka"}`,
       html: getEmailTemplate(finalName, finalEmail, messageBody),
     });
@@ -277,7 +276,7 @@ router.post("/verify-email", async (req, res) => {
     try {
       await resend.emails.send({
         from: senderEmailAddress,
-        to: "marenjakmarina@gmail.com",
+        to: recipientEmail,
         subject: `[Info-Kiosk] Message - ${messageData.senderName}`,
         html: getEmailTemplate(
           messageData.senderName || "Nepoznato",
