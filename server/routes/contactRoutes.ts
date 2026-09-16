@@ -6,6 +6,10 @@ import logger from "../config/logger.js";
 
 const router = express.Router();
 
+const resend = new Resend(process.env.RESEND_API_KEY);
+const senderEmailAddress =
+  process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+
 const blockedEmails = new Map<string, number>();
 const pendingMessages = new Map<
   string,
@@ -70,29 +74,6 @@ function sendLimitError(lang: string) {
     : "Previše uspješno poslanih poruka s ovog uređaja. Molimo pokušajte ponovno kasnije.";
 }
 
-async function sendEmail(options: {
-  to: string;
-  subject: string;
-  html: string;
-}): Promise<void> {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    throw new Error("RESEND_API_KEY nije postavljen");
-  }
-
-  const resend = new Resend(apiKey);
-  const { error } = await resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
-    to: [options.to],
-    subject: options.subject,
-    html: options.html,
-  });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-}
-
 router.post("/send-email", async (req, res) => {
   const lang = req.body.lang === "en" ? "en" : "hr";
   const clientKey = getClientKey(req);
@@ -107,6 +88,7 @@ router.post("/send-email", async (req, res) => {
 
   const { isAnonymous, senderName, senderEmail, messageBody } = result.data;
 
+  // 1. DIO: Ako NIJE anonimno, šaljemo verifikacijski mail korisniku
   if (!isAnonymous && senderEmail) {
     const cleanEmail = senderEmail.trim().toLowerCase();
     const unblockTime = blockedEmails.get(cleanEmail);
@@ -138,7 +120,8 @@ router.post("/send-email", async (req, res) => {
     const cancelUrl = `${serverBaseUrl}/api/verify-email?token=${token}&action=cancel`;
 
     try {
-      await sendEmail({
+      await resend.emails.send({
+        from: senderEmailAddress,
         to: cleanEmail,
         subject:
           lang === "en"
@@ -192,6 +175,7 @@ router.post("/send-email", async (req, res) => {
     }
   }
 
+  // 2. DIO: Ako JE anonimno, šaljemo direktno poruku tebi na mail
   const finalName = lang === "en" ? "Anonymous citizen" : "Anonimni građanin";
   const finalEmail = "info-kiosk@osijek.hr";
 
@@ -200,7 +184,8 @@ router.post("/send-email", async (req, res) => {
   }
 
   try {
-    await sendEmail({
+    await resend.emails.send({
+      from: senderEmailAddress,
       to: "marenjakmarina@gmail.com",
       subject: `[Info-Kiosk] ${lang === "en" ? "Anonymous message" : "Anonimna poruka"}`,
       html: getEmailTemplate(finalName, finalEmail, messageBody),
@@ -211,7 +196,9 @@ router.post("/send-email", async (req, res) => {
         lang === "en" ? "Email sent successfully!" : "Mail uspješno poslan!",
     });
     recordSuccessfulSend(clientKey);
-  } catch {
+  } catch (error: unknown) {
+    const errMessage = error instanceof Error ? error.message : String(error);
+    logger.error(`Greška pri slanju anonimnog maila: ${errMessage}`);
     res.status(500).json({ error: "Neuspjelo slanje maila." });
   }
 });
@@ -288,7 +275,8 @@ router.post("/verify-email", async (req, res) => {
     }
 
     try {
-      await sendEmail({
+      await resend.emails.send({
+        from: senderEmailAddress,
         to: "marenjakmarina@gmail.com",
         subject: `[Info-Kiosk] Message - ${messageData.senderName}`,
         html: getEmailTemplate(
@@ -306,7 +294,9 @@ router.post("/verify-email", async (req, res) => {
           <p>Hvala vam. Možete zatvoriti ovaj prozor.</p>
         </div>
       `);
-    } catch {
+    } catch (error: unknown) {
+      const errMessage = error instanceof Error ? error.message : String(error);
+      logger.error(`Greška pri slanju potvrđene poruke: ${errMessage}`);
       return res.send(
         "<h3 style='text-align:center; margin-top:50px; font-family:Arial;'>Došlo je do greške prilikom slanja poruke u Ured gradonačelnika. Pokušajte ponovno.</h3>",
       );
