@@ -6,8 +6,17 @@ import logger from "../config/logger.js";
 
 const router = express.Router();
 
-const blockedEmails = new Map();
-const pendingMessages = new Map();
+const blockedEmails = new Map<string, number>();
+const pendingMessages = new Map<
+  string,
+  {
+    senderName?: string;
+    senderEmail: string;
+    messageBody: string;
+    lang: string;
+    clientKey: string;
+  }
+>();
 const successfulSendTimes = new Map<string, number[]>();
 const sendLimitWindowMs = 15 * 60 * 1000;
 const sendLimit = 3;
@@ -66,7 +75,7 @@ const smtpOptions = {
   port: 587,
   secure: false,
   requireTLS: true,
-  family: 4,
+  family: 4, // <-- OVO RJEŠAVA ENETUNREACH IPV6 GREŠKU NA RENDERU
   connectionTimeout: 10000,
   greetingTimeout: 10000,
   socketTimeout: 20000,
@@ -148,7 +157,6 @@ router.post("/send-email", async (req, res) => {
               ${lang === "en" ? "Did you send this? Please choose an option below:" : "Jeste li to bili vi? Molimo odaberite opciju:"}
             </p>
             
-            <!-- GUMBI SLOŽENI DA SE NE PRELAMAJU -->
             <div style="margin-top: 20px;">
               <a href="${confirmUrl}" style="background-color: #28a745; color: #ffffff; padding: 14px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; display: block; text-align: center; margin-bottom: 12px; font-size: 16px;">
                 ${lang === "en" ? "Yes, send message" : "Da, pošalji poruku"}
@@ -217,7 +225,7 @@ router.get("/verify-email", (req, res) => {
     return res.send(`
       <div style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
         <h2 style="color: #dc3545;">Želite li poništiti slanje?</h2>
-        <form method="post" action="/api/verify-email?token=${encodeURIComponent(token)}&action=cancel">
+        <form method="post" action="/api/verify-email?token=${encodeURIComponent(token as string)}&action=cancel">
           <button type="submit" style="background:#dc3545;color:white;padding:14px 24px;border:0;border-radius:6px;font-size:16px;">Da, poništi i blokiraj adresu</button>
         </form>
       </div>
@@ -229,7 +237,7 @@ router.get("/verify-email", (req, res) => {
       <div style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
         <h2>Potvrdite slanje poruke</h2>
         <p>Kliknite gumb ispod kako bi se poruka poslala u Ured gradonačelnika.</p>
-        <form method="post" action="/api/verify-email?token=${encodeURIComponent(token)}&action=confirm">
+        <form method="post" action="/api/verify-email?token=${encodeURIComponent(token as string)}&action=confirm">
           <button type="submit" style="background:#28a745;color:white;padding:14px 24px;border:0;border-radius:6px;font-size:16px;">Da, pošalji poruku</button>
         </form>
       </div>
@@ -281,7 +289,7 @@ router.post("/verify-email", async (req, res) => {
         to: "marenjakmarina@gmail.com",
         subject: `[Info-Kiosk] Message - ${messageData.senderName}`,
         html: getEmailTemplate(
-          messageData.senderName,
+          messageData.senderName || "Nepoznato",
           messageData.senderEmail,
           messageData.messageBody,
         ),
