@@ -46,7 +46,7 @@ export const createContactSchema = (lang: "hr" | "en" = "hr") => {
           typeof value === "string" && value.trim() === "" ? undefined : value,
         z
           .string()
-          .transform((val) => validator.normalizeEmail(val.trim()) || val)
+          .transform((val) => val.trim().toLowerCase())
           .pipe(
             z.string().regex(emailPattern, t.emailInvalid).max(50, t.emailMax),
           )
