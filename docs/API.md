@@ -183,8 +183,8 @@ DB_HOST=database
 DB_NAME=osijek_kiosk
 DB_USER=root
 DB_PASSWORD=root
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_gmail_app_password
+RESEND_API_KEY=your_resend_api_key
+RESEND_FROM_EMAIL=onboarding@resend.dev
 PUBLIC_SERVER_URL=http://localhost:5000
 ```
 

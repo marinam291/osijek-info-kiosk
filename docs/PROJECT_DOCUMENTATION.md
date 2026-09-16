@@ -13,7 +13,7 @@ flowchart LR
     Browser[Expo React Native Web client] -->|HTTP JSON| API[Express API]
     API --> ORM[Sequelize]
     ORM --> DB[(MySQL 8)]
-    API --> Mail[Gmail SMTP]
+    API --> Mail[Resend HTTPS API]
     API --> External[Osijek.hr / Osijek031]
     Browser --> Weather[Open-Meteo]
 ```
@@ -105,7 +105,7 @@ docker compose up -d server client
 - WordPress API Grada Osijeka: vijesti
 - Osijek031: događanja i opisi
 - Google Maps: karta i navigacija
-- Gmail SMTP: kontakt i verifikacija
+- Resend HTTPS API: kontakt i verifikacija
 
 Ako vanjski izvor ne uspije, lokalni podaci iz baze ostaju dostupni gdje je to moguće.
 

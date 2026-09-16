@@ -66,7 +66,7 @@ Za muzeje, znamenitosti, zdravstvo, gradske usluge, smještaj i trgovine detalji
 - WordPress API Grada Osijeka za ticker vijesti
 - Osijek031 za vanjska događanja
 - Google Maps za kartu i navigaciju
-- Gmail SMTP za kontakt-formu
+- Resend HTTP API za kontakt-formu
 
 ## Struktura projekta
 
@@ -116,7 +116,7 @@ Nakon kloniranja iz korijena projekta napravi lokalnu konfiguraciju:
 Copy-Item server\.env.example server\.env
 ```
 
-Za kontakt-formu upiši stvarni Gmail račun i Gmail App Password u `server/.env`. Zatim pokreni sustav:
+Za kontakt-formu upiši Resend API ključ u `server/.env`. Zatim pokreni sustav:
 
 ```bash
 docker compose up --build
@@ -160,8 +160,8 @@ DB_HOST=adresa-mysql-servera
 DB_NAME=osijek_kiosk
 DB_USER=korisnik_baze
 DB_PASSWORD=lozinka_baze
-EMAIL_USER=tvoj_gmail@gmail.com
-EMAIL_PASS=gmail_app_password
+RESEND_API_KEY=resend_api_key
+RESEND_FROM_EMAIL=onboarding@resend.dev
 PUBLIC_SERVER_URL=https://osijek-info-kiosk.onrender.com
 ```
 
@@ -188,7 +188,7 @@ Nakon deploya otvori Render URL statičke stranice. Ako promijeniš server URL, 
 ### Važne napomene
 
 - `PUBLIC_SERVER_URL` mora biti javni HTTPS URL servera jer ga korisnik otvara iz emaila.
-- Gmail koristi App Password, ne običnu lozinku Gmail računa.
+- Resend koristi API ključ; ne stavljaj ga u repozitorij.
 - Besplatni Render server može se uspavati nakon neaktivnosti, pa prvi zahtjev može biti sporiji.
 - Za produkciju ne stavljaj stvarne lozinke u repozitorij; unesi ih samo u Render Environment Variables.
 
@@ -222,14 +222,14 @@ DB_HOST=database
 DB_NAME=osijek_kiosk
 DB_USER=root
 DB_PASSWORD=root
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_gmail_app_password
+RESEND_API_KEY=your_resend_api_key
+RESEND_FROM_EMAIL=onboarding@resend.dev
 PUBLIC_SERVER_URL=http://localhost:5000
 ```
 
 - U Dockeru je `DB_HOST=database` ime Compose servisa.
 - Izvan Dockera koristi `DB_HOST=localhost`.
-- `EMAIL_USER` i `EMAIL_PASS` potrebni su za kontakt-formu.
+- `RESEND_API_KEY` potreban je za kontakt-formu. Za produkciju možeš postaviti verificiranu adresu u `RESEND_FROM_EMAIL`.
 - `PUBLIC_SERVER_URL` se koristi u linkovima email potvrde. Lokalno je `http://localhost:5000`; na Renderu mora biti javni HTTPS URL Web Servicea.
 - `server/.env` ne smije se commitati.
 
@@ -281,7 +281,7 @@ Detalji i primjeri nalaze se u [docs/API.md](docs/API.md).
 
 ## Sigurnost
 
-- Ne commitaj `server/.env`, Gmail App Password ni druge tajne.
+- Ne commitaj `server/.env`, Resend API ključ ni druge tajne.
 - Za javni deployment koristi HTTPS u `PUBLIC_SERVER_URL`.
 - Kontaktna ruta koristi Zod validaciju i ograničava na najviše 3 uspješno poslane poruke s istog uređaja u 15 minuta; neuspjeli pokušaji ne troše limit.
 - Razvojne MySQL vrijednosti `root/root` nisu primjer za produkciju.
@@ -314,7 +314,7 @@ Ako su klijent i API na različitim računalima, postavi `EXPO_PUBLIC_API_URL` n
 
 ### Email ne radi
 
-Provjeri Gmail App Password, `EMAIL_USER`, `EMAIL_PASS` i `PUBLIC_SERVER_URL`. Obična Gmail lozinka nije zamjena za App Password.
+Provjeri `RESEND_API_KEY`, `RESEND_FROM_EMAIL` i `PUBLIC_SERVER_URL`.
 
 ## Dokumentacija
 

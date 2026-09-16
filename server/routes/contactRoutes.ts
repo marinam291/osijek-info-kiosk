@@ -1,5 +1,5 @@
 import express from "express";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { getEmailTemplate } from "../utils/emailTemplate.js";
 import { createContactSchema } from "../schemas/contactSchema.js";
 import logger from "../config/logger.js";
@@ -70,21 +70,28 @@ function sendLimitError(lang: string) {
     : "Previše uspješno poslanih poruka s ovog uređaja. Molimo pokušajte ponovno kasnije.";
 }
 
-const smtpOptions = {
-  host: "smtp.gmail.com",
-  port: 465, 
-  secure: true, 
-  family: 4,
-  connectionTimeout: 30000, 
-  greetingTimeout: 30000,
-  socketTimeout: 30000,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-} as Parameters<typeof nodemailer.createTransport>[0];
+async function sendEmail(options: {
+  to: string;
+  subject: string;
+  html: string;
+}): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    throw new Error("RESEND_API_KEY nije postavljen");
+  }
 
-const transporter = nodemailer.createTransport(smtpOptions);
+  const resend = new Resend(apiKey);
+  const { error } = await resend.emails.send({
+    from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
+    to: [options.to],
+    subject: options.subject,
+    html: options.html,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
 
 router.post("/send-email", async (req, res) => {
   const lang = req.body.lang === "en" ? "en" : "hr";
@@ -131,8 +138,7 @@ router.post("/send-email", async (req, res) => {
     const cancelUrl = `${serverBaseUrl}/api/verify-email?token=${token}&action=cancel`;
 
     try {
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
+      await sendEmail({
         to: cleanEmail,
         subject:
           lang === "en"
@@ -194,8 +200,7 @@ router.post("/send-email", async (req, res) => {
   }
 
   try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    await sendEmail({
       to: "marenjakmarina@gmail.com",
       subject: `[Info-Kiosk] ${lang === "en" ? "Anonymous message" : "Anonimna poruka"}`,
       html: getEmailTemplate(finalName, finalEmail, messageBody),
@@ -283,8 +288,7 @@ router.post("/verify-email", async (req, res) => {
     }
 
     try {
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
+      await sendEmail({
         to: "marenjakmarina@gmail.com",
         subject: `[Info-Kiosk] Message - ${messageData.senderName}`,
         html: getEmailTemplate(
