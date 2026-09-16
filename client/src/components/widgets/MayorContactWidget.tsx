@@ -27,6 +27,7 @@ export default function MayorContactWidget({
   const [senderEmail, setSenderEmail] = useState("");
   const [messageBody, setMessageBody] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   const [notificationMessage, setNotificationMessage] = useState<string | null>(
     null,
@@ -43,6 +44,8 @@ export default function MayorContactWidget({
   }, [notificationMessage]);
 
   const handleSendEmail = async () => {
+    if (isSending) return;
+
     if (!isAnonymous && (!senderName || !senderEmail || !messageBody)) {
       setNotificationMessage(
         isHR ? "Molimo ispunite sva polja." : "Please fill in all fields.",
@@ -81,10 +84,16 @@ export default function MayorContactWidget({
       }
     }
 
+    setIsSending(true);
+    let requestTimeout: ReturnType<typeof setTimeout> | undefined;
+
     try {
+      const controller = new AbortController();
+      requestTimeout = setTimeout(() => controller.abort(), 30000);
       const response = await fetch(apiUrl("/api/send-email"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
         body: JSON.stringify({
           isAnonymous,
           senderName: isAnonymous ? "" : senderName,
@@ -93,7 +102,6 @@ export default function MayorContactWidget({
           lang: isHR ? "hr" : "en",
         }),
       });
-
       const data = await response.json();
 
       if (response.ok) {
@@ -126,10 +134,17 @@ export default function MayorContactWidget({
       // eslint-disable-next-line no-console
       console.error("Greška:", error);
       setNotificationMessage(
-        isHR
-          ? "Nije moguće uspostaviti vezu sa serverom."
-          : "Unable to connect to the server.",
+        error instanceof DOMException && error.name === "AbortError"
+          ? isHR
+            ? "Slanje traje predugo. Provjerite SMTP postavke servera i pokušajte ponovno."
+            : "The request took too long. Check the server SMTP settings and try again."
+          : isHR
+            ? "Nije moguće uspostaviti vezu sa serverom."
+            : "Unable to connect to the server.",
       );
+    } finally {
+      if (requestTimeout) clearTimeout(requestTimeout);
+      setIsSending(false);
     }
   };
 
@@ -329,6 +344,7 @@ export default function MayorContactWidget({
           ]}
           onPress={handleSendEmail}
           activeOpacity={0.8}
+          disabled={isSending}
         >
           <Text
             style={[
@@ -338,7 +354,13 @@ export default function MayorContactWidget({
               },
             ]}
           >
-            {isHR ? "Pošalji poruku" : "Send Message"}
+            {isSending
+              ? isHR
+                ? "Slanje..."
+                : "Sending..."
+              : isHR
+                ? "Pošalji poruku"
+                : "Send Message"}
           </Text>
         </TouchableOpacity>
       </View>
