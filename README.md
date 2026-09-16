@@ -19,7 +19,6 @@ Projekt se sastoji od Expo/React Native klijenta, Express/TypeScript API-ja i My
 - [API](#api)
 - [Sigurnost](#sigurnost)
 - [Rješavanje problema](#rješavanje-problema)
-- [Dokumentacija](#dokumentacija)
 
 ## Mogućnosti
 
@@ -57,7 +56,7 @@ Za muzeje, znamenitosti, zdravstvo, gradske usluge, smještaj i trgovine detalji
 - Node.js 20+, Express 5 i TypeScript
 - Sequelize, MySQL 8 i `mysql2`
 - `dotenv`, `cors`, Zod i `validator`
-- Nodemailer, vlastiti limiter uspješnih slanja i Winston
+- Resend, vlastiti limiter uspješnih slanja i Winston
 - `tsx` za razvoj
 
 ### Vanjski izvori
@@ -95,9 +94,6 @@ osijek-info-kiosk/
 │   ├── Dockerfile
 │   ├── .env.example
 │   └── package.json
-├── docs/
-│   ├── API.md
-│   └── PROJECT_DOCUMENTATION.md
 ├── docker-compose.yml
 └── README.md
 ```
@@ -162,6 +158,7 @@ DB_USER=korisnik_baze
 DB_PASSWORD=lozinka_baze
 RESEND_API_KEY=resend_api_key
 RESEND_FROM_EMAIL=onboarding@resend.dev
+MAIL_TO=gradonacelnik@osijek.hr
 PUBLIC_SERVER_URL=https://osijek-info-kiosk.onrender.com
 ```
 
@@ -218,15 +215,15 @@ Kopiraj [server/.env.example](server/.env.example) u `server/.env`:
 
 ```env
 PORT=5000
-DB_HOST=mysql-1ce3500c-marenjakmarina-6192.d.aivencloud.com
-DB_USER=avnadmin
-DB_PASSWORD=AVNS_VqCUhAaeCX2T0caKML7
-DB_NAME=defaultdb
+DB_HOST=adresa_tvog_mysql_servera
+DB_USER=tvoj_korisnik_baze
+DB_PASSWORD=tvoja_lozinka_baze
+DB_NAME=osijek_kiosk
 DB_PORT=15331
-RESEND_API_KEY=re_K3CzMc5V_FMmRN9y6TqGoTniYDx8rWjHQ
+RESEND_API_KEY=tvoj_resend_api_kljuc
 RESEND_FROM_EMAIL=onboarding@resend.dev
 PUBLIC_SERVER_URL=https://osijek-info-kiosk.onrender.com
-MAIL_TO=marenjakmarina@gmail.com
+MAIL_TO=gradonacelnik@osijek.hr
 ```
 
 - U Dockeru je `DB_HOST=database` ime Compose servisa.
@@ -279,8 +276,6 @@ Glavne rute:
 - `GET /api/verify-email?token=...&action=confirm|cancel` - prikaz potvrde ili odustajanja
 - `POST /api/verify-email?token=...&action=confirm|cancel` - stvarna potvrda slanja ili odustajanje
 
-Detalji i primjeri nalaze se u [docs/API.md](docs/API.md).
-
 ## Sigurnost
 
 - Ne commitaj `server/.env`, Resend API ključ ni druge tajne.
@@ -317,11 +312,6 @@ Ako su klijent i API na različitim računalima, postavi `EXPO_PUBLIC_API_URL` n
 ### Email ne radi
 
 Provjeri `RESEND_API_KEY`, `RESEND_FROM_EMAIL` i `PUBLIC_SERVER_URL`.
-
-## Dokumentacija
-
-- [API dokumentacija](docs/API.md)
-- [Projektna dokumentacija](docs/PROJECT_DOCUMENTATION.md)
 
 ## Licenca
 
