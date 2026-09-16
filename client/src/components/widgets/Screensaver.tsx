@@ -323,6 +323,7 @@ const styles = StyleSheet.create({
   },
   themeToggleContainer: {
     justifyContent: "center",
+    position: "relative",
   },
   toggleBackgroundIcons: {
     position: "absolute",
